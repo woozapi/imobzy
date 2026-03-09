@@ -973,7 +973,14 @@ app.post('/api/onboarding', async (req, res) => {
     }
 });
 
-const PORT = 3002;
-app.listen(PORT, () => {
-    console.log(`🔌 Servidor de Migração rodando na porta ${PORT}`);
-});
+const PORT = process.env.PORT || 3002;
+
+// Only start the server if not running in a serverless environment (Vercel)
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`🔌 Servidor de Migração rodando na porta ${PORT}`);
+    });
+}
+
+// Export for Vercel Serverless Function
+export default app;
