@@ -62,6 +62,12 @@ import FeatureFlags from './views/superadmin/FeatureFlags';
 import AuditLog from './views/superadmin/AuditLog';
 import TemplateManager from './views/superadmin/TemplateManager';
 
+// Portals
+import PortalProprietarioRural from './views/rural/PortalProprietarioRural';
+import PortalCompradorRural from './views/rural/PortalCompradorRural';
+import PortalProprietarioUrbano from './views/urban/PortalProprietarioUrbano';
+import PortalCompradorUrbano from './views/urban/PortalCompradorUrbano';
+
 // Context
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -143,8 +149,8 @@ const AppContent: React.FC = () => {
       <Route path="/rural/messages" element={<ProtectedRoute><RuralLayout><Messages /></RuralLayout></ProtectedRoute>} />
       <Route path="/rural/whatsapp-setup" element={<ProtectedRoute><RuralLayout><WhatsAppSetup /></RuralLayout></ProtectedRoute>} />
       <Route path="/rural/reports" element={<ProtectedRoute><RuralLayout><BIRural /></RuralLayout></ProtectedRoute>} />
-      <Route path="/rural/portal-proprietario" element={<ProtectedRoute><RuralLayout><Placeholder name="Portal Proprietário Rural" /></RuralLayout></ProtectedRoute>} />
-      <Route path="/rural/portal-comprador" element={<ProtectedRoute><RuralLayout><Placeholder name="Portal Comprador Rural" /></RuralLayout></ProtectedRoute>} />
+      <Route path="/rural/portal-proprietario" element={<ProtectedRoute><RuralLayout><PortalProprietarioRural /></RuralLayout></ProtectedRoute>} />
+      <Route path="/rural/portal-comprador" element={<ProtectedRoute><RuralLayout><PortalCompradorRural /></RuralLayout></ProtectedRoute>} />
       <Route path="/rural/landing-pages" element={<ProtectedRoute><RuralLayout><LandingPageManager /></RuralLayout></ProtectedRoute>} />
       <Route path="/rural/landing-pages/new" element={<ProtectedRoute><RuralLayout><LandingPageEditor /></RuralLayout></ProtectedRoute>} />
       <Route path="/rural/landing-pages/:id" element={<ProtectedRoute><RuralLayout><LandingPageEditor /></RuralLayout></ProtectedRoute>} />
@@ -167,8 +173,8 @@ const AppContent: React.FC = () => {
       <Route path="/urban/messages" element={<ProtectedRoute><UrbanLayout><Messages /></UrbanLayout></ProtectedRoute>} />
       <Route path="/urban/whatsapp-setup" element={<ProtectedRoute><UrbanLayout><WhatsAppSetup /></UrbanLayout></ProtectedRoute>} />
       <Route path="/urban/reports" element={<ProtectedRoute><UrbanLayout><BIRural /></UrbanLayout></ProtectedRoute>} />
-      <Route path="/urban/portal-proprietario" element={<ProtectedRoute><UrbanLayout><Placeholder name="Portal Proprietário Urbano" /></UrbanLayout></ProtectedRoute>} />
-      <Route path="/urban/portal-comprador" element={<ProtectedRoute><UrbanLayout><Placeholder name="Portal Comprador Urbano" /></UrbanLayout></ProtectedRoute>} />
+      <Route path="/urban/portal-proprietario" element={<ProtectedRoute><UrbanLayout><PortalProprietarioUrbano /></UrbanLayout></ProtectedRoute>} />
+      <Route path="/urban/portal-comprador" element={<ProtectedRoute><UrbanLayout><PortalCompradorUrbano /></UrbanLayout></ProtectedRoute>} />
       <Route path="/urban/landing-pages" element={<ProtectedRoute><UrbanLayout><LandingPageManager /></UrbanLayout></ProtectedRoute>} />
       <Route path="/urban/landing-pages/new" element={<ProtectedRoute><UrbanLayout><LandingPageEditor /></UrbanLayout></ProtectedRoute>} />
       <Route path="/urban/landing-pages/:id" element={<ProtectedRoute><UrbanLayout><LandingPageEditor /></UrbanLayout></ProtectedRoute>} />
