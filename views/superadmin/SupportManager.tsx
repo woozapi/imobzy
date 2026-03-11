@@ -58,7 +58,7 @@ const SupportManager: React.FC = () => {
         .select(`
           *,
           organization:organizations(name),
-          user_profile:profiles!support_tickets_user_id_fkey(full_name)
+          user_profile:profiles!support_tickets_user_id_fkey(full_name:name)
         `);
 
       if (filter !== 'all') {
@@ -80,7 +80,7 @@ const SupportManager: React.FC = () => {
       .from('support_messages')
       .select(`
         *,
-        user_profile:profiles(full_name)
+        user_profile:profiles(full_name:name)
       `)
       .eq('ticket_id', ticketId)
       .order('created_at', { ascending: true });

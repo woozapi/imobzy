@@ -32,7 +32,7 @@ const UserManagement: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, full_name:name')
         .order('created_at', { ascending: false });
 
       if (error) throw error;

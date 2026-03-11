@@ -30,7 +30,7 @@ const TeamManager: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, full_name:name')
         .eq('role', 'superadmin')
         .order('created_at', { ascending: false });
 
