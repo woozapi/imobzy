@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 // Impersonation Components
 import ImpersonateCallback from './views/ImpersonateCallback';
@@ -63,6 +63,8 @@ import AuditLog from './views/superadmin/AuditLog';
 import TemplateManager from './views/superadmin/TemplateManager';
 import PlatformMonitoring from './views/superadmin/PlatformMonitoring';
 import AnalyticsDashboard from './views/superadmin/AnalyticsDashboard';
+import SupportManager from './views/superadmin/SupportManager';
+import TeamManager from './views/superadmin/TeamManager';
 
 // Portals
 import PortalProprietarioRural from './views/rural/PortalProprietarioRural';
@@ -94,12 +96,51 @@ const Placeholder: React.FC<{ name: string }> = ({ name }) => (
 // NICHE REDIRECT — sends /admin/* users to the correct panel
 // ==========================================
 const NicheRedirect: React.FC = () => {
-  const { profile } = useAuth();
+  const { profile, isImpersonating, loading } = useAuth();
+  
+  if (loading) return null;
+
+  console.log('🔄 [NicheRedirect] State:', { 
+    role: profile?.role, 
+    isImpersonating, 
+    orgId: profile?.organization_id,
+    niche: profile?.organization?.niche 
+  });
+
+  // If Super Admin and NOT impersonating, go to Super Admin panel
+  if (profile?.role === 'superadmin' && !isImpersonating) {
+    console.log('👑 [NicheRedirect] Super Admin detected, redirecting to /superadmin');
+    return <Navigate to="/superadmin" replace />;
+  }
+
   const niche = profile?.organization?.niche || 'traditional';
+  console.log('🏢 [NicheRedirect] Redirecting to niche:', niche);
 
   if (niche === 'rural') return <Navigate to="/rural" replace />;
   if (niche === 'hybrid') return <Navigate to="/rural" replace />;
   return <Navigate to="/urban" replace />;
+};
+
+// ==========================================
+// GLOBAL SUPER ADMIN GUARD
+// = [FORCE] sends super admins to /superadmin unless impersonating
+// ==========================================
+const SuperAdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { profile, isImpersonating, loading } = useAuth();
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (!loading && profile?.role === 'superadmin' && !isImpersonating) {
+      const path = location.pathname;
+      // If not on superadmin path, force redirect
+      if (!path.startsWith('/superadmin') && path !== '/login' && path !== '/impersonate') {
+        console.log('🛡️ [GlobalGuard] Super Admin escaping! Redirecting to /superadmin');
+        window.location.href = '/superadmin';
+      }
+    }
+  }, [profile, isImpersonating, loading, location.pathname]);
+
+  return <>{children}</>;
 };
 
 // ==========================================
@@ -119,7 +160,8 @@ const AppContent: React.FC = () => {
   return (
     <>
     <ImpersonationBanner />
-    <Routes>
+    <SuperAdminGuard>
+      <Routes>
       {/* ============================== */}
       {/* PUBLIC ROUTES */}
       {/* ============================== */}
@@ -192,6 +234,8 @@ const AppContent: React.FC = () => {
           <Route path="analytics" element={<AnalyticsDashboard />} />
           <Route path="monitoring" element={<PlatformMonitoring />} />
           <Route path="tenants" element={<TenantManager />} />
+          <Route path="support" element={<SupportManager />} />
+          <Route path="team" element={<TeamManager />} />
           <Route path="domains" element={<DomainManager />} />
           <Route path="plans" element={<PlanManager />} />
           <Route path="billing" element={<BillingManager />} />
@@ -204,6 +248,7 @@ const AppContent: React.FC = () => {
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </SuperAdminGuard>
     </>
   );
 };

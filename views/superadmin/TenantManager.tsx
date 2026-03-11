@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
 import { Building2, Search, Edit2, Ban, CheckCircle, Plus, X, Save, Key } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 interface Organization {
     id: string;
@@ -25,6 +26,7 @@ interface Plan {
 
 
 const TenantManager: React.FC = () => {
+    const { impersonateOrganization } = useAuth();
     const [tenants, setTenants] = useState<Organization[]>([]);
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(true);
@@ -251,73 +253,23 @@ const TenantManager: React.FC = () => {
                                                 if (!reason) return;
 
                                                 try {
-                                                    // USER REQUEST: Call Secure Backend API
+                                                    // Start impersonation in AuthContext
+                                                    await impersonateOrganization(tenant.id);
                                                     
-                                                    // Visual Feedback
-                                                    const feedback = document.createElement('div');
-                                                    feedback.className = 'fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center text-white flex-col gap-4 animate-in fade-in duration-300';
-                                                    feedback.innerHTML = `
-                                                        <div class="h-12 w-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                        <div class="text-xl font-bold">Solicitando Acesso Seguro...</div>
-                                                        <div class="text-sm opacity-80">Validando permissões e auditando...</div>
-                                                    `;
-                                                    document.body.appendChild(feedback);
-
-                                                    const { data: { user } } = await supabase.auth.getUser();
-                                                    if (!user) throw new Error("Usuário não autenticado");
-
-                                                    // Use VITE_API_URL or default to local/configured
-                                                    const apiUrl = (import.meta as any).env.VITE_API_URL || 'http://localhost:3002';
-                                                    
-                                                    // Get the tenant owner ID or just pass tenantId and let backend find a user
-                                                    // Ideally we passed the specific user_id to impersonate.
-                                                    // For now, let's assume we want to impersonate the owner or just find ANY admin of that tenant.
-                                                    // But we didn't fetch users here, only tenants. 
-                                                    // Let's first fetch the owner of the tenant.
-                                                    
-                                                    const { data: ownerData, error: ownerError } = await supabase
-                                                        .from('profiles')
-                                                        .select('id')
-                                                        .eq('organization_id', tenant.id)
-                                                        .in('role', ['admin', 'broker', 'superadmin']) 
-                                                        .limit(1)
-                                                        .single();
-
-                                                    if (ownerError || !ownerData) {
-                                                        document.body.removeChild(feedback);
-                                                        alert("Não foi possível encontrar um usuário ADMIN para esta organização.");
-                                                        return;
-                                                    }
-
-                                                    const response = await fetch(`${apiUrl}/api/support/impersonate`, {
-                                                        method: 'POST',
-                                                        headers: { 'Content-Type': 'application/json' },
-                                                        body: JSON.stringify({
-                                                            actorId: user.id,
-                                                            targetUserId: ownerData.id,
-                                                            tenantId: tenant.id,
-                                                            reason: reason
-                                                        })
-                                                    });
-
-                                                    const result = await response.json();
-
-                                                    if (!response.ok || !result.success) {
-                                                        throw new Error(result.error || 'Falha ao iniciar impersonation');
-                                                    }
-
-                                                    // Redirect using the provided secure One-Time URL
-                                                    // result.redirectUrl should be like /impersonate?code=...
-                                                    window.location.href = result.redirectUrl;
+                                                    // Redirect to the appropriate dashboard
+                                                    // We need to know the niche. Let's fetch it if not present, 
+                                                    // or assume the component will handle it after refresh.
+                                                    // Since AuthContext loadProfile fetches the niche, we can just redirect to /admin 
+                                                    // and NicheRedirect will handle it.
+                                                    window.location.href = '/admin';
 
                                                 } catch (err: any) {
                                                     console.error(err);
-                                                    document.querySelector('.fixed.inset-0')?.remove(); // remove feedback
                                                     alert(`Erro: ${err.message}`);
                                                 }
                                             }}
                                             className="p-1.5 text-purple-600 bg-purple-50 hover:bg-purple-100 rounded mr-2" 
-                                            title="Acessar Como (Secure Log In)"
+                                            title="Acessar Como (Modo Suporte)"
                                         >
                                             <Key size={18} />
                                         </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Home, 
@@ -22,11 +22,13 @@ import {
   FolderOpen,
   Wheat,
   TreePine,
-  Eye
+  Eye,
+  LifeBuoy
 } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
 import { useAuth } from '../context/AuthContext';
 import { usePlans } from '../context/PlansContext';
+import SupportModal from './SupportModal';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -34,8 +36,15 @@ interface LayoutProps {
 
 const RuralLayout: React.FC<LayoutProps> = ({ children }) => {
   const { settings } = useSettings();
-  const { profile, signOut, stopImpersonation, loading } = useAuth();
+  const { profile, signOut, stopImpersonation, isImpersonating, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
+
+  // Guard: Super Admin can ONLY see this if impersonating
+  if (!loading && profile?.role === 'superadmin' && !isImpersonating) {
+    console.log('🛡️ [RuralLayout] Guard triggered. Redirecting Super Admin to /superadmin');
+    return <Navigate to="/superadmin" replace />;
+  }
 
   const handleLogout = async () => {
     try {
@@ -147,6 +156,14 @@ const RuralLayout: React.FC<LayoutProps> = ({ children }) => {
         </div>
         
         <button
+          onClick={() => setIsSupportOpen(true)}
+          className="w-full flex items-center gap-3 px-4 py-3 mb-1 text-emerald-400/80 hover:text-emerald-400 hover:bg-emerald-900/20 rounded-xl transition-all group border border-emerald-900/30"
+        >
+          <LifeBuoy size={18} />
+          <span className="text-xs font-black uppercase tracking-widest">Suporte Imobzy</span>
+        </button>
+
+        <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all group"
         >
@@ -154,6 +171,7 @@ const RuralLayout: React.FC<LayoutProps> = ({ children }) => {
           <span className="text-xs font-black uppercase tracking-widest">Sair</span>
         </button>
       </div>
+      <SupportModal isOpen={isSupportOpen} onClose={() => setIsSupportOpen(false)} />
     </>
   );
 
@@ -176,22 +194,6 @@ const RuralLayout: React.FC<LayoutProps> = ({ children }) => {
             <SidebarContent />
           </aside>
         </div>
-      )}
-
-      {/* Impersonation Banner */}
-      {localStorage.getItem('impersonatedOrgId') && (
-          <div className="bg-red-600 text-white text-center py-2 px-4 shadow-lg z-50 flex items-center justify-center gap-4">
-              <span className="font-bold flex items-center gap-2">
-                  <ShieldAlert size={18} />
-                  ACESSANDO COMO: IMOBILIÁRIA RURAL (Modo Super Admin)
-              </span>
-              <button 
-                  onClick={stopImpersonation} 
-                  className="bg-white text-red-600 px-3 py-1 rounded text-xs font-bold uppercase hover:bg-red-50"
-              >
-                  Sair do Acesso
-              </button>
-          </div>
       )}
 
       {/* Desktop Sidebar — Dark Green Theme */}

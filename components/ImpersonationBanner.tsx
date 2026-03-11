@@ -1,61 +1,44 @@
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { ShieldAlert, LogOut, UserCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { ShieldAlert, LogOut } from 'lucide-react';
-import { supabase } from '../services/supabase';
 
 const ImpersonationBanner: React.FC = () => {
-    const { user, loading } = useAuth();
-    const [isImpersonating, setIsImpersonating] = useState(false);
-    const [actorId, setActorId] = useState<string | null>(null);
+  const { isImpersonating, profile, stopImpersonation } = useAuth();
 
-    useEffect(() => {
-        if (!user || loading) return;
+  if (!isImpersonating || !profile?.organization) return null;
 
-        // Check for specific claim in app_metadata
-        // This relies on the custom token we minted
-        const checkImpersonation = () => {
-            const output = user.app_metadata?.provider === 'impersonation';
-            setIsImpersonating(output);
-            if (output) {
-                setActorId(user.app_metadata.actor_user_id as string);
-            }
-        };
-
-        checkImpersonation();
-    }, [user, loading]);
-
-    const exitSupportMode = async () => {
-        if (confirm('Sair do modo de suporte e encerrar sessão do cliente?')) {
-            await supabase.auth.signOut();
-            localStorage.removeItem('isImpersonating');
-            // Redirect to login or admin login
-            window.location.href = '/login';
-        }
-    };
-
-    if (!isImpersonating) return null;
-
-    return (
-        <div className="bg-amber-500 text-white px-4 py-2 shadow-md flex items-center justify-between z-[9999] relative">
-            <div className="flex items-center gap-2">
-                <ShieldAlert className="h-5 w-5 animate-pulse" />
-                <span className="font-bold text-sm md:text-base">
-                    MODO SUPORTE: Você está acessando como o cliente.
-                </span>
-                <span className="text-xs bg-amber-700/50 px-2 py-0.5 rounded ml-2 hidden sm:inline-block">
-                    Sessão Monitorada
-                </span>
-            </div>
-            <button 
-                onClick={exitSupportMode}
-                className="flex items-center gap-1 bg-white text-amber-600 px-3 py-1 rounded text-sm font-bold hover:bg-amber-50 transition-colors shadow-sm"
-            >
-                <LogOut size={14} />
-                Sair
-            </button>
+  return (
+    <div className="bg-red-600 text-white px-4 py-2.5 flex items-center justify-between sticky top-0 z-[100] shadow-lg animate-pulse-slow">
+      <div className="flex items-center gap-3">
+        <div className="bg-white/20 p-1.5 rounded-lg">
+          <ShieldAlert size={20} className="text-white" />
         </div>
-    );
+        <div>
+          <p className="text-sm font-bold">
+            MODO SUPORTE ATIVO
+          </p>
+          <p className="text-[11px] opacity-90 leading-tight">
+            Você está visualizando o painel de: <span className="font-bold underline">{profile.organization.name}</span>
+          </p>
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-black/20 rounded-full border border-white/20">
+          <UserCircle size={14} />
+          <span className="text-[10px] font-medium uppercase tracking-wider">Acesso Super Admin</span>
+        </div>
+        
+        <button
+          onClick={stopImpersonation}
+          className="flex items-center gap-2 px-4 py-1.5 bg-white text-red-600 rounded-lg text-xs font-bold hover:bg-red-50 transition-all shadow-sm"
+        >
+          <LogOut size={14} />
+          Sair do Modo Suporte
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default ImpersonationBanner;

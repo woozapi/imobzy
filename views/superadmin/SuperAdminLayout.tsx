@@ -5,7 +5,9 @@ import {
   LayoutDashboard, 
   Building2, 
   CreditCard,
-  Settings, 
+  HelpCircle,
+  Users,
+  Settings,
   LogOut, 
   Menu, 
   X,
@@ -37,6 +39,8 @@ const SuperAdminLayout: React.FC = () => {
     { icon: BarChart3, label: 'Analytics', path: '/superadmin/analytics' },
     { icon: Activity, label: 'Monitoring', path: '/superadmin/monitoring' },
     { icon: Building2, label: 'Imobiliárias', path: '/superadmin/tenants' },
+    { icon: HelpCircle, label: 'Suporte', path: '/superadmin/support' },
+    { icon: Users, label: 'Equipe', path: '/superadmin/team' },
     { icon: CreditCard, label: 'Planos', path: '/superadmin/plans' },
     { icon: DollarSign, label: 'Billing', path: '/superadmin/billing' },
     { icon: ToggleRight, label: 'Feature Flags', path: '/superadmin/feature-flags' },
@@ -122,14 +126,6 @@ const SuperAdminLayout: React.FC = () => {
                 <p className="text-xs text-slate-400 truncate">{profile?.email}</p>
               </div>
             </div>
-            
-            <button
-               onClick={() => navigate('/admin')}
-               className="w-full flex items-center gap-2 px-2 py-2 mb-1 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border-b border-transparent hover:border-slate-700"
-             >
-               <LayoutDashboard size={18} />
-               Acessar Painel da Agência
-             </button>
             
             <button
               onClick={handleSignOut}

@@ -26,7 +26,9 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<void>;
+  impersonateOrganization: (orgId: string) => Promise<void>;
   stopImpersonation: () => void;
+  isImpersonating: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,8 +37,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isImpersonating, setIsImpersonating] = useState(false);
 
   useEffect(() => {
+    // Check for existing impersonation - ONLY if already logged in or session found
+    const impOrgId = sessionStorage.getItem('impersonated_org_id');
+    // We don't set isImpersonating to true here blindly anymore, 
+    // we let loadProfile handle it after verifying the role.
+
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -48,12 +56,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log('🔄 [AuthContext] Auth State Change:', _event, session?.user?.id);
       if (session?.user) {
-        loadProfile(session.user.id);
+        setUser(session.user);
+        await loadProfile(session.user.id);
       } else {
+        setUser(null);
         setProfile(null);
+        setIsImpersonating(false);
         setLoading(false);
       }
     });
@@ -63,31 +74,62 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const loadProfile = async (userId: string) => {
     try {
-      const { data: profileData, error } = await supabase
+      setLoading(true);
+      console.log('📡 [AuthContext] Loading profile for:', userId);
+      
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select(`
-          *,
-          organization:organizations (
-            id,
-            name,
-            slug,
-            niche
-          )
-        `)
+        .select('*, organization:organizations(*)')
         .eq('id', userId)
         .single();
 
-      if (error) throw error;
-      
-      console.log('🔍 [AuthContext] Profile Loaded:', profileData);
-      setProfile(profileData);
-    } catch (error: any) {
-      console.error('Error loading profile:', error);
-      
-      if (error?.code === 'PGRST303' || error?.message?.includes('JWT expired')) {
+      if (profileError) {
+        console.error('❌ [AuthContext] Error loading profile:', profileError);
+        setProfile(null);
+        setIsImpersonating(false);
+      } else if (profileData) {
+        let finalProfile = { ...profileData };
+        
+        // Handle impersonation
+        const impOrgId = sessionStorage.getItem('impersonated_org_id');
+        console.log('🕵️ [AuthContext] Impersonation check:', { role: profileData.role, impOrgId });
+        
+        if (profileData.role === 'superadmin' && impOrgId && impOrgId !== 'null' && impOrgId !== 'undefined') {
+          console.log('🎭 [AuthContext] Fetching impersonated org info:', impOrgId);
+          const { data: orgData, error: orgError } = await supabase
+            .from('organizations')
+            .select('*')
+            .eq('id', impOrgId)
+            .single();
+            
+          if (!orgError && orgData) {
+            console.log('✅ [AuthContext] Impersonation active:', orgData.name);
+            finalProfile = {
+              ...profileData,
+              organization_id: orgData.id,
+              organization: orgData
+            };
+            setIsImpersonating(true);
+          } else {
+            console.warn('⚠️ [AuthContext] Impersonation target failed to load:', orgError);
+            sessionStorage.removeItem('impersonated_org_id');
+            setIsImpersonating(false);
+          }
+        } else {
+          setIsImpersonating(false);
+          if (impOrgId === 'null' || impOrgId === 'undefined') {
+            sessionStorage.removeItem('impersonated_org_id');
+          }
+        }
+        
+        console.log('🔍 [AuthContext] Final Profile State:', { id: finalProfile.id, role: finalProfile.role, org: finalProfile.organization?.name });
+        setProfile(finalProfile);
+      }
+    } catch (err: any) {
+      console.error('❌ [AuthContext] Critical exception in loadProfile:', err);
+      if (err?.code === 'PGRST303' || err?.message?.includes('JWT expired')) {
           console.warn('Session expired, signing out...');
           await signOut();
-          alert('Sua sessão expirou. Por favor, faça login novamente.');
       }
     } finally {
       setLoading(false);
@@ -95,6 +137,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const signIn = async (email: string, password: string) => {
+    // Clear any existing impersonation data on new login
+    sessionStorage.removeItem('impersonated_org_id');
+    setIsImpersonating(false);
+    
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   };
@@ -112,18 +158,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (error) throw error;
 
-    // Create profile (will be done by trigger, but we can do it manually as fallback)
     if (data.user) {
       await supabase.from('profiles').upsert({
         id: data.user.id,
         email: data.user.email,
         full_name: fullName,
-        role: 'broker' // Default role
+        role: 'broker'
       });
     }
   };
 
   const signOut = async () => {
+    sessionStorage.removeItem('impersonated_org_id');
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };
@@ -137,16 +183,44 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       .eq('id', user.id);
 
     if (error) throw error;
-
-    // Reload profile
     await loadProfile(user.id);
   };
 
-  // Single tenant: No impersonation needed
-  const stopImpersonation = () => {};
+  const impersonateOrganization = async (orgId: string) => {
+    // Basic check for superadmin (will be enforced by RLS/Backend too)
+    // We fetch current role again to be sure
+    const { data: currentProfile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user?.id)
+        .single();
+
+    if (currentProfile?.role !== 'superadmin') throw new Error('Unauthorized');
+    
+    console.log('🚀 Starting impersonation of:', orgId);
+    sessionStorage.setItem('impersonated_org_id', orgId);
+    await loadProfile(user!.id);
+  };
+
+  const stopImpersonation = () => {
+    console.log('🛑 Stopping impersonation');
+    sessionStorage.removeItem('impersonated_org_id');
+    if (user) loadProfile(user.id);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut, updateProfile, stopImpersonation }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      profile, 
+      loading, 
+      signIn, 
+      signUp, 
+      signOut, 
+      updateProfile, 
+      impersonateOrganization,
+      stopImpersonation,
+      isImpersonating
+    }}>
       {children}
     </AuthContext.Provider>
   );

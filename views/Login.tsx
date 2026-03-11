@@ -22,12 +22,41 @@ const Login: React.FC = () => {
 
 
     try {
+      console.log('🚀 [Login] Starting signIn for:', email);
       await signIn(email, password);
       
+      console.log('✅ [Login] signIn successful, fetching user...');
       const { data: { user } } = await supabase.auth.getUser();
+      
       if (user) {
-        // Any admin role (admin or superadmin) should go to the main dashboard
-        navigate('/admin');
+        console.log('👤 [Login] User found:', user.id);
+        
+        // Retry logic for profile fetch (Supabase sync might take a millisecond)
+        let profile = null;
+        for (let i = 0; i < 3; i++) {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('role, organization:organizations(niche)')
+            .eq('id', user.id)
+            .single();
+            
+          if (data) {
+            profile = data;
+            break;
+          }
+          console.warn(`⚠️ [Login] Profile fetch attempt ${i+1} failed, retrying...`, error);
+          await new Promise(r => setTimeout(r, 500));
+        }
+
+        console.log('📋 [Login] Profile result:', profile);
+
+        if (profile?.role === 'superadmin') {
+          console.log('👑 [Login] Role detected is SUPERADMIN. Forcing hard redirect to /superadmin');
+          window.location.href = '/superadmin';
+        } else {
+          console.log('🏢 [Login] Role detected is NOT superadmin. Using standard redirect.');
+          navigate('/admin');
+        }
         return;
       }
     } catch (err: any) {
