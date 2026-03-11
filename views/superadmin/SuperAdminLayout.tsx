@@ -15,7 +15,9 @@ import {
   ToggleRight,
   ScrollText,
   Layout,
-  DollarSign
+  DollarSign,
+  Activity,
+  BarChart3
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -32,6 +34,8 @@ const SuperAdminLayout: React.FC = () => {
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/superadmin' },
+    { icon: BarChart3, label: 'Analytics', path: '/superadmin/analytics' },
+    { icon: Activity, label: 'Monitoring', path: '/superadmin/monitoring' },
     { icon: Building2, label: 'Imobiliárias', path: '/superadmin/tenants' },
     { icon: CreditCard, label: 'Planos', path: '/superadmin/plans' },
     { icon: DollarSign, label: 'Billing', path: '/superadmin/billing' },

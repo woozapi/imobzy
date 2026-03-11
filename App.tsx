@@ -61,6 +61,8 @@ import BillingManager from './views/superadmin/BillingManager';
 import FeatureFlags from './views/superadmin/FeatureFlags';
 import AuditLog from './views/superadmin/AuditLog';
 import TemplateManager from './views/superadmin/TemplateManager';
+import PlatformMonitoring from './views/superadmin/PlatformMonitoring';
+import AnalyticsDashboard from './views/superadmin/AnalyticsDashboard';
 
 // Portals
 import PortalProprietarioRural from './views/rural/PortalProprietarioRural';
@@ -187,6 +189,8 @@ const AppContent: React.FC = () => {
       {/* ============================== */}
       <Route path="/superadmin" element={<ProtectedRoute><SuperAdminLayout /></ProtectedRoute>}>
           <Route index element={<SuperAdminDashboard />} />
+          <Route path="analytics" element={<AnalyticsDashboard />} />
+          <Route path="monitoring" element={<PlatformMonitoring />} />
           <Route path="tenants" element={<TenantManager />} />
           <Route path="domains" element={<DomainManager />} />
           <Route path="plans" element={<PlanManager />} />
