@@ -57,6 +57,10 @@ import TenantManager from './views/superadmin/TenantManager';
 import GlobalSettings from './views/superadmin/GlobalSettings';
 import DomainManager from './views/superadmin/DomainManager';
 import PlanManager from './views/superadmin/PlanManager';
+import BillingManager from './views/superadmin/BillingManager';
+import FeatureFlags from './views/superadmin/FeatureFlags';
+import AuditLog from './views/superadmin/AuditLog';
+import TemplateManager from './views/superadmin/TemplateManager';
 
 // Context
 import { SettingsProvider, useSettings } from './context/SettingsContext';
@@ -180,6 +184,10 @@ const AppContent: React.FC = () => {
           <Route path="tenants" element={<TenantManager />} />
           <Route path="domains" element={<DomainManager />} />
           <Route path="plans" element={<PlanManager />} />
+          <Route path="billing" element={<BillingManager />} />
+          <Route path="feature-flags" element={<FeatureFlags />} />
+          <Route path="audit-log" element={<AuditLog />} />
+          <Route path="templates" element={<TemplateManager />} />
           <Route path="settings" element={<GlobalSettings />} />
       </Route>
 

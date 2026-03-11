@@ -11,7 +11,11 @@ import {
   X,
   ShieldAlert,
   Globe,
-  ArrowLeft
+  ArrowLeft,
+  ToggleRight,
+  ScrollText,
+  Layout,
+  DollarSign
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -28,8 +32,12 @@ const SuperAdminLayout: React.FC = () => {
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/superadmin' },
-    // { icon: Building2, label: 'Imobiliárias', path: '/superadmin/tenants' }, // REMOVED FOR SINGLE TENANT
-    // { icon: CreditCard, label: 'Planos', path: '/superadmin/plans' }, // REMOVED FOR SINGLE TENANT
+    { icon: Building2, label: 'Imobiliárias', path: '/superadmin/tenants' },
+    { icon: CreditCard, label: 'Planos', path: '/superadmin/plans' },
+    { icon: DollarSign, label: 'Billing', path: '/superadmin/billing' },
+    { icon: ToggleRight, label: 'Feature Flags', path: '/superadmin/feature-flags' },
+    { icon: ScrollText, label: 'Audit Log', path: '/superadmin/audit-log' },
+    { icon: Layout, label: 'Templates', path: '/superadmin/templates' },
     { icon: Globe, label: 'Domínios', path: '/superadmin/domains' },
     { icon: Settings, label: 'Configurações', path: '/superadmin/settings' },
   ];
