@@ -38,12 +38,32 @@ import {
   LivestockCategory 
 } from '../types';
 import RuralMap from '../components/RuralMap';
+import { useAuth } from '../context/AuthContext';
 
 const PropertyEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const isNew = id === 'new';
   
+  const niche = profile?.organization?.niche || 'hybrid';
+
+  const RURAL_TYPES = [
+    PropertyType.FAZENDA, PropertyType.SITIO, PropertyType.CHACARA, 
+    PropertyType.ESTANCIA, PropertyType.HARAS, PropertyType.GRANJA, 
+    PropertyType.AGROPECUARIA, PropertyType.TERRENO_RURAL, 
+    PropertyType.GLEBA, PropertyType.LOTE_RURAL, PropertyType.AREA_PRODUTIVA
+  ];
+
+  const URBAN_TYPES = [
+    PropertyType.APARTAMENTO, PropertyType.CASA, PropertyType.SOBRADO, 
+    PropertyType.TERRENO_URBANO, PropertyType.SALA_COMERCIAL, 
+    PropertyType.GALPAO_INDUSTRIAL, PropertyType.LOFT, PropertyType.STUDIO, 
+    PropertyType.COBERTURA
+  ];
+
+  const filteredTypes = niche === 'rural' ? RURAL_TYPES : niche === 'traditional' ? URBAN_TYPES : Object.values(PropertyType);
+
   const [loading, setLoading] = useState(false);
   const [loadingCar, setLoadingCar] = useState(false);
   const [aiGenerating, setAiGenerating] = useState(false);
@@ -259,15 +279,17 @@ const PropertyEditor: React.FC = () => {
           >
             Cancelar
           </button>
-          <button 
-            type="button"
-            onClick={handleAnalyzeProperty}
-            disabled={analyzing}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg disabled:opacity-50"
-          >
-            {analyzing ? <Loader2 className="animate-spin" size={20} /> : <Activity size={20} />}
-            Análise Inteligente
-          </button>
+          {niche !== 'traditional' && (
+            <button 
+              type="button"
+              onClick={handleAnalyzeProperty}
+              disabled={analyzing}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-black text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-lg disabled:opacity-50"
+            >
+              {analyzing ? <Loader2 className="animate-spin" size={20} /> : <Activity size={20} />}
+              Análise Inteligente
+            </button>
+          )}
           <button 
             onClick={handleSave}
             disabled={loading}
@@ -326,7 +348,7 @@ const PropertyEditor: React.FC = () => {
                   onChange={e => setFormData({...formData, type: e.target.value as PropertyType})}
                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
                 >
-                  {Object.values(PropertyType).map(t => <option key={t} value={t}>{t}</option>)}
+                  {filteredTypes.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
@@ -389,59 +411,62 @@ const PropertyEditor: React.FC = () => {
           </div>
         </div>
 
-        {/* Seção 2.1: Mapeamento Georreferenciado (GIS) */}
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2 text-indigo-600">
-              <Sparkles size={20} />
-              <h2 className="font-bold uppercase tracking-wider text-sm">Mapeamento Georreferenciado (GIS)</h2>
+        {/* Seção 2.1: Mapeamento Georreferenciado (GIS) - RURAL ONLY */}
+        {niche !== 'traditional' && (
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2 text-indigo-600">
+                <Sparkles size={20} />
+                <h2 className="font-bold uppercase tracking-wider text-sm">Mapeamento Georreferenciado (GIS)</h2>
+              </div>
+              <div className="relative">
+                <input 
+                  type="file" 
+                  accept=".kml"
+                  onChange={handleKmlImport}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
+                />
+                <button 
+                  type="button"
+                  className="flex items-center gap-2 text-xs font-bold bg-indigo-50 text-indigo-600 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors"
+                >
+                  <Upload size={14} />
+                  IMPORTAR KML
+                </button>
+              </div>
             </div>
-            <div className="relative">
-              <input 
-                type="file" 
-                accept=".kml"
-                onChange={handleKmlImport}
-                className="absolute inset-0 opacity-0 cursor-pointer"
-              />
-              <button 
-                type="button"
-                className="flex items-center gap-2 text-xs font-bold bg-indigo-50 text-indigo-600 px-4 py-2 rounded-full hover:bg-indigo-100 transition-colors"
-              >
-                <Upload size={14} />
-                IMPORTAR KML
-              </button>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <p className="text-sm text-slate-500 mb-4">
-              Desenhe os limites da propriedade no mapa para calcular a área automaticamente e visualizar camadas do SIGEF/CAR.
-            </p>
-            <RuralMap 
-              height="500px"
-              initialGeoJson={formData.features?.legal?.geometry}
-              onPolygonCreated={(geoJson) => {
-                setFormData(prev => ({
-                  ...prev,
-                  features: {
-                    ...prev.features!,
-                    legal: {
-                      ...prev.features?.legal!,
-                      geometry: geoJson
+            <div className="space-y-4">
+              <p className="text-sm text-slate-500 mb-4">
+                Desenhe os limites da propriedade no mapa para calcular a área automaticamente e visualizar camadas do SIGEF/CAR.
+              </p>
+              <RuralMap 
+                height="500px"
+                initialGeoJson={formData.features?.legal?.geometry}
+                onPolygonCreated={(geoJson) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    features: {
+                      ...prev.features!,
+                      legal: {
+                        ...prev.features?.legal!,
+                        geometry: geoJson
+                      }
+                      // TODO: Trigger area update here based on polygon if needed
                     }
-                    // TODO: Trigger area update here based on polygon if needed
-                  }
-                }));
-              }}
-            />
+                  }));
+                }}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Seção 3: Características Rurais */}
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-          <div className="flex items-center gap-2 mb-6 text-indigo-600">
-            <Home size={20} />
-            <h2 className="font-bold uppercase tracking-wider text-sm">Características Rurais</h2>
-          </div>
+        {/* Seção 3: Características Rurais - RURAL ONLY */}
+        {niche !== 'traditional' && (
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <div className="flex items-center gap-2 mb-6 text-indigo-600">
+              <Home size={20} />
+              <h2 className="font-bold uppercase tracking-wider text-sm">Características Rurais</h2>
+            </div>
           
           {/* Aptidão */}
           <div className="mb-8">
@@ -858,7 +883,111 @@ const PropertyEditor: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+          </div>
+        )}
+
+        {/* Seção 3.1: Características Urbanas - TRADITIONAL ONLY */}
+        {niche !== 'rural' && (
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <div className="flex items-center gap-2 mb-6 text-indigo-600">
+              <Home size={20} />
+              <h2 className="font-bold uppercase tracking-wider text-sm">Características do Imóvel</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Área Privativa (m²)</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.areaPrivativa || ''}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, areaPrivativa: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                   placeholder="Ex: 85"
+                />
+               </div>
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Área Total (m²)</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.areaTotalM2 || ''}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, areaTotalM2: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                   placeholder="Ex: 120"
+                />
+               </div>
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Andar</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.andar || ''}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, andar: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                   placeholder="Ex: 12"
+                />
+               </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Quartos</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.quartos || ''}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, quartos: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                />
+               </div>
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Suítes</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.suites || ''}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, suites: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                />
+               </div>
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Banheiros</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.banheiros || ''}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, banheiros: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                />
+               </div>
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Vagas</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.vagas || ''}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, vagas: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-bold"
+                />
+               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-slate-50 rounded-2xl border border-slate-100">
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Valor do Condomínio (R$)</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.condominio || 0}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, condominio: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                />
+               </div>
+               <div>
+                 <label className="block text-sm font-semibold text-slate-700 mb-2">Valor do IPTU (Anual - R$)</label>
+                 <input 
+                   type="number" 
+                   value={formData.features?.iptu || 0}
+                   onChange={e => setFormData({...formData, features: {...formData.features!, iptu: Number(e.target.value)}})}
+                   className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                />
+               </div>
+            </div>
+          </div>
+        )}
 
         {/* Seção 4: Descrição & IA */}
         <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative">
@@ -931,40 +1060,42 @@ const PropertyEditor: React.FC = () => {
         </div>
 
 
-        {/* Seção 5: Análise Inteligente */}
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between mb-6">
-             <div className="flex items-center gap-2 text-indigo-600">
-                <Sparkles size={20} />
-                <h2 className="font-bold uppercase tracking-wider text-sm">Análise Inteligente (IA)</h2>
-             </div>
-             <button 
-               type="button"
-               onClick={handleAnalyzeProperty}
-               disabled={analyzing}
-               className="flex items-center gap-2 text-xs font-bold bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors disabled:opacity-50 shadow-lg shadow-indigo-100"
-             >
-               {analyzing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
-               ANALISAR PROPRIEDADE
-             </button>
+        {/* Seção 5: Análise Inteligente - RURAL ONLY */}
+        {niche !== 'traditional' && (
+          <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+            <div className="flex items-center justify-between mb-6">
+               <div className="flex items-center gap-2 text-indigo-600">
+                  <Sparkles size={20} />
+                  <h2 className="font-bold uppercase tracking-wider text-sm">Análise Inteligente (IA)</h2>
+               </div>
+               <button 
+                 type="button"
+                 onClick={handleAnalyzeProperty}
+                 disabled={analyzing}
+                 className="flex items-center gap-2 text-xs font-bold bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition-colors disabled:opacity-50 shadow-lg shadow-indigo-100"
+               >
+                 {analyzing ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                 ANALISAR PROPRIEDADE
+               </button>
+            </div>
+
+            {!formData.analysis && (
+               <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                  <Sparkles className="mx-auto text-slate-300 mb-3" size={32} />
+                  <h3 className="text-slate-900 font-bold mb-1">Descubra o potencial desta propriedade</h3>
+                  <p className="text-sm text-slate-500 max-w-md mx-auto">
+                     Nossa IA analisa dados climáticos e de solo para gerar insights sobre aptidão agrícola e pecuária.
+                  </p>
+               </div>
+            )}
+
+            {formData.analysis && (
+               <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <PropertyAnalysisCard analysis={formData.analysis} />
+               </div>
+            )}
           </div>
-
-          {!formData.analysis && (
-             <div className="text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                <Sparkles className="mx-auto text-slate-300 mb-3" size={32} />
-                <h3 className="text-slate-900 font-bold mb-1">Descubra o potencial desta propriedade</h3>
-                <p className="text-sm text-slate-500 max-w-md mx-auto">
-                   Nossa IA analisa dados climáticos e de solo para gerar insights sobre aptidão agrícola e pecuária.
-                </p>
-             </div>
-          )}
-
-          {formData.analysis && (
-             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <PropertyAnalysisCard analysis={formData.analysis} />
-             </div>
-          )}
-        </div>
+        )}
 
         {/* Seção 6: Mídia */}
         <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">

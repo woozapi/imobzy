@@ -1,70 +1,62 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
 import { Lock, Mail, AlertCircle } from 'lucide-react';
-import { supabase } from '../services/supabase';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn, user, profile, loading: authLoading } = useAuth();
   const { settings } = useSettings();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [justSignedIn, setJustSignedIn] = useState(false);
+
+  // A2: If already authenticated, redirect away from login
+  // This also handles redirection AFTER signIn completes (AuthContext sets profile)
+  useEffect(() => {
+    if (authLoading || !justSignedIn) return; // Only redirect after a deliberate login
+    if (!user || !profile) return;
+
+    console.log('✅ [Login] Profile loaded via AuthContext, redirecting...', { role: profile.role, org: profile.organization?.niche });
+
+    if (profile.role === 'superadmin') {
+      navigate('/superadmin', { replace: true });
+    } else {
+      navigate('/admin', { replace: true });
+    }
+  }, [user, profile, authLoading, justSignedIn, navigate]);
+
+  // A2: If user navigates to /login while already authenticated (not after a fresh login)
+  if (!authLoading && user && profile && !justSignedIn) {
+    console.log('🔄 [Login] Already authenticated, redirecting away from login page.');
+    if (profile.role === 'superadmin') {
+      return <Navigate to="/superadmin" replace />;
+    }
+    return <Navigate to="/admin" replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-
     try {
       console.log('🚀 [Login] Starting signIn for:', email);
       await signIn(email, password);
-      
-      console.log('✅ [Login] signIn successful, fetching user...');
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        console.log('👤 [Login] User found:', user.id);
-        
-        // Retry logic for profile fetch (Supabase sync might take a millisecond)
-        let profile = null;
-        for (let i = 0; i < 3; i++) {
-          const { data, error } = await supabase
-            .from('profiles')
-            .select('role, organization:organizations(niche)')
-            .eq('id', user.id)
-            .single();
-            
-          if (data) {
-            profile = data;
-            break;
-          }
-          console.warn(`⚠️ [Login] Profile fetch attempt ${i+1} failed, retrying...`, error);
-          await new Promise(r => setTimeout(r, 500));
-        }
-
-        console.log('📋 [Login] Profile result:', profile);
-
-        if (profile?.role === 'superadmin') {
-          console.log('👑 [Login] Role detected is SUPERADMIN. Using navigate to /superadmin');
-          navigate('/superadmin', { replace: true });
-        } else {
-          console.log('🏢 [Login] Role detected is NOT superadmin. Using standard redirect.');
-          navigate('/admin');
-        }
-        return;
-      }
+      // Do NOT manually fetch profile here. AuthContext.onAuthStateChange will handle it.
+      // Just flag that we signed in so the useEffect above handles the redirect.
+      setJustSignedIn(true);
+      console.log('✅ [Login] signIn successful. Waiting for AuthContext to load profile...');
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'Erro ao fazer login. Verifique suas credenciais.');
-    } finally {
       setLoading(false);
     }
+    // Note: we don't setLoading(false) on success — the redirect will unmount this component
   };
 
   return (
@@ -132,11 +124,11 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || justSignedIn}
               style={{ backgroundColor: settings.primaryColor }}
               className="w-full py-4 text-white rounded-2xl font-black uppercase text-sm tracking-[0.3em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading || justSignedIn ? 'Entrando...' : 'Entrar'}
             </button>
           </form>
 
@@ -162,3 +154,4 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+

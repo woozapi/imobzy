@@ -15,15 +15,24 @@ const DomainRouter: React.FC<DomainRouterProps> = ({ children }) => {
     const location = useLocation(); 
     const { isVisualMode } = useTexts();
     
+    // A3: Prevent redundant re-execution
+    const lastCheckedPath = React.useRef<string | null>(null);
+    
     // Debug Logic
     const [searchParams] = useSearchParams();
     const debugMode = searchParams.get('debug') === 'true';
     const [debugLogs, setDebugLogs] = useState<string[]>([]);
     
     useEffect(() => {
+        const currentPath = location.pathname;
+        
+        // A3: Skip if we already checked this exact path
+        if (lastCheckedPath.current === currentPath) return;
+        lastCheckedPath.current = currentPath;
+
         const checkRoute = async () => {
              const hostname = window.location.hostname;
-             const path = window.location.pathname;
+             const path = currentPath;
 
              const log = (msg: string) => {
                  console.log(msg);

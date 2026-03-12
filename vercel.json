@@ -13,18 +13,7 @@
       "use": "@vercel/node"
     }
   ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/admin",
-      "has": [
-        {
-          "type": "host",
-          "value": "app.imobisaas.com"
-        }
-      ]
-    }
-  ],
+  "redirects": [],
   "rewrites": [
     {
       "source": "/api/(.*)",

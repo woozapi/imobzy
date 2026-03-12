@@ -18,7 +18,17 @@ export enum PropertyType {
   TERRENO_RURAL = 'Terreno Rural',
   GLEBA = 'Gleba',
   LOTE_RURAL = 'Lote Rural',
-  AREA_PRODUTIVA = 'Área Produtiva'
+  AREA_PRODUTIVA = 'Área Produtiva',
+  // Urban Property Types
+  APARTAMENTO = 'Apartamento',
+  CASA = 'Casa',
+  SOBRADO = 'Sobrado',
+  TERRENO_URBANO = 'Terreno Urbano',
+  SALA_COMERCIAL = 'Sala Comercial',
+  GALPAO_INDUSTRIAL = 'Galpão Industrial',
+  LOFT = 'Loft',
+  STUDIO = 'Studio',
+  COBERTURA = 'Cobertura'
 }
 
 export enum PropertyPurpose {

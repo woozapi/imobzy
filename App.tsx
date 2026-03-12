@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 
 // Impersonation Components
 import ImpersonateCallback from './views/ImpersonateCallback';
@@ -114,7 +114,13 @@ const NicheRedirect: React.FC = () => {
     return <Navigate to="/superadmin" replace />;
   }
 
-  const niche = profile?.organization?.niche || 'traditional';
+  // A1: If user has no organization, redirect to onboarding
+  if (!profile?.organization_id || !profile?.organization) {
+    console.log('⚠️ [NicheRedirect] User has no organization, redirecting to /onboarding');
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  const niche = profile.organization.niche || 'traditional';
   console.log('🏢 [NicheRedirect] Redirecting to niche:', niche);
 
   if (niche === 'rural') return <Navigate to="/rural" replace />;
@@ -122,28 +128,29 @@ const NicheRedirect: React.FC = () => {
   return <Navigate to="/urban" replace />;
 };
 
+
 // ==========================================
 // GLOBAL SUPER ADMIN GUARD
 // = [FORCE] sends super admins to /superadmin unless impersonating
+// Uses DECLARATIVE redirect (Navigate) instead of useEffect to prevent loops
 // ==========================================
 const SuperAdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { profile, isImpersonating, loading } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
-  React.useEffect(() => {
-    if (!loading && profile?.role === 'superadmin' && !isImpersonating) {
-      const path = location.pathname;
-      // If not on superadmin path, force redirect
-      if (!path.startsWith('/superadmin') && path !== '/login' && path !== '/impersonate') {
-        console.log('🛡️ [GlobalGuard] Super Admin escaping! Redirecting to /superadmin');
-        navigate('/superadmin', { replace: true });
-      }
+  if (loading) return <>{children}</>;
+
+  if (profile?.role === 'superadmin' && !isImpersonating) {
+    const path = location.pathname;
+    if (!path.startsWith('/superadmin') && path !== '/login' && path !== '/impersonate') {
+      console.log('🛡️ [GlobalGuard] Super Admin on non-superadmin route, redirecting to /superadmin');
+      return <Navigate to="/superadmin" replace />;
     }
-  }, [profile, isImpersonating, loading, location.pathname, navigate]);
+  }
 
   return <>{children}</>;
 };
+
 
 // ==========================================
 // MAIN APP CONTENT WITH ISOLATED ROUTE GROUPS
@@ -248,8 +255,8 @@ const AppContent: React.FC = () => {
           <Route path="settings" element={<GlobalSettings />} />
       </Route>
 
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Fallback — send unknown routes to login instead of / to avoid 302 loops */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
     </SuperAdminGuard>
     </>
