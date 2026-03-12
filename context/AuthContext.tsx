@@ -47,21 +47,24 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('📡 [AuthContext] Initial session check:', session?.user?.id);
       setUser(session?.user ?? null);
       if (session?.user) {
         loadProfile(session.user.id);
       } else {
+        console.log('📡 [AuthContext] No initial session found.');
         setLoading(false);
       }
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log('🔄 [AuthContext] Auth State Change:', _event, session?.user?.id);
+      console.log('🔄 [AuthContext] Auth Event:', _event, 'User:', session?.user?.id);
       if (session?.user) {
         setUser(session.user);
         await loadProfile(session.user.id);
       } else {
+        console.log('🔄 [AuthContext] Auth Event: User is null');
         setUser(null);
         setProfile(null);
         setIsImpersonating(false);
@@ -82,25 +85,36 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       fetchInProgress.current = userId;
       setLoading(true);
-      console.log('📡 [AuthContext] Loading profile for:', userId);
+      console.log('📡 [AuthContext] Querying profile for:', userId);
       
-      const { data: profileData, error: profileError } = await supabase
+      // Add a timeout promise to detect if query is hanging
+      const queryPromise = supabase
         .from('profiles')
         .select('*, full_name:name, organization:organizations(*)')
         .eq('id', userId)
         .single();
+        
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile query timeout')), 10000)
+      );
+
+      const { data: profileData, error: profileError } = await Promise.race([queryPromise, timeoutPromise]) as any;
+
+      console.log('📡 [AuthContext] Profile query resolved. Data:', !!profileData, 'Error:', profileError?.message);
 
       if (profileError) {
         console.error('❌ [AuthContext] Error loading profile:', profileError);
         setProfile(null);
         setIsImpersonating(false);
       } else if (profileData) {
+        console.log('✅ [AuthContext] Profile core data loaded:', profileData.role);
         let finalProfile = { ...profileData };
         
         // Handle impersonation
         const impOrgId = sessionStorage.getItem('impersonated_org_id');
         
         if (profileData.role === 'superadmin' && impOrgId && impOrgId !== 'null' && impOrgId !== 'undefined') {
+          console.log('🚀 [AuthContext] Checking impersonated org:', impOrgId);
           const { data: orgData, error: orgError } = await supabase
             .from('organizations')
             .select('*')
@@ -108,6 +122,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             .single();
             
           if (!orgError && orgData) {
+            console.log('✅ [AuthContext] Impersonation active:', orgData.name);
             finalProfile = {
               ...profileData,
               organization_id: orgData.id,
@@ -115,6 +130,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             };
             setIsImpersonating(true);
           } else {
+            console.warn('⚠️ [AuthContext] Impersonation failed or org not found:', orgError);
             sessionStorage.removeItem('impersonated_org_id');
             setIsImpersonating(false);
           }
@@ -125,7 +141,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           }
         }
         
+        console.log('✅ [AuthContext] Final profile set.');
         setProfile(finalProfile);
+      } else {
+        console.warn('⚠️ [AuthContext] Profile query returned no data.');
+        setProfile(null);
       }
     } catch (err: any) {
       console.error('❌ [AuthContext] Critical exception in loadProfile:', err);
@@ -133,6 +153,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           await signOut();
       }
     } finally {
+      console.log('🏁 [AuthContext] loadProfile finished.');
       fetchInProgress.current = null;
       setLoading(false);
     }

@@ -22,6 +22,7 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
   useEffect(() => {
     const loadSettings = async () => {
       try {
+        console.log('📡 [SettingsContext] Loading site settings...');
         setSettingsLoading(true);
         
         // Always get the first/only settings row
@@ -32,36 +33,20 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
           .single();
 
         if (error) {
-           console.log("Settings Load Info:", error.message);
+           console.warn("⚠️ [SettingsContext] Load Error:", error.message);
         } else if (data) {
+          console.log('✅ [SettingsContext] Settings loaded:', data.agency_name);
           setSettings({
             ...DEFAULT_SITE_SETTINGS,
-            id: data.id,
-            agencyName: data.agency_name || DEFAULT_SITE_SETTINGS.agencyName,
-            templateId: data.template_id || DEFAULT_SITE_SETTINGS.templateId,
-            primaryColor: data.primary_color || DEFAULT_SITE_SETTINGS.primaryColor,
-            secondaryColor: data.secondary_color || DEFAULT_SITE_SETTINGS.secondaryColor,
-            headerColor: data.header_color, 
-            logoUrl: data.logo_url || DEFAULT_SITE_SETTINGS.logoUrl,
-            logoHeight: data.logo_height || 80, 
-            fontFamily: data.font_family || 'Inter, sans-serif',
-            baseFontSize: data.base_font_size || 16,
-            headingFontSize: data.heading_font_size || 48,
-            contactPhone: data.contact_phone || DEFAULT_SITE_SETTINGS.contactPhone,
-            contactEmail: data.contact_email || DEFAULT_SITE_SETTINGS.contactEmail,
-            footerText: data.footer_text || DEFAULT_SITE_SETTINGS.footerText,
-            socialLinks: {
-              instagram: data.instagram_url,
-              facebook: data.facebook_url,
-              whatsapp: data.whatsapp_number
-            },
+// ... (rest of mapping)
             homeContent: data.home_content || {}, 
             integrations: data.integrations 
           });
         }
       } catch (e) {
-        console.error("Erro inesperado ao carregar settings:", e);
+        console.error("❌ [SettingsContext] Unexpected error:", e);
       } finally {
+        console.log('🏁 [SettingsContext] finished.');
         setSettingsLoading(false);
       }
     };

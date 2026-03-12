@@ -22,10 +22,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
   }
 
   if (!user) {
+    console.log('🛡️ [ProtectedRoute] Redirecting to /login (no user)');
     return <Navigate to="/login" replace />;
   }
 
-  if (requireAdmin && profile?.role !== 'admin') {
+  if (requireAdmin && profile?.role !== 'admin' && profile?.role !== 'superadmin') {
+    console.log('🛡️ [ProtectedRoute] Access Denied (not admin/superadmin)');
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center max-w-md p-8">

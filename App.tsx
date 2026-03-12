@@ -99,7 +99,10 @@ const Placeholder: React.FC<{ name: string }> = ({ name }) => (
 const NicheRedirect: React.FC = () => {
   const { profile, isImpersonating, loading } = useAuth();
   
-  if (loading) return null;
+  if (loading) {
+    console.log('⏳ [NicheRedirect] Auth still loading, rendering null...');
+    return null;
+  }
 
   console.log('🔄 [NicheRedirect] State:', { 
     role: profile?.role, 
@@ -121,12 +124,12 @@ const NicheRedirect: React.FC = () => {
   }
 
   const niche = profile.organization.niche || 'traditional';
-  console.log('🏢 [NicheRedirect] Redirecting to niche:', niche);
+  const target = (niche === 'rural' || niche === 'hybrid') ? '/rural' : '/urban';
+  console.log('🏢 [NicheRedirect] Redirecting to niche:', niche, 'Target:', target);
 
-  if (niche === 'rural') return <Navigate to="/rural" replace />;
-  if (niche === 'hybrid') return <Navigate to="/rural" replace />;
-  return <Navigate to="/urban" replace />;
+  return <Navigate to={target} replace />;
 };
+
 
 
 // ==========================================
@@ -143,7 +146,7 @@ const SuperAdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) 
   if (profile?.role === 'superadmin' && !isImpersonating) {
     const path = location.pathname;
     if (!path.startsWith('/superadmin') && path !== '/login' && path !== '/impersonate') {
-      console.log('🛡️ [GlobalGuard] Super Admin on non-superadmin route, redirecting to /superadmin');
+      console.log('🛡️ [GlobalGuard] Super Admin on non-superadmin route:', path, '-> Redirecting to /superadmin');
       return <Navigate to="/superadmin" replace />;
     }
   }
