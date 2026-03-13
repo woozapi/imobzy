@@ -76,7 +76,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     try {
       fetchInProgress.current = userId;
-      setLoading(true);
+      // Define a flag to track if we're silently refreshing so we don't flicker the loading state
+      const isSilentRefresh = profile && profile.id === userId;
+      if (!isSilentRefresh) {
+        setLoading(true);
+      }
       console.log('📡 [AuthContext] Querying profile for:', userId);
       
       // Add a timeout promise to detect if query is hanging
@@ -87,7 +91,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .single();
         
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Profile query timeout')), 10000)
+        setTimeout(() => reject(new Error('Profile query timeout')), 15000)
       );
 
       const { data: profileData, error: profileError } = await Promise.race([queryPromise, timeoutPromise]) as any;
@@ -96,8 +100,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (profileError) {
         console.error('❌ [AuthContext] Error loading profile:', profileError);
-        setProfile(null);
-        setIsImpersonating(false);
+        setProfile(prev => (prev && prev.id === userId) ? prev : null);
+        if (!profile) setIsImpersonating(false);
       } else if (profileData) {
         console.log('✅ [AuthContext] Profile core data loaded:', profileData.role);
         let finalProfile = { ...profileData };
@@ -137,7 +141,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setProfile(finalProfile);
       } else {
         console.warn('⚠️ [AuthContext] Profile query returned no data.');
-        setProfile(null);
+        setProfile(prev => (prev && prev.id === userId) ? prev : null);
       }
     } catch (err: any) {
       console.error('❌ [AuthContext] Critical exception in loadProfile:', err);
@@ -146,9 +150,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           console.warn('⚠️ Token expired, logging out...');
           await signOut();
       } else {
-          // If it's a network error or timeout, we don't clear the session, we just leave profile null
-          // The user can try again or the App will handle the null profile (e.g., throwing a friendly error)
-          setProfile(null);
+          // If it's a network error or timeout, we ONLY set profile to null if we don't already have one for this user
+          setProfile(prev => (prev && prev.id === userId) ? prev : null);
       }
     } finally {
       console.log('🏁 [AuthContext] loadProfile finished.');
