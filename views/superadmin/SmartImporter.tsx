@@ -64,6 +64,15 @@ const SmartImporter: React.FC = () => {
     }, 2000);
   };
 
+  React.useEffect(() => {
+    if (step === 3) {
+      const timer = setTimeout(() => {
+        setStep(4);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
       {/* Header */}
@@ -307,9 +316,6 @@ const SmartImporter: React.FC = () => {
                 </div>
               ))}
             </div>
-            
-            {/* Hidden auto-advance for demo */}
-            <button onClick={() => setStep(4)} className="opacity-0 absolute bottom-0">Next</button>
           </div>
         )}
 
