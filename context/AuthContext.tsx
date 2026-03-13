@@ -39,21 +39,31 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
   const [isImpersonating, setIsImpersonating] = useState(false);
 
+  // Track whether INITIAL_SESSION has been processed to debounce SIGNED_IN
+  const initialSessionProcessed = React.useRef(false);
+  const retryCount = React.useRef(0);
+
   useEffect(() => {
-    // Check for existing impersonation - ONLY if already logged in or session found
-    const impOrgId = sessionStorage.getItem('impersonated_org_id');
-    // We don't set isImpersonating to true here blindly anymore, 
-    // we let loadProfile handle it after verifying the role.
-
-    // BUG 3 FIX: Removed redundant getSession(). 
-    // onAuthStateChange fires with INITIAL_SESSION immediately on mount,
-    // so getSession() creates a race condition where loadProfile is called twice.
-
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       console.log('🔄 [AuthContext] Auth Event:', _event, 'User:', session?.user?.id);
+
+      // DEBOUNCE FIX: If SIGNED_IN fires before INITIAL_SESSION, skip it.
+      // INITIAL_SESSION is the canonical first event and will follow immediately.
+      if (_event === 'SIGNED_IN' && !initialSessionProcessed.current) {
+        console.log('⏭️ [AuthContext] Skipping early SIGNED_IN, waiting for INITIAL_SESSION');
+        // Still set the user so we have it ready
+        if (session?.user) setUser(session.user);
+        return;
+      }
+
+      if (_event === 'INITIAL_SESSION') {
+        initialSessionProcessed.current = true;
+      }
+
       if (session?.user) {
         setUser(session.user);
+        retryCount.current = 0;
         await loadProfile(session.user.id);
       } else {
         console.log('🔄 [AuthContext] Auth Event: User is null');
@@ -145,12 +155,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     } catch (err: any) {
       console.error('❌ [AuthContext] Critical exception in loadProfile:', err);
-      // FIXED: Only sign out if it's explicitly a JWT expiration to avoid loops on slow networks or DB timeouts
       if (err?.message?.includes('JWT expired')) {
           console.warn('⚠️ Token expired, logging out...');
           await signOut();
+      } else if (err?.message?.includes('timeout') && retryCount.current < 1) {
+          // RETRY FIX: On first timeout, retry once after a short delay
+          console.warn('🔄 [AuthContext] Timeout on first load, retrying in 2s...');
+          retryCount.current++;
+          fetchInProgress.current = null; // allow retry
+          setTimeout(() => loadProfile(userId), 2000);
+          return; // don't set loading=false yet
       } else {
-          // If it's a network error or timeout, we ONLY set profile to null if we don't already have one for this user
           setProfile(prev => (prev && prev.id === userId) ? prev : null);
       }
     } finally {

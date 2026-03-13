@@ -90,6 +90,7 @@ export const PlansProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (profile?.role === 'superadmin') return true;
         
         if (!currentPlan) return false;
+        if (!Array.isArray(currentPlan.features)) return false;
         return currentPlan.features.includes(feature);
     };
 

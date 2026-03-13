@@ -133,6 +133,12 @@ export const SettingsProvider: React.FC<{ children: ReactNode, organizationId?: 
         payload.id = idToUse;
       }
 
+      // AUDIT FIX: Always include organization_id to prevent orphan records
+      const activeOrgId = propsOrgId || profileOrgId;
+      if (activeOrgId) {
+        payload.organization_id = activeOrgId;
+      }
+
       const { data, error } = await supabase
         .from('site_settings')
         .upsert(payload)

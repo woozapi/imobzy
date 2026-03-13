@@ -151,7 +151,7 @@ const PlanManager: React.FC = () => {
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                            {plan.features?.map(f => (
+                            {(Array.isArray(plan.features) ? plan.features : []).map(f => (
                                 <span key={f} className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
                                     {f}
                                 </span>
