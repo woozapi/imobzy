@@ -100,7 +100,7 @@ const PlanManager: React.FC = () => {
     };
 
     const toggleFeature = (featureId: string) => {
-        const current = formData.features || [];
+        const current = Array.isArray(formData.features) ? formData.features : [];
         if (current.includes(featureId)) {
             setFormData({ ...formData, features: current.filter(f => f !== featureId) });
         } else {
@@ -228,7 +228,7 @@ const PlanManager: React.FC = () => {
                                         <label key={feat.id} className="flex items-center gap-2 p-2 border rounded hover:bg-gray-50 cursor-pointer">
                                             <input 
                                                 type="checkbox" 
-                                                checked={(formData.features || []).includes(feat.id)}
+                                                checked={Array.isArray(formData.features) && formData.features.includes(feat.id)}
                                                 onChange={() => toggleFeature(feat.id)}
                                                 className="rounded text-blue-600"
                                             />
