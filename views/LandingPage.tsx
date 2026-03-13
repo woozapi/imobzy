@@ -85,7 +85,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ organizationId }) => {
     e.preventDefault();
     setIsSubmittingProperty(true);
     try {
-      await propertyService.submit(propertyForm);
+      await propertyService.submit({ 
+        ...propertyForm, 
+        organization_id: organizationId 
+      });
       setSubmitSuccess(true);
       setTimeout(() => {
         setIsSubmitModalOpen(false);
@@ -143,8 +146,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ organizationId }) => {
         name: leadForm.name,
         phone: leadForm.phone,
         email: leadForm.email,
-        source: `Site - ${leadForm.subject}`
-      });
+        source: `Site - ${leadForm.subject}`,
+        organization_id: organizationId
+      } as any);
       setLeadSuccess(true);
       setLeadForm({ name: '', phone: '', email: '', subject: t('lead_modal.default_subject', 'Interesse Geral') });
       setTimeout(() => {

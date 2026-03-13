@@ -13,6 +13,7 @@ export const leadService = {
     const { data, error } = await supabase
       .from('crm_leads')
       .insert({
+        organization_id: (lead as any).organization_id,
         name: lead.name,
         phone: lead.phone,
         email: lead.email,

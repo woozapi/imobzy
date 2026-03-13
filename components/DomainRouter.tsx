@@ -31,7 +31,8 @@ const DomainRouter: React.FC<DomainRouterProps> = ({ children }) => {
         lastCheckedPath.current = currentPath;
 
         const checkRoute = async () => {
-             const hostname = window.location.hostname;
+             try {
+                 const hostname = window.location.hostname;
              const path = currentPath;
 
              const log = (msg: string) => {
@@ -104,7 +105,8 @@ const DomainRouter: React.FC<DomainRouterProps> = ({ children }) => {
              }
 
              // 3. Sub-path Logic (Slug)
-             const systemRoutes = ['/login', '/register', '/onboarding', '/admin', '/superadmin', '/impersonate', '/lp/'];
+             // BUG 2 FIX: Added /rural and /urban to system routes list
+             const systemRoutes = ['/login', '/register', '/onboarding', '/admin', '/rural', '/urban', '/superadmin', '/impersonate', '/lp/'];
              const isSystemRoute = systemRoutes.some(r => path.startsWith(r));
 
              if (isSystemRoute || path === '/') {
@@ -146,9 +148,15 @@ const DomainRouter: React.FC<DomainRouterProps> = ({ children }) => {
              // Default: Render main app
              setIsPublicSite(false);
              setLoading(false);
-        };
+         } catch (err) {
+             log(`❌ [Router] Fatal Error in checkRoute: ${err}`);
+             setIsPublicSite(false);
+             setLoading(false);
+         }
+     };
 
-        checkRoute();
+     // BUG 5 FIX: The loading = false is now guaranteed by the catch and early returns inside checkRoute
+     checkRoute();
         
     }, [location.pathname, debugMode]); 
 

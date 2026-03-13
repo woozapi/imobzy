@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { SiteSettings } from '../types';
 import { DEFAULT_SITE_SETTINGS } from '../constants';
 import { supabase } from '../services/supabase';
+import { useAuth } from './AuthContext';
 
 
 interface SettingsContextType {
@@ -14,31 +15,75 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const SettingsProvider: React.FC<{ children: ReactNode, organizationId?: string }> = ({ children, organizationId: propsOrgId }) => {
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [settingsLoading, setSettingsLoading] = useState(true);
+  
+  // Use Auth context, safely handling if it's missing (though it shouldn't be in this app structure)
+  let authContext: any = null;
+  try {
+    authContext = useAuth();
+  } catch (e) {
+    // If used completely outside AuthProvider
+  }
+  const profileOrgId = authContext?.profile?.organization_id;
+  const authLoading = authContext?.loading || false;
 
-  // Carregar configurações do Supabase (Single Tenant)
   useEffect(() => {
+    let isMounted = true;
+    
     const loadSettings = async () => {
+      // Determine which organization ID to load settings for
+      const activeOrgId = propsOrgId || profileOrgId;
+      
+      // If no explicit org ID is provided and auth is still loading, wait before fetching
+      if (!propsOrgId && authLoading) {
+        return;
+      }
+
       try {
-        console.log('📡 [SettingsContext] Loading site settings...');
-        setSettingsLoading(true);
+        if (isMounted) setSettingsLoading(true);
         
-        // Always get the first/only settings row
+        if (!activeOrgId) {
+          console.log('📡 [SettingsContext] No organization ID available, using defaults.');
+          if (isMounted) {
+            setSettings(DEFAULT_SITE_SETTINGS);
+          }
+          return;
+        }
+
+        console.log(`📡 [SettingsContext] Loading site settings for org: ${activeOrgId}...`);
+        
+        // Fetch specific organization settings
         const { data, error } = await supabase
           .from('site_settings')
           .select('*')
-          .limit(1)
+          .eq('organization_id', activeOrgId)
           .single();
 
         if (error) {
            console.warn("⚠️ [SettingsContext] Load Error:", error.message);
-        } else if (data) {
+        } else if (data && isMounted) {
           console.log('✅ [SettingsContext] Settings loaded:', data.agency_name);
           setSettings({
             ...DEFAULT_SITE_SETTINGS,
-// ... (rest of mapping)
+            id: data.id,
+            agencyName: data.agency_name,
+            primaryColor: data.primary_color || DEFAULT_SITE_SETTINGS.primaryColor,
+            secondaryColor: data.secondary_color || DEFAULT_SITE_SETTINGS.secondaryColor,
+            headerColor: data.header_color,
+            logoUrl: data.logo_url,
+            logoHeight: data.logo_height,
+            fontFamily: data.font_family,
+            baseFontSize: data.base_font_size,
+            headingFontSize: data.heading_font_size,
+            footerText: data.footer_text,
+            templateId: data.template_id,
+            socialLinks: {
+              instagram: data.instagram_url,
+              facebook: data.facebook_url,
+              whatsapp: data.whatsapp_number
+            },
             homeContent: data.home_content || {}, 
             integrations: data.integrations 
           });
@@ -46,13 +91,17 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
       } catch (e) {
         console.error("❌ [SettingsContext] Unexpected error:", e);
       } finally {
-        console.log('🏁 [SettingsContext] finished.');
-        setSettingsLoading(false);
+        if (isMounted) {
+          console.log('🏁 [SettingsContext] finished loading cycle.');
+          setSettingsLoading(false);
+        }
       }
     };
 
     loadSettings();
-  }, []); 
+    
+    return () => { isMounted = false; };
+  }, [propsOrgId, profileOrgId, authLoading]); 
 
   const updateSettings = async (newSettings: SiteSettings) => {
     setSettings(newSettings);

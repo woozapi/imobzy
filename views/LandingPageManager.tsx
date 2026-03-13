@@ -687,7 +687,7 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
 // ============================================
 
 const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose, onCreated }) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [step, setStep] = useState<'template' | 'property' | 'generating'>('template');
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
@@ -697,12 +697,15 @@ const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClo
   const [generationStage, setGenerationStage] = useState('Analizando imóvel...');
 
   useEffect(() => {
-    loadProperties();
-  }, []);
+    if (profile?.organization_id) {
+        loadProperties();
+    }
+  }, [profile?.organization_id]);
 
   const loadProperties = async () => {
     try {
-      const data = await propertyService.list();
+      if (!profile?.organization_id) return;
+      const data = await propertyService.list(profile.organization_id);
       setProperties(data);
     } catch (error) {
       console.error('Failed to load properties', error);

@@ -123,11 +123,12 @@ const PropertyEditor: React.FC = () => {
     setLoading(true);
     
     try {
+       const payload = { ...formData, organization_id: profile?.organization_id };
        if (isNew) {
-         await propertyService.create(formData);
+         await propertyService.create(payload);
          alert('Imóvel criado com sucesso!');
        } else if (id) {
-         await propertyService.update(id, formData);
+         await propertyService.update(id, payload);
          alert('Imóvel atualizado com sucesso!');
        }
        navigate('/admin/properties');

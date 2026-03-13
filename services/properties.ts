@@ -87,6 +87,7 @@ export const propertyService = {
 // Mappers para converter entre Banco de Dados (snake_case/flat) e Modelo da Aplicação (CamelCase/Nested)
 const mapToModel = (dbItem: any): Property => ({
   id: dbItem.id,
+  organization_id: dbItem.organization_id,
   title: dbItem.title || '',
   description: dbItem.description || '',
   price: dbItem.price || 0,
@@ -135,7 +136,7 @@ const mapToModel = (dbItem: any): Property => ({
   analysis: dbItem.analysis
 });
 
-const mapToDatabase = (model: Partial<Property>): any => {
+const mapToDatabase = (model: Partial<Property> & { organization_id?: string }): any => {
   const payload: any = {
     title: model.title,
     description: model.description,
@@ -144,6 +145,7 @@ const mapToDatabase = (model: Partial<Property>): any => {
     purpose: model.purpose,
     aptitude: model.aptitude,
     status: model.status,
+    organization_id: (model as any).organization_id,
     // Flat location fields
     city: model.location?.city,
     neighborhood: model.location?.neighborhood,

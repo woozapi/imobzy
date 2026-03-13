@@ -29,13 +29,19 @@ const PropertyManagement: React.FC = () => {
   const { profile } = useAuth(); 
   
   useEffect(() => {
-    loadProperties();
-  }, []);
+    if (profile?.organization_id) {
+      loadProperties();
+    }
+  }, [profile?.organization_id]);
 
   const loadProperties = async () => {
     try {
       setLoading(true);
-      const data = await propertyService.list();
+      if (!profile?.organization_id) {
+        console.warn('❌ Cannot load properties: No organization ID in profile');
+        return;
+      }
+      const data = await propertyService.list(profile.organization_id);
       setProperties(data);
     } catch (error) {
       console.error('Erro ao carregar imóveis:', error);

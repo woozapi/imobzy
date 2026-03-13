@@ -25,6 +25,8 @@ const Login: React.FC = () => {
 
     if (profile.role === 'superadmin') {
       navigate('/superadmin', { replace: true });
+    } else if (!profile.organization_id) {
+      navigate('/onboarding', { replace: true });
     } else {
       navigate('/admin', { replace: true });
     }
@@ -35,6 +37,9 @@ const Login: React.FC = () => {
     console.log('🔄 [Login] Already authenticated, redirecting away from login page.');
     if (profile.role === 'superadmin') {
       return <Navigate to="/superadmin" replace />;
+    }
+    if (!profile.organization_id) {
+      return <Navigate to="/onboarding" replace />;
     }
     return <Navigate to="/admin" replace />;
   }

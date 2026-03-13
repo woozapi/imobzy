@@ -19,7 +19,6 @@ import PublicLandingPage from './views/PublicLandingPage';
 import Onboarding from './views/Onboarding';
 
 // Dashboards (Niche-aware)
-import AdminDashboard from './views/AdminDashboard';
 import RuralDashboard from './views/RuralDashboard';
 import UrbanDashboard from './views/UrbanDashboard';
 
@@ -28,9 +27,7 @@ import PropertyManagement from './views/PropertyManagement';
 import PropertyEditor from './views/PropertyEditor';
 import LandingPageManager from './views/LandingPageManager';
 import LandingPageEditor from './views/LandingPageEditor';
-import TextsManager from './views/TextsManager';
 import AIAssistant from './views/AIAssistant';
-import Migration from './views/Migration';
 import SystemSettings from './views/SystemSettings';
 import DataRoom from './views/DataRoom';
 import LegalContracts from './views/LegalContracts';
@@ -85,10 +82,17 @@ console.log('App.tsx: Multi-Panel Architecture Active');
 // ==========================================
 // ERROR BOUNDARY
 // ==========================================
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
-  constructor(props: { children: React.ReactNode }) {
+interface EBProps { children: React.ReactNode }
+interface EBState { hasError: boolean; error: Error | null }
+
+class ErrorBoundary extends React.Component<EBProps, EBState> {
+  // @ts-ignore
+  state: EBState = { hasError: false, error: null };
+
+  // @ts-ignore
+  constructor(props: EBProps) {
+    // @ts-ignore
     super(props);
-    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error) {
@@ -120,18 +124,20 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
       );
     }
 
+    // @ts-ignore
     return this.props.children;
   }
 }
 
 // ==========================================
-// PLACEHOLDER for WIP views
+// LOADING SPINNER (reusable)
 // ==========================================
-const Placeholder: React.FC<{ name: string }> = ({ name }) => (
-  <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-500 bg-slate-50 p-4 text-center">
-    <div className="animate-pulse bg-slate-200 rounded-full h-16 w-16 mb-4 mx-auto"></div>
-    <h2 className="text-xl font-bold mb-2">Em Breve: {name}</h2>
-    <p>Funcionalidade em desenvolvimento.</p>
+const FullScreenSpinner: React.FC = () => (
+  <div className="min-h-screen flex items-center justify-center bg-slate-50">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <p className="mt-4 text-slate-500 font-medium">Carregando...</p>
+    </div>
   </div>
 );
 
@@ -141,59 +147,37 @@ const Placeholder: React.FC<{ name: string }> = ({ name }) => (
 const NicheRedirect: React.FC = () => {
   const { profile, isImpersonating, loading } = useAuth();
   
-  if (loading) {
-    console.log('⏳ [NicheRedirect] Auth still loading, rendering null...');
-    return null;
-  }
-
-  console.log('🔄 [NicheRedirect] State:', { 
-    role: profile?.role, 
-    isImpersonating, 
-    orgId: profile?.organization_id,
-    niche: profile?.organization?.niche 
-  });
+  if (loading) return <FullScreenSpinner />;
 
   // If Super Admin and NOT impersonating, go to Super Admin panel
   if (profile?.role === 'superadmin' && !isImpersonating) {
-    console.log('👑 [NicheRedirect] Super Admin detected, redirecting to /superadmin');
     return <Navigate to="/superadmin" replace />;
   }
 
-  // A1: If user has no organization, redirect to onboarding
+  // If user has no organization, redirect to onboarding
   if (!profile?.organization_id || !profile?.organization) {
-    console.log('⚠️ [NicheRedirect] User has no organization, redirecting to /onboarding');
     return <Navigate to="/onboarding" replace />;
   }
 
   const niche = profile.organization.niche || 'traditional';
   const target = (niche === 'rural' || niche === 'hybrid') ? '/rural' : '/urban';
-  console.log('🏢 [NicheRedirect] Redirecting to niche:', niche, 'Target:', target);
-
   return <Navigate to={target} replace />;
 };
 
-
-
 // ==========================================
 // GLOBAL SUPER ADMIN GUARD
-// = [FORCE] sends super admins to /superadmin unless impersonating
-// Uses DECLARATIVE redirect (Navigate) instead of useEffect to prevent loops
+// Forces super admins to /superadmin unless impersonating
 // ==========================================
 const SuperAdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { profile, isImpersonating, loading } = useAuth();
   const location = useLocation();
 
-  console.log('🛡️ [SuperAdminGuard] Rendering. Path:', location.pathname, 'Profile:', profile?.role, 'Loading:', loading);
-
-  if (loading) {
-    console.log('🛡️ [SuperAdminGuard] Auth loading, returning null');
-    return null;
-  }
+  // BUG 4 FIX: Show spinner instead of blank screen while loading
+  if (loading) return <FullScreenSpinner />;
 
   if (profile?.role === 'superadmin' && !isImpersonating) {
     const path = location.pathname;
     if (!path.startsWith('/superadmin') && path !== '/login' && path !== '/impersonate') {
-      console.log('🛡️ [GlobalGuard] Super Admin on non-superadmin route:', path, '-> Redirecting to /superadmin');
       return <Navigate to="/superadmin" replace />;
     }
   }
@@ -201,42 +185,110 @@ const SuperAdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) 
   return <>{children}</>;
 };
 
-
 // ==========================================
-// MAIN APP CONTENT WITH ISOLATED ROUTE GROUPS
+// MAIN APP CONTENT
 // ==========================================
 const AppContent: React.FC = () => {
-  const { settings, loading } = useSettings();
-  
-  console.log('📦 [AppContent] Rendering. Settings loading:', loading);
+  const { loading } = useSettings();
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
+  if (loading) return <FullScreenSpinner />;
 
   return (
     <>
-    <ErrorBoundary>
-    <ImpersonationBanner />
-    <SuperAdminGuard>
-      <Routes>
-      {/* ... routes ... */}
-      </Routes>
-    </SuperAdminGuard>
-    </ErrorBoundary>
+      <ImpersonationBanner />
+      <SuperAdminGuard>
+        <Routes>
+          {/* ====== PUBLIC ROUTES ====== */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/impersonate" element={<ImpersonateCallback />} />
+          <Route path="/lp/:slug" element={<PublicLandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+
+          {/* ====== LEGACY /admin → NICHE REDIRECT ====== */}
+          <Route path="/admin" element={<ProtectedRoute><NicheRedirect /></ProtectedRoute>} />
+          <Route path="/admin/*" element={<ProtectedRoute><NicheRedirect /></ProtectedRoute>} />
+
+          {/* ====== 🌾 RURAL PANEL ====== */}
+          <Route path="/rural" element={<ProtectedRoute><RuralLayout><RuralDashboard /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/cadastro-tecnico" element={<ProtectedRoute><RuralLayout><CadastroTecnico /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/properties" element={<ProtectedRoute><RuralLayout><PropertyManagement /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/properties/new" element={<ProtectedRoute><RuralLayout><PropertyEditor /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/properties/:id" element={<ProtectedRoute><RuralLayout><PropertyEditor /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/geointeligencia" element={<ProtectedRoute><RuralLayout><Geointeligencia /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/due-diligence" element={<ProtectedRoute><RuralLayout><DueDiligence /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/dataroom" element={<ProtectedRoute><RuralLayout><DataRoom /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/crm" element={<ProtectedRoute><RuralLayout><KanbanBoard /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/messages" element={<ProtectedRoute><RuralLayout><Messages /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/whatsapp-setup" element={<ProtectedRoute><RuralLayout><WhatsAppSetup /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/reports" element={<ProtectedRoute><RuralLayout><BIRural /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/portal-proprietario" element={<ProtectedRoute><RuralLayout><PortalProprietarioRural /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/portal-comprador" element={<ProtectedRoute><RuralLayout><PortalCompradorRural /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/landing-pages" element={<ProtectedRoute><RuralLayout><LandingPageManager /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/landing-pages/new" element={<ProtectedRoute><RuralLayout><LandingPageEditor /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/landing-pages/:id" element={<ProtectedRoute><RuralLayout><LandingPageEditor /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/ai-assistant" element={<ProtectedRoute><RuralLayout><AIAssistant /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/contracts" element={<ProtectedRoute><RuralLayout><LegalContracts /></RuralLayout></ProtectedRoute>} />
+          <Route path="/rural/settings" element={<ProtectedRoute><RuralLayout><SystemSettings /></RuralLayout></ProtectedRoute>} />
+
+          {/* ====== 🏙 URBAN PANEL ====== */}
+          <Route path="/urban" element={<ProtectedRoute><UrbanLayout><UrbanDashboard /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/properties" element={<ProtectedRoute><UrbanLayout><PropertyManagement /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/properties/new" element={<ProtectedRoute><UrbanLayout><PropertyEditor /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/properties/:id" element={<ProtectedRoute><UrbanLayout><PropertyEditor /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/empreendimentos" element={<ProtectedRoute><UrbanLayout><Empreendimentos /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/locacao" element={<ProtectedRoute><UrbanLayout><Locacao /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/compliance" element={<ProtectedRoute><UrbanLayout><ComplianceUrbano /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/exportador" element={<ProtectedRoute><UrbanLayout><ExportadorPortais /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/crm" element={<ProtectedRoute><UrbanLayout><KanbanBoard /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/messages" element={<ProtectedRoute><UrbanLayout><Messages /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/whatsapp-setup" element={<ProtectedRoute><UrbanLayout><WhatsAppSetup /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/reports" element={<ProtectedRoute><UrbanLayout><BIRural /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/portal-proprietario" element={<ProtectedRoute><UrbanLayout><PortalProprietarioUrbano /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/portal-comprador" element={<ProtectedRoute><UrbanLayout><PortalCompradorUrbano /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/landing-pages" element={<ProtectedRoute><UrbanLayout><LandingPageManager /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/landing-pages/new" element={<ProtectedRoute><UrbanLayout><LandingPageEditor /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/landing-pages/:id" element={<ProtectedRoute><UrbanLayout><LandingPageEditor /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/ai-assistant" element={<ProtectedRoute><UrbanLayout><AIAssistant /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/contracts" element={<ProtectedRoute><UrbanLayout><LegalContracts /></UrbanLayout></ProtectedRoute>} />
+          <Route path="/urban/settings" element={<ProtectedRoute><UrbanLayout><SystemSettings /></UrbanLayout></ProtectedRoute>} />
+
+          {/* ====== 👑 SUPER ADMIN ====== */}
+          <Route path="/superadmin" element={<ProtectedRoute><SuperAdminLayout /></ProtectedRoute>}>
+            <Route index element={<SuperAdminDashboard />} />
+            <Route path="analytics" element={<AnalyticsDashboard />} />
+            <Route path="monitoring" element={<PlatformMonitoring />} />
+            <Route path="tenants" element={<TenantManager />} />
+            <Route path="support" element={<SupportManager />} />
+            <Route path="team" element={<TeamManager />} />
+            <Route path="domains" element={<DomainManager />} />
+            <Route path="plans" element={<PlanManager />} />
+            <Route path="billing" element={<BillingManager />} />
+            <Route path="feature-flags" element={<FeatureFlags />} />
+            <Route path="audit-log" element={<AuditLog />} />
+            <Route path="templates" element={<TemplateManager />} />
+            <Route path="importer" element={<SmartImporter />} />
+            <Route path="settings" element={<GlobalSettings />} />
+          </Route>
+
+          {/* FALLBACK */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </SuperAdminGuard>
     </>
   );
 };
 
+// ==========================================
+// ROOT APP
+// ==========================================
 const App: React.FC = () => {
   return (
-    <Router>
-      <AuthProvider>
-        <SettingsProvider>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <SettingsProvider>
           <TextsProvider>
             <PlansProvider>
               <DomainRouter>
@@ -248,6 +300,7 @@ const App: React.FC = () => {
         </SettingsProvider>
       </AuthProvider>
     </Router>
+    </ErrorBoundary>
   );
 };
 

@@ -45,17 +45,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // We don't set isImpersonating to true here blindly anymore, 
     // we let loadProfile handle it after verifying the role.
 
-    // Check active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('📡 [AuthContext] Initial session check:', session?.user?.id);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        loadProfile(session.user.id);
-      } else {
-        console.log('📡 [AuthContext] No initial session found.');
-        setLoading(false);
-      }
-    });
+    // BUG 3 FIX: Removed redundant getSession(). 
+    // onAuthStateChange fires with INITIAL_SESSION immediately on mount,
+    // so getSession() creates a race condition where loadProfile is called twice.
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -149,8 +141,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     } catch (err: any) {
       console.error('❌ [AuthContext] Critical exception in loadProfile:', err);
-      if (err?.code === 'PGRST303' || err?.message?.includes('JWT expired')) {
+      // FIXED: Only sign out if it's explicitly a JWT expiration to avoid loops on slow networks or DB timeouts
+      if (err?.message?.includes('JWT expired')) {
+          console.warn('⚠️ Token expired, logging out...');
           await signOut();
+      } else {
+          // If it's a network error or timeout, we don't clear the session, we just leave profile null
+          // The user can try again or the App will handle the null profile (e.g., throwing a friendly error)
+          setProfile(null);
       }
     } finally {
       console.log('🏁 [AuthContext] loadProfile finished.');
