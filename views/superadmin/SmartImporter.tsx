@@ -65,13 +65,19 @@ const SmartImporter: React.FC = () => {
   };
 
   React.useEffect(() => {
+    console.log('🔄 [SmartImporter] Step changed to:', step, 'Status:', status);
     if (step === 3) {
+      console.log('⏳ [SmartImporter] Starting auto-advance timer for Step 4...');
       const timer = setTimeout(() => {
+        console.log('🚀 [SmartImporter] Auto-advancing to Step 4');
         setStep(4);
       }, 4000);
-      return () => clearTimeout(timer);
+      return () => {
+        console.log('🧹 [SmartImporter] Cleaning up timer');
+        clearTimeout(timer);
+      };
     }
-  }, [step]);
+  }, [step, status]);
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
