@@ -1,8 +1,7 @@
-
 import { supabase } from './supabase';
 
 export const uploadFile = async (
-  file: File, 
+  file: File,
   bucket: 'agency-assets' | 'property-images',
   folder?: string
 ): Promise<string | null> => {
@@ -22,9 +21,7 @@ export const uploadFile = async (
       throw uploadError;
     }
 
-    const { data } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(filePath);
+    const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
 
     console.log('Upload sucesso. URL:', data.publicUrl);
     return data.publicUrl;

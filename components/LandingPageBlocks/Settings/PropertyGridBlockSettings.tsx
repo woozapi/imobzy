@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { PropertyGridBlockConfig, LandingPage, PropertySelectionMode } from '../../../types/landingPage';
+import {
+  PropertyGridBlockConfig,
+  LandingPage,
+  PropertySelectionMode,
+} from '../../../types/landingPage';
 import { Property } from '../../../types';
 
 interface PropertyGridBlockSettingsProps {
@@ -13,7 +17,7 @@ const PropertyGridBlockSettings: React.FC<PropertyGridBlockSettingsProps> = ({
   config,
   onUpdate,
   page,
-  onUpdatePage
+  onUpdatePage,
 }) => {
   const [showPropertySelector, setShowPropertySelector] = useState(false);
 
@@ -106,7 +110,10 @@ const PropertyGridBlockSettings: React.FC<PropertyGridBlockSettingsProps> = ({
           onChange={(e) => updateField('showFilters', e.target.checked)}
           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
         />
-        <label htmlFor="showFilters" className="ml-2 block text-sm text-gray-700">
+        <label
+          htmlFor="showFilters"
+          className="ml-2 block text-sm text-gray-700"
+        >
           Mostrar Filtros
         </label>
       </div>
@@ -119,11 +126,12 @@ const PropertyGridBlockSettings: React.FC<PropertyGridBlockSettingsProps> = ({
           Selecionar Imóveis
         </button>
         <p className="text-xs text-gray-500 mt-2 text-center">
-          {page.propertySelection.mode === 'manual' && page.propertySelection.propertyIds
+          {page.propertySelection.mode === 'manual' &&
+          page.propertySelection.propertyIds
             ? `${page.propertySelection.propertyIds.length} imóveis selecionados`
             : page.propertySelection.mode === 'filter'
-            ? 'Seleção por filtros'
-            : 'Todos os imóveis'}
+              ? 'Seleção por filtros'
+              : 'Todos os imóveis'}
         </p>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLayoutEditor } from '../../context/LayoutEditorContext';
 import { WidgetPanel } from './WidgetPanel';

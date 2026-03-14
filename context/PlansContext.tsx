@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../services/supabase';
 import { useAuth } from './AuthContext';
@@ -7,59 +6,62 @@ import { useAuth } from './AuthContext';
 export type Feature = 'crm' | 'site' | 'ia_chat' | 'api' | 'whatsapp';
 
 interface PlanLimits {
-    users: number;
-    properties: number;
-    whatsapp_instances: number;
+  users: number;
+  properties: number;
+  whatsapp_instances: number;
 }
 
 interface Plan {
-    id: string;
-    name: string;
-    features: Feature[];
-    limits: PlanLimits;
+  id: string;
+  name: string;
+  features: Feature[];
+  limits: PlanLimits;
 }
 
 interface PlansContextType {
-    currentPlan: Plan | null;
-    loading: boolean;
-    hasFeature: (feature: Feature) => boolean;
-    checkLimit: (limit: keyof PlanLimits, currentValue: number) => boolean;
+  currentPlan: Plan | null;
+  loading: boolean;
+  hasFeature: (feature: Feature) => boolean;
+  checkLimit: (limit: keyof PlanLimits, currentValue: number) => boolean;
 }
 
 const PlansContext = createContext<PlansContextType | undefined>(undefined);
 
-export const PlansProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const { user, profile } = useAuth();
-    const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
-    const [loading, setLoading] = useState(true);
+export const PlansProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { user, profile } = useAuth();
+  const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (user) {
-            fetchPlan();
-        } else {
-            setLoading(false);
-        }
-    }, [user]);
+  useEffect(() => {
+    if (user) {
+      fetchPlan();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
-    const fetchPlan = async () => {
-        if (!user) return;
-        try {
-            // 1. Get Org ID from profile
-            const { data: profileData } = await supabase
-                .from('profiles')
-                .select('organization_id')
-                .eq('id', user.id)
-                .single();
+  const fetchPlan = async () => {
+    if (!user) return;
+    try {
+      // 1. Get Org ID from profile
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single();
 
-            if (!profileData?.organization_id) {
-                setLoading(false);
-                return;
-            }
+      if (!profileData?.organization_id) {
+        setLoading(false);
+        return;
+      }
 
-            // 2. Get Plan details via Organization
-            const { data: orgData, error } = await supabase
-                .from('organizations')
-                .select(`
+      // 2. Get Plan details via Organization
+      const { data: orgData, error } = await supabase
+        .from('organizations')
+        .select(
+          `
                     plan_id,
                     plans (
                         id,
@@ -67,53 +69,59 @@ export const PlansProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                         features,
                         limits
                     )
-                `)
-                .eq('id', profileData.organization_id)
-                .single();
+                `
+        )
+        .eq('id', profileData.organization_id)
+        .single();
 
-            if (error) throw error;
+      if (error) throw error;
 
-            if (orgData.plans) {
-                // @ts-ignore
-                setCurrentPlan(orgData.plans as Plan);
-            }
-        } catch (error) {
-            console.error('Error fetching plan:', error);
-            // Fallback to basic plan or null
-        } finally {
-            setLoading(false);
-        }
-    };
+      if (orgData.plans) {
+        // @ts-ignore
+        setCurrentPlan(orgData.plans as Plan);
+      }
+    } catch (error) {
+      console.error('Error fetching plan:', error);
+      // Fallback to basic plan or null
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const hasFeature = (feature: Feature): boolean => {
-        // Super admin has everything
-        if (profile?.role === 'superadmin') return true;
-        
-        if (!currentPlan) return false;
-        if (!Array.isArray(currentPlan.features)) return false;
-        return currentPlan.features.includes(feature);
-    };
+  const hasFeature = (feature: Feature): boolean => {
+    // Super admin has everything
+    if (profile?.role === 'superadmin') return true;
 
-    const checkLimit = (limit: keyof PlanLimits, currentValue: number): boolean => {
-        // Super admin has no limits
-        if (profile?.role === 'superadmin') return true;
+    if (!currentPlan) return false;
+    if (!Array.isArray(currentPlan.features)) return false;
+    return currentPlan.features.includes(feature);
+  };
 
-        if (!currentPlan) return false;
-        const max = currentPlan.limits[limit];
-        return currentValue < max;
-    };
+  const checkLimit = (
+    limit: keyof PlanLimits,
+    currentValue: number
+  ): boolean => {
+    // Super admin has no limits
+    if (profile?.role === 'superadmin') return true;
 
-    return (
-        <PlansContext.Provider value={{ currentPlan, loading, hasFeature, checkLimit }}>
-            {children}
-        </PlansContext.Provider>
-    );
+    if (!currentPlan) return false;
+    const max = currentPlan.limits[limit];
+    return currentValue < max;
+  };
+
+  return (
+    <PlansContext.Provider
+      value={{ currentPlan, loading, hasFeature, checkLimit }}
+    >
+      {children}
+    </PlansContext.Provider>
+  );
 };
 
 export const usePlans = () => {
-    const context = useContext(PlansContext);
-    if (context === undefined) {
-        throw new Error('usePlans must be used within a PlansProvider');
-    }
-    return context;
+  const context = useContext(PlansContext);
+  if (context === undefined) {
+    throw new Error('usePlans must be used within a PlansProvider');
+  }
+  return context;
 };

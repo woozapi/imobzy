@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block, TextBlockConfig } from '../../../types';
 
@@ -17,9 +16,11 @@ export const TextBlock: React.FC<TextBlockProps> = ({ block, isEditing }) => {
         fontSize: config.fontSize || 16,
         fontWeight: config.fontWeight || 400,
         color: config.color || '#000000',
-        textAlign: config.alignment || 'left'
+        textAlign: config.alignment || 'left',
       }}
-      dangerouslySetInnerHTML={{ __html: config.content || 'Digite seu texto aqui...' }}
+      dangerouslySetInnerHTML={{
+        __html: config.content || 'Digite seu texto aqui...',
+      }}
     />
   );
 };

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block } from '../../../types';
 import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
@@ -9,10 +8,13 @@ interface FooterBlockProps {
   isEditing?: boolean;
 }
 
-export const FooterBlock: React.FC<FooterBlockProps> = ({ block, isEditing }) => {
+export const FooterBlock: React.FC<FooterBlockProps> = ({
+  block,
+  isEditing,
+}) => {
   const config = block.config as any;
   const { settings } = useSettings();
-  
+
   const backgroundColor = config.backgroundColor || '#1a1a1a';
   const textColor = config.textColor || '#ffffff';
   const showSocial = config.showSocial !== false;
@@ -20,20 +22,20 @@ export const FooterBlock: React.FC<FooterBlockProps> = ({ block, isEditing }) =>
   const columns = config.columns || 4;
 
   return (
-    <footer 
-      className="py-12"
-      style={{ backgroundColor, color: textColor }}
-    >
+    <footer className="py-12" style={{ backgroundColor, color: textColor }}>
       <div className="max-w-7xl mx-auto px-6">
-        <div 
+        <div
           className="grid gap-8 mb-8"
           style={{
-            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`
+            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
           }}
         >
           {/* Brand */}
           <div>
-            <h3 className="text-2xl font-bold mb-4" style={{ color: textColor }}>
+            <h3
+              className="text-2xl font-bold mb-4"
+              style={{ color: textColor }}
+            >
               {settings.agencyName}
             </h3>
             <p className="text-sm opacity-60 mb-4">
@@ -42,7 +44,7 @@ export const FooterBlock: React.FC<FooterBlockProps> = ({ block, isEditing }) =>
             {showSocial && (
               <div className="flex gap-3">
                 {settings.socialLinks?.instagram && (
-                  <a 
+                  <a
                     href={settings.socialLinks.instagram}
                     className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
                   >
@@ -50,7 +52,7 @@ export const FooterBlock: React.FC<FooterBlockProps> = ({ block, isEditing }) =>
                   </a>
                 )}
                 {settings.socialLinks?.facebook && (
-                  <a 
+                  <a
                     href={settings.socialLinks.facebook}
                     className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
                   >
@@ -67,9 +69,21 @@ export const FooterBlock: React.FC<FooterBlockProps> = ({ block, isEditing }) =>
               Navegação
             </h4>
             <ul className="space-y-2 text-sm opacity-80">
-              <li><a href="/properties" className="hover:opacity-100">Imóveis</a></li>
-              <li><a href="/about" className="hover:opacity-100">Sobre</a></li>
-              <li><a href="/contact" className="hover:opacity-100">Contato</a></li>
+              <li>
+                <a href="/properties" className="hover:opacity-100">
+                  Imóveis
+                </a>
+              </li>
+              <li>
+                <a href="/about" className="hover:opacity-100">
+                  Sobre
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="hover:opacity-100">
+                  Contato
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -121,8 +135,12 @@ export const FooterBlock: React.FC<FooterBlockProps> = ({ block, isEditing }) =>
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs opacity-40">
           <p>© 2024 {settings.agencyName}. Todos os direitos reservados.</p>
           <div className="flex gap-6">
-            <a href="/privacy" className="hover:opacity-100">Privacidade</a>
-            <a href="/terms" className="hover:opacity-100">Termos</a>
+            <a href="/privacy" className="hover:opacity-100">
+              Privacidade
+            </a>
+            <a href="/terms" className="hover:opacity-100">
+              Termos
+            </a>
           </div>
         </div>
       </div>

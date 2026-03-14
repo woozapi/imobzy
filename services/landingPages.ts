@@ -9,7 +9,7 @@ import {
   LandingPageAnalyticsEvent,
   LandingPageAnalytics,
   AnalyticsEventType,
-  Block
+  Block,
 } from '../types/landingPage';
 import { Property } from '../types';
 
@@ -27,23 +27,25 @@ export const landingPageService = {
    */
   async list(): Promise<LandingPage[]> {
     console.log('📋 [LandingPageService] Listando todas as páginas');
-    
-    let query = supabase
-      .from('landing_pages')
-      .select('*');
-    
-    const { data, error } = await query.order('updated_at', { ascending: false });
+
+    let query = supabase.from('landing_pages').select('*');
+
+    const { data, error } = await query.order('updated_at', {
+      ascending: false,
+    });
 
     if (error) {
       console.error('❌ [LandingPageService] Erro ao listar:', error);
       throw error;
     }
-    
-    console.log(`✅ [LandingPageService] Encontradas ${data?.length || 0} páginas`);
+
+    console.log(
+      `✅ [LandingPageService] Encontradas ${data?.length || 0} páginas`
+    );
     if (data && data.length > 0) {
       console.log('📄 Primeira página:', data[0]);
     }
-    
+
     return data.map(mapToModel);
   },
 
@@ -112,10 +114,16 @@ export const landingPageService = {
   /**
    * Atualiza uma landing page existente
    */
-  async update(id: string, input: UpdateLandingPageInput): Promise<LandingPage> {
+  async update(
+    id: string,
+    input: UpdateLandingPageInput
+  ): Promise<LandingPage> {
     console.log('🗄️ [LandingPageService] Atualizando página:', id);
     const payload = mapToDatabase(input);
-    console.log('📦 [LandingPageService] Payload:', JSON.stringify(payload).substring(0, 200) + '...');
+    console.log(
+      '📦 [LandingPageService] Payload:',
+      JSON.stringify(payload).substring(0, 200) + '...'
+    );
 
     const { data, error } = await supabase
       .from('landing_pages')
@@ -128,7 +136,7 @@ export const landingPageService = {
       console.error('❌ [LandingPageService] Erro no Supabase:', error);
       throw error;
     }
-    
+
     console.log('✅ [LandingPageService] Atualizado no banco!');
     return mapToModel(data);
   },
@@ -150,13 +158,13 @@ export const landingPageService = {
    */
   async duplicate(id: string): Promise<LandingPage> {
     const original = await this.getById(id);
-    
+
     const duplicate: CreateLandingPageInput = {
       ...original,
       name: `${original.name} (Cópia)`,
       slug: `${original.slug}-copy-${Date.now()}`,
       status: LandingPageStatus.DRAFT,
-      publishedAt: undefined
+      publishedAt: undefined,
     };
 
     return this.create(duplicate);
@@ -174,7 +182,7 @@ export const landingPageService = {
       .from('landing_pages')
       .update({
         status: LandingPageStatus.PUBLISHED,
-        published_at: new Date().toISOString()
+        published_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -191,7 +199,7 @@ export const landingPageService = {
     const { data, error } = await supabase
       .from('landing_pages')
       .update({
-        status: LandingPageStatus.DRAFT
+        status: LandingPageStatus.DRAFT,
       })
       .eq('id', id)
       .select()
@@ -208,7 +216,7 @@ export const landingPageService = {
     const { data, error } = await supabase
       .from('landing_pages')
       .update({
-        status: LandingPageStatus.ARCHIVED
+        status: LandingPageStatus.ARCHIVED,
       })
       .eq('id', id)
       .select()
@@ -232,7 +240,11 @@ export const landingPageService = {
     let query = supabase.from('properties').select('*');
 
     // Modo Manual: IDs específicos
-    if (config.mode === 'manual' && config.propertyIds && config.propertyIds.length > 0) {
+    if (
+      config.mode === 'manual' &&
+      config.propertyIds &&
+      config.propertyIds.length > 0
+    ) {
       query = query.in('id', config.propertyIds);
     }
     // Modo Filtro: Aplicar filtros
@@ -272,7 +284,7 @@ export const landingPageService = {
     // Ordenação
     if (config.sortBy) {
       const ascending = config.sortOrder === 'asc';
-      
+
       switch (config.sortBy) {
         case 'price':
           query = query.order('price', { ascending });
@@ -316,7 +328,7 @@ export const landingPageService = {
     const { error } = await supabase
       .from('landing_pages')
       .update({
-        property_selection: config
+        property_selection: config,
       })
       .eq('id', pageId);
 
@@ -330,7 +342,10 @@ export const landingPageService = {
   /**
    * Registra uma visualização de página
    */
-  async trackView(pageId: string, visitorData: Partial<LandingPageAnalyticsEvent>): Promise<void> {
+  async trackView(
+    pageId: string,
+    visitorData: Partial<LandingPageAnalyticsEvent>
+  ): Promise<void> {
     // Incrementa contador
     await supabase.rpc('increment_landing_page_views', { page_id: pageId });
 
@@ -346,19 +361,17 @@ export const landingPageService = {
     eventType: AnalyticsEventType,
     visitorData: Partial<LandingPageAnalyticsEvent>
   ): Promise<void> {
-    const { error } = await supabase
-      .from('landing_page_analytics')
-      .insert({
-        landing_page_id: pageId,
-        event_type: eventType,
-        visitor_id: visitorData.visitorId || generateVisitorId(),
-        ip_address: visitorData.ipAddress,
-        user_agent: visitorData.userAgent,
-        referrer: visitorData.referrer,
-        event_data: visitorData.eventData,
-        country: visitorData.country,
-        city: visitorData.city
-      });
+    const { error } = await supabase.from('landing_page_analytics').insert({
+      landing_page_id: pageId,
+      event_type: eventType,
+      visitor_id: visitorData.visitorId || generateVisitorId(),
+      ip_address: visitorData.ipAddress,
+      user_agent: visitorData.userAgent,
+      referrer: visitorData.referrer,
+      event_data: visitorData.eventData,
+      country: visitorData.country,
+      city: visitorData.city,
+    });
 
     if (error) console.error('Error tracking event:', error);
   },
@@ -373,7 +386,7 @@ export const landingPageService = {
     // Registra evento
     await this.trackEvent(pageId, AnalyticsEventType.FORM_SUBMIT, {
       eventData: leadData,
-      visitorId: leadData.visitorId || generateVisitorId()
+      visitorId: leadData.visitorId || generateVisitorId(),
     });
   },
 
@@ -402,22 +415,34 @@ export const landingPageService = {
     if (error) throw error;
 
     // Processar dados
-    const totalViews = events?.filter(e => e.event_type === 'view').length || 0;
-    const totalLeads = events?.filter(e => e.event_type === 'form_submit').length || 0;
+    const totalViews =
+      events?.filter((e) => e.event_type === 'view').length || 0;
+    const totalLeads =
+      events?.filter((e) => e.event_type === 'form_submit').length || 0;
     const conversionRate = totalViews > 0 ? (totalLeads / totalViews) * 100 : 0;
 
     // Agrupar por data
-    const viewsByDate = groupByDate(events?.filter(e => e.event_type === 'view') || []);
-    const leadsByDate = groupByDate(events?.filter(e => e.event_type === 'form_submit') || []);
+    const viewsByDate = groupByDate(
+      events?.filter((e) => e.event_type === 'view') || []
+    ).map((item) => ({ date: item.date, count: Number(item.count) }));
+    const leadsByDate = groupByDate(
+      events?.filter((e) => e.event_type === 'form_submit') || []
+    ).map((item) => ({ date: item.date, count: Number(item.count) }));
 
     // Top referrers
-    const topReferrers = countByField(events || [], 'referrer');
+    const topReferrers = countByField(events || [], 'referrer').map(
+      (item: any) => ({ referrer: item.referrer, count: item.count })
+    ) as Array<{ referrer: string; count: number }>;
 
     // Top countries
-    const topCountries = countByField(events || [], 'country');
+    const topCountries = countByField(events || [], 'country').map(
+      (item: any) => ({ country: item.country, count: item.count })
+    ) as Array<{ country: string; count: number }>;
 
     // Events by type
-    const eventsByType = countByField(events || [], 'event_type');
+    const eventsByType = countByField(events || [], 'event_type').map(
+      (item: any) => ({ type: item.event_type, count: item.count })
+    ) as Array<{ type: string; count: number }>;
 
     return {
       totalViews,
@@ -427,7 +452,7 @@ export const landingPageService = {
       leadsByDate,
       topReferrers,
       topCountries,
-      eventsByType
+      eventsByType,
     };
   },
 
@@ -438,17 +463,14 @@ export const landingPageService = {
   /**
    * Salva um bloco para reutilização
    */
-  async saveBlock(
-    block: Block,
-    name: string
-  ): Promise<SavedBlock> {
+  async saveBlock(block: Block, name: string): Promise<SavedBlock> {
     const { data, error } = await supabase
       .from('landing_page_blocks')
       .insert({
         name,
         type: block.type,
         config: block.config,
-        is_template: false
+        is_template: false,
       })
       .select()
       .single();
@@ -480,7 +502,7 @@ export const landingPageService = {
       .eq('id', id);
 
     if (error) throw error;
-  }
+  },
 };
 
 // ============================================
@@ -513,7 +535,7 @@ const mapToModel = (dbItem: any): LandingPage => ({
   customJs: dbItem.custom_js,
   customHead: dbItem.custom_head,
   createdAt: dbItem.created_at,
-  updatedAt: dbItem.updated_at
+  updatedAt: dbItem.updated_at,
 });
 
 const mapToDatabase = (model: Partial<LandingPage>): any => {
@@ -525,14 +547,16 @@ const mapToDatabase = (model: Partial<LandingPage>): any => {
   if (model.title !== undefined) db.title = model.title;
   if (model.description !== undefined) db.description = model.description;
   if (model.metaTitle !== undefined) db.meta_title = model.metaTitle;
-  if (model.metaDescription !== undefined) db.meta_description = model.metaDescription;
+  if (model.metaDescription !== undefined)
+    db.meta_description = model.metaDescription;
   if (model.metaKeywords !== undefined) db.meta_keywords = model.metaKeywords;
   if (model.ogImage !== undefined) db.og_image = model.ogImage;
   if (model.templateId !== undefined) db.template_id = model.templateId;
   if (model.themeConfig !== undefined) db.theme_config = model.themeConfig;
   if (model.blocks !== undefined) db.blocks = model.blocks;
   if (model.settings !== undefined) db.settings = model.settings;
-  if (model.propertySelection !== undefined) db.property_selection = model.propertySelection;
+  if (model.propertySelection !== undefined)
+    db.property_selection = model.propertySelection;
   if (model.formConfig !== undefined) db.form_config = model.formConfig;
   if (model.status !== undefined) db.status = model.status;
   if (model.publishedAt !== undefined) db.published_at = model.publishedAt;
@@ -553,7 +577,7 @@ const mapBlockToModel = (dbItem: any): SavedBlock => ({
   isTemplate: dbItem.is_template,
   usageCount: dbItem.usage_count || 0,
   createdAt: dbItem.created_at,
-  updatedAt: dbItem.updated_at
+  updatedAt: dbItem.updated_at,
 });
 
 // ============================================
@@ -583,26 +607,35 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function groupByDate(events: any[]): Array<{ date: string; count: number }> {
-  const grouped = events.reduce((acc, event) => {
-    const date = new Date(event.created_at).toISOString().split('T')[0];
-    acc[date] = (acc[date] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const grouped = events.reduce(
+    (acc, event) => {
+      const date = new Date(event.created_at).toISOString().split('T')[0];
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return Object.entries(grouped)
-    .map(([date, count]) => ({ date, count }))
+    .map(([date, count]) => ({ date, count: Number(count) }))
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
-function countByField(events: any[], field: string): Array<{ [key: string]: any; count: number }> {
-  const counted = events.reduce((acc, event) => {
-    const value = event[field] || 'Unknown';
-    acc[value] = (acc[value] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+function countByField(
+  events: any[],
+  field: string
+): Array<{ [key: string]: any; count: number }> {
+  const counted = events.reduce(
+    (acc, event) => {
+      const value = event[field] || 'Unknown';
+      acc[value] = (acc[value] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return Object.entries(counted)
-    .map(([key, count]) => ({ [field]: key, count }))
+    .map(([key, count]) => ({ [field]: key, count: Number(count) }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 }

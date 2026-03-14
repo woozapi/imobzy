@@ -10,7 +10,7 @@ const TextBlock: React.FC<TextBlockProps> = ({ config, theme }) => {
   // Ajustar tamanho de fonte para mobile (reduzir em 20-30%)
   const baseFontSize = config.fontSize || 16;
   const mobileFontSize = Math.max(14, Math.round(baseFontSize * 0.75));
-  
+
   return (
     <div
       className="prose prose-lg max-w-none px-4 sm:px-6 lg:px-0"
@@ -20,7 +20,7 @@ const TextBlock: React.FC<TextBlockProps> = ({ config, theme }) => {
         color: config.color,
         textAlign: config.alignment,
         fontFamily: theme.fontFamily,
-        lineHeight: '1.6'
+        lineHeight: '1.6',
       }}
     >
       <style>{`

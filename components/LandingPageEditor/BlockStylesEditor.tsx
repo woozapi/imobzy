@@ -6,7 +6,10 @@ interface BlockStylesEditorProps {
   onUpdate: (styles: BlockStyles) => void;
 }
 
-const BlockStylesEditor: React.FC<BlockStylesEditorProps> = ({ styles, onUpdate }) => {
+const BlockStylesEditor: React.FC<BlockStylesEditorProps> = ({
+  styles,
+  onUpdate,
+}) => {
   const updateStyle = (key: keyof BlockStyles, value: any) => {
     onUpdate({ ...styles, [key]: value });
   };

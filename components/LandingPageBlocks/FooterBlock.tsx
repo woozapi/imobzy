@@ -1,5 +1,13 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin,  MessageCircle } from 'lucide-react';
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Facebook,
+  Instagram,
+  Linkedin,
+  MessageCircle,
+} from 'lucide-react';
 
 export interface FooterBlockConfig {
   logo?: string;
@@ -37,9 +45,9 @@ const FooterBlock: React.FC<FooterBlockProps> = ({ config, theme }) => {
           {/* Company Info */}
           <div>
             {config.logo && (
-              <img 
-                src={config.logo} 
-                alt={config.companyName || 'Logo'} 
+              <img
+                src={config.logo}
+                alt={config.companyName || 'Logo'}
                 className="h-12 w-auto mb-4"
               />
             )}
@@ -138,7 +146,8 @@ const FooterBlock: React.FC<FooterBlockProps> = ({ config, theme }) => {
 
         {/* Copyright */}
         <div className="pt-8 border-t border-white/10 text-center text-sm opacity-70">
-          {config.copyrightText || `© ${currentYear} ${config.companyName || 'Todos os direitos reservados'}`}
+          {config.copyrightText ||
+            `© ${currentYear} ${config.companyName || 'Todos os direitos reservados'}`}
         </div>
       </div>
     </footer>

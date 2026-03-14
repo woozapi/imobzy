@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block, ImageBlockConfig } from '../../../types';
 
@@ -17,7 +16,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({ block, isEditing }) => {
       style={{
         width: config.width || '100%',
         height: config.height || 'auto',
-        objectFit: config.objectFit || 'cover'
+        objectFit: config.objectFit || 'cover',
       }}
       className="rounded-lg"
     />

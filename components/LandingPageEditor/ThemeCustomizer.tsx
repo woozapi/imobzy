@@ -8,7 +8,11 @@ interface ThemeCustomizerProps {
   onClose: () => void;
 }
 
-const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate, onClose }) => {
+const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({
+  themeConfig,
+  onUpdate,
+  onClose,
+}) => {
   const [theme, setTheme] = useState<LandingPageTheme>(themeConfig);
 
   const updateTheme = (updates: Partial<LandingPageTheme>) => {
@@ -17,21 +21,27 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
     onUpdate(newTheme);
   };
 
-  const updateFontSize = (key: keyof LandingPageTheme['fontSize'], value: string) => {
+  const updateFontSize = (
+    key: keyof LandingPageTheme['fontSize'],
+    value: string
+  ) => {
     updateTheme({
       fontSize: {
         ...theme.fontSize,
-        [key]: value
-      }
+        [key]: value,
+      },
     });
   };
 
-  const updateSpacing = (key: keyof LandingPageTheme['spacing'], value: string) => {
+  const updateSpacing = (
+    key: keyof LandingPageTheme['spacing'],
+    value: string
+  ) => {
     updateTheme({
       spacing: {
         ...theme.spacing,
-        [key]: value
-      }
+        [key]: value,
+      },
     });
   };
 
@@ -46,29 +56,39 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
     'Playfair Display',
     'Merriweather',
     'Nunito',
-    'Lora'
+    'Lora',
   ];
 
   const themePresets = [
     {
       name: 'Padrão Profissional',
-      colors: { primaryColor: '#2563eb', secondaryColor: '#4f46e5', backgroundColor: '#ffffff', textColor: '#111827' },
-      fonts: { fontFamily: 'Inter', headingFontFamily: 'Poppins' }
+      colors: {
+        primaryColor: '#2563eb',
+        secondaryColor: '#4f46e5',
+        backgroundColor: '#ffffff',
+        textColor: '#111827',
+      },
+      fonts: { fontFamily: 'Inter', headingFontFamily: 'Poppins' },
     },
     {
       name: 'Fazenda dos Sonhos',
-      colors: { primaryColor: '#4a5d23', secondaryColor: '#8b9c7a', backgroundColor: '#fdfbf7', textColor: '#333333', accentColor: '#d4af37' },
-      fonts: { fontFamily: 'Inter', headingFontFamily: 'Lora' }
-    }
+      colors: {
+        primaryColor: '#4a5d23',
+        secondaryColor: '#8b9c7a',
+        backgroundColor: '#fdfbf7',
+        textColor: '#333333',
+        accentColor: '#d4af37',
+      },
+      fonts: { fontFamily: 'Inter', headingFontFamily: 'Lora' },
+    },
   ];
 
   const applyPreset = (preset: any) => {
     updateTheme({
       ...preset.colors,
-      ...preset.fonts
+      ...preset.fonts,
     });
   };
-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -77,7 +97,9 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Palette className="text-blue-600" size={24} />
-            <h2 className="text-2xl font-bold text-gray-900">Customizar Tema</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Customizar Tema
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -90,7 +112,9 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Templates de Tema</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Templates de Tema
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {themePresets.map((preset) => (
                 <button
@@ -101,22 +125,39 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                   <div className="text-left">
                     <p className="font-bold text-gray-900">{preset.name}</p>
                     <div className="flex gap-1 mt-2">
-                       <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.colors.primaryColor }} />
-                       <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.colors.secondaryColor }} />
-                       <div className="w-4 h-4 rounded-full" style={{ backgroundColor: preset.colors.backgroundColor }} />
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: preset.colors.primaryColor }}
+                      />
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{
+                          backgroundColor: preset.colors.secondaryColor,
+                        }}
+                      />
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{
+                          backgroundColor: preset.colors.backgroundColor,
+                        }}
+                      />
                     </div>
                   </div>
-                  <Palette size={20} className="text-gray-400 group-hover:text-blue-600" />
+                  <Palette
+                    size={20}
+                    className="text-gray-400 group-hover:text-blue-600"
+                  />
                 </button>
               ))}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             {/* Cores */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Cores</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Cores
+              </h3>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -126,13 +167,17 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                   <input
                     type="color"
                     value={theme.primaryColor}
-                    onChange={(e) => updateTheme({ primaryColor: e.target.value })}
+                    onChange={(e) =>
+                      updateTheme({ primaryColor: e.target.value })
+                    }
                     className="h-10 w-20 rounded border border-gray-300"
                   />
                   <input
                     type="text"
                     value={theme.primaryColor}
-                    onChange={(e) => updateTheme({ primaryColor: e.target.value })}
+                    onChange={(e) =>
+                      updateTheme({ primaryColor: e.target.value })
+                    }
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -146,13 +191,17 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                   <input
                     type="color"
                     value={theme.secondaryColor}
-                    onChange={(e) => updateTheme({ secondaryColor: e.target.value })}
+                    onChange={(e) =>
+                      updateTheme({ secondaryColor: e.target.value })
+                    }
                     className="h-10 w-20 rounded border border-gray-300"
                   />
                   <input
                     type="text"
                     value={theme.secondaryColor}
-                    onChange={(e) => updateTheme({ secondaryColor: e.target.value })}
+                    onChange={(e) =>
+                      updateTheme({ secondaryColor: e.target.value })
+                    }
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -166,13 +215,17 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                   <input
                     type="color"
                     value={theme.accentColor || '#f59e0b'}
-                    onChange={(e) => updateTheme({ accentColor: e.target.value })}
+                    onChange={(e) =>
+                      updateTheme({ accentColor: e.target.value })
+                    }
                     className="h-10 w-20 rounded border border-gray-300"
                   />
                   <input
                     type="text"
                     value={theme.accentColor || '#f59e0b'}
-                    onChange={(e) => updateTheme({ accentColor: e.target.value })}
+                    onChange={(e) =>
+                      updateTheme({ accentColor: e.target.value })
+                    }
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -186,13 +239,17 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                   <input
                     type="color"
                     value={theme.backgroundColor}
-                    onChange={(e) => updateTheme({ backgroundColor: e.target.value })}
+                    onChange={(e) =>
+                      updateTheme({ backgroundColor: e.target.value })
+                    }
                     className="h-10 w-20 rounded border border-gray-300"
                   />
                   <input
                     type="text"
                     value={theme.backgroundColor}
-                    onChange={(e) => updateTheme({ backgroundColor: e.target.value })}
+                    onChange={(e) =>
+                      updateTheme({ backgroundColor: e.target.value })
+                    }
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -221,7 +278,9 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
 
             {/* Tipografia */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Tipografia</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Tipografia
+              </h3>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -232,8 +291,10 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                   onChange={(e) => updateTheme({ fontFamily: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
-                  {googleFonts.map(font => (
-                    <option key={font} value={font}>{font}</option>
+                  {googleFonts.map((font) => (
+                    <option key={font} value={font}>
+                      {font}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -244,11 +305,15 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                 </label>
                 <select
                   value={theme.headingFontFamily || theme.fontFamily}
-                  onChange={(e) => updateTheme({ headingFontFamily: e.target.value })}
+                  onChange={(e) =>
+                    updateTheme({ headingFontFamily: e.target.value })
+                  }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
-                  {googleFonts.map(font => (
-                    <option key={font} value={font}>{font}</option>
+                  {googleFonts.map((font) => (
+                    <option key={font} value={font}>
+                      {font}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -308,9 +373,13 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
 
             {/* Espaçamentos */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Espaçamentos</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Espaçamentos
+              </h3>
 
-              {(Object.keys(theme.spacing) as Array<keyof typeof theme.spacing>).map((key) => (
+              {(
+                Object.keys(theme.spacing) as Array<keyof typeof theme.spacing>
+              ).map((key) => (
                 <div key={key}>
                   <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
                     {key}
@@ -318,18 +387,24 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                   <input
                     type="text"
                     value={theme.spacing[key as keyof typeof theme.spacing]}
-                    onChange={(e) => updateSpacing(key as keyof typeof theme.spacing, e.target.value)}
+                    onChange={(e) =>
+                      updateSpacing(
+                        key as keyof typeof theme.spacing,
+                        e.target.value
+                      )
+                    }
                     placeholder="16px"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
-
                 </div>
               ))}
             </div>
 
             {/* Border Radius */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Bordas</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Bordas
+              </h3>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -338,7 +413,9 @@ const ThemeCustomizer: React.FC<ThemeCustomizerProps> = ({ themeConfig, onUpdate
                 <input
                   type="text"
                   value={theme.borderRadius}
-                  onChange={(e) => updateTheme({ borderRadius: e.target.value })}
+                  onChange={(e) =>
+                    updateTheme({ borderRadius: e.target.value })
+                  }
                   placeholder="8px"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 />

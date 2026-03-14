@@ -2,7 +2,12 @@
 // LANDING PAGE BUILDER - TYPES
 // ============================================
 
-import { Property, PropertyType, PropertyPurpose, PropertyStatus } from '../types';
+import {
+  Property,
+  PropertyType,
+  PropertyPurpose,
+  PropertyStatus,
+} from '../types';
 
 // ============================================
 // ENUMS
@@ -11,30 +16,30 @@ import { Property, PropertyType, PropertyPurpose, PropertyStatus } from '../type
 export enum LandingPageStatus {
   DRAFT = 'draft',
   PUBLISHED = 'published',
-  ARCHIVED = 'archived'
+  ARCHIVED = 'archived',
 }
 
 export enum BlockType {
   // Structure
   HEADER = 'header',
   FOOTER = 'footer',
-  
+
   // Hero & Headers
   HERO = 'hero',
   HERO_WITH_FORM = 'hero_with_form',
-  
+
   // Property Blocks
   PROPERTY_GRID = 'property_grid',
   PROPERTY_CAROUSEL = 'property_carousel',
   PROPERTY_FEATURED = 'property_featured',
   PROPERTY_SEARCH = 'property_search',
-  
+
   // Content Blocks
   TEXT = 'text',
   IMAGE = 'image',
   VIDEO = 'video',
   GALLERY = 'gallery',
-  
+
   // Interactive Blocks
   FORM = 'form',
   CTA = 'cta',
@@ -42,23 +47,23 @@ export enum BlockType {
   STATS = 'stats',
   MAP = 'map',
   TIMELINE = 'timeline',
-  
+
   // Info Blocks
   BROKER_CARD = 'broker_card',
   FEATURES = 'features',
-  
+
   // Layout Blocks
   SPACER = 'spacer',
   DIVIDER = 'divider',
-  
+
   // Advanced
-  CUSTOM_HTML = 'custom_html'
+  CUSTOM_HTML = 'custom_html',
 }
 
 export enum PropertySelectionMode {
   MANUAL = 'manual',
   FILTER = 'filter',
-  ALL = 'all'
+  ALL = 'all',
 }
 
 // ============================================
@@ -317,8 +322,31 @@ export interface CustomHTMLBlockConfig {
   js?: string;
 }
 
+export interface Feature {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface FeaturesBlockConfig {
+  features: Feature[];
+  columns: number;
+  layout?: 'grid' | 'list';
+}
+
+export interface TimelineItem {
+  title: string;
+  description: string;
+  time?: string;
+}
+
+export interface TimelineBlockConfig {
+  title?: string;
+  items: TimelineItem[];
+}
+
 // Union type for all block configs
-export type BlockConfig = 
+export type BlockConfig =
   | HeroWithFormBlockConfig
   | HeroBlockConfig
   | TextBlockConfig
@@ -334,6 +362,8 @@ export type BlockConfig =
   | StatsBlockConfig
   | MapBlockConfig
   | GalleryBlockConfig
+  | FeaturesBlockConfig
+  | TimelineBlockConfig
   | SpacerBlockConfig
   | DividerBlockConfig
   | CustomHTMLBlockConfig;
@@ -414,42 +444,42 @@ export interface LandingPage {
   id: string;
   organizationId?: string;
   userId: string;
-  
+
   // Identificação
   name: string;
   slug: string;
   title: string;
   description?: string;
-  
+
   // SEO
   metaTitle?: string;
   metaDescription?: string;
   metaKeywords?: string[];
   ogImage?: string;
-  
+
   // Visual
   templateId: string;
   themeConfig: LandingPageTheme;
   blocks: Block[];
   settings: LandingPageSettings;
-  
+
   // Imóveis
   propertySelection: PropertySelectionConfig;
-  
+
   // Formulário
   formConfig: LandingPageFormConfig;
-  
+
   // Status
   status: LandingPageStatus;
   publishedAt?: string;
   viewsCount: number;
   leadsCount: number;
-  
+
   // Custom Code
   customCss?: string;
   customJs?: string;
   customHead?: string;
-  
+
   // Timestamps
   createdAt: string;
   updatedAt: string;
@@ -484,7 +514,7 @@ export enum AnalyticsEventType {
   CTA_CLICK = 'cta_click',
   PHONE_CLICK = 'phone_click',
   EMAIL_CLICK = 'email_click',
-  WHATSAPP_CLICK = 'whatsapp_click'
+  WHATSAPP_CLICK = 'whatsapp_click',
 }
 
 export interface LandingPageAnalyticsEvent {
@@ -492,17 +522,17 @@ export interface LandingPageAnalyticsEvent {
   landingPageId: string;
   eventType: AnalyticsEventType;
   eventData?: Record<string, any>;
-  
+
   // Visitor Info
   visitorId: string;
   ipAddress?: string;
   userAgent?: string;
   referrer?: string;
-  
+
   // Geo
   country?: string;
   city?: string;
-  
+
   createdAt: string;
 }
 
@@ -536,8 +566,16 @@ export interface LandingPageTemplate {
 // UTILITY TYPES
 // ============================================
 
-export type CreateLandingPageInput = Omit<LandingPage, 'id' | 'createdAt' | 'updatedAt' | 'viewsCount' | 'leadsCount'>;
-export type UpdateLandingPageInput = Partial<Omit<LandingPage, 'id' | 'createdAt' | 'updatedAt' | 'organizationId' | 'userId'>>;
+export type CreateLandingPageInput = Omit<
+  LandingPage,
+  'id' | 'createdAt' | 'updatedAt' | 'viewsCount' | 'leadsCount'
+>;
+export type UpdateLandingPageInput = Partial<
+  Omit<
+    LandingPage,
+    'id' | 'createdAt' | 'updatedAt' | 'organizationId' | 'userId'
+  >
+>;
 
 // ============================================
 // BLOCK METADATA
@@ -562,8 +600,8 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
     category: 'layout',
     defaultConfig: {} as any,
     defaultStyles: {
-      padding: '0px'
-    }
+      padding: '0px',
+    },
   },
   [BlockType.FOOTER]: {
     type: BlockType.FOOTER,
@@ -574,8 +612,8 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
     defaultConfig: {} as any,
     defaultStyles: {
       padding: '40px 20px',
-      backgroundColor: '#f9fafb'
-    }
+      backgroundColor: '#f9fafb',
+    },
   },
   [BlockType.HERO]: {
     type: BlockType.HERO,
@@ -592,11 +630,11 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
       ctaLink: '#',
       height: 600,
       alignment: 'center',
-      textColor: '#ffffff'
+      textColor: '#ffffff',
     } as HeroBlockConfig,
     defaultStyles: {
-      padding: '0px'
-    }
+      padding: '0px',
+    },
   },
 
   [BlockType.HERO_WITH_FORM]: {
@@ -607,31 +645,69 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
     category: 'content',
     defaultConfig: {
       title: 'Encontre sua Fazenda dos Sonhos',
-      subtitle: 'Assine para receber ofertas exclusivas e novidades sobre os melhores imóveis rurais.',
+      subtitle:
+        'Assine para receber ofertas exclusivas e novidades sobre os melhores imóveis rurais.',
       backgroundImage: '',
       overlayOpacity: 0.3,
       formTitle: 'Receba novas oportunidades em imóveis rurais!',
-      formSubtitle: 'Cadastre-se para receber ofertas e novidades de imóveis rurais. Prometemos não enviar spam.',
+      formSubtitle:
+        'Cadastre-se para receber ofertas e novidades de imóveis rurais. Prometemos não enviar spam.',
       submitText: 'Quero Receber Ofertas Exclusivas',
       fields: [
-        { name: 'name', type: 'text', label: 'Nome completo', required: true, placeholder: 'Nome completo' },
-        { name: 'email', type: 'email', label: 'Seu e-mail', required: true, placeholder: 'Seu e-mail' },
-        { name: 'phone', type: 'tel', label: 'Telefone (WhatsApp)', required: true, placeholder: 'Telefone (WhatsApp)' },
-        { name: 'region', type: 'select', label: 'Região de Interesse', required: false, options: ['Norte', 'Sul', 'Centro-Oeste', 'Sudeste', 'Nordeste'] }
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Nome completo',
+          required: true,
+          placeholder: 'Nome completo',
+        },
+        {
+          name: 'email',
+          type: 'email',
+          label: 'Seu e-mail',
+          required: true,
+          placeholder: 'Seu e-mail',
+        },
+        {
+          name: 'phone',
+          type: 'tel',
+          label: 'Telefone (WhatsApp)',
+          required: true,
+          placeholder: 'Telefone (WhatsApp)',
+        },
+        {
+          name: 'region',
+          type: 'select',
+          label: 'Região de Interesse',
+          required: false,
+          options: ['Norte', 'Sul', 'Centro-Oeste', 'Sudeste', 'Nordeste'],
+        },
       ],
       height: 700,
       textColor: '#ffffff',
       showBadges: true,
       badges: [
-        { icon: 'shield', title: 'Cadastro 100% seguro', description: 'Seus dados protegidos.' },
-        { icon: 'star', title: 'Ofertas exclusivas', description: 'Receba propriedades selecionadas.' },
-        { icon: 'clock', title: 'Primeiro a saber', description: 'Acesse novas oportunidades antes de todos.' }
-      ]
+        {
+          icon: 'shield',
+          title: 'Cadastro 100% seguro',
+          description: 'Seus dados protegidos.',
+        },
+        {
+          icon: 'star',
+          title: 'Ofertas exclusivas',
+          description: 'Receba propriedades selecionadas.',
+        },
+        {
+          icon: 'clock',
+          title: 'Primeiro a saber',
+          description: 'Acesse novas oportunidades antes de todos.',
+        },
+      ],
     } as HeroWithFormBlockConfig,
     defaultStyles: {
       padding: '0px',
-      textAlign: 'center'
-    }
+      textAlign: 'center',
+    },
   },
   [BlockType.PROPERTY_GRID]: {
     type: BlockType.PROPERTY_GRID,
@@ -645,11 +721,11 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
       showFilters: true,
       maxItems: 12,
       sortBy: 'price',
-      cardStyle: 'modern'
+      cardStyle: 'modern',
     } as PropertyGridBlockConfig,
     defaultStyles: {
-      padding: '60px 20px'
-    }
+      padding: '60px 20px',
+    },
   },
   [BlockType.FORM]: {
     type: BlockType.FORM,
@@ -660,18 +736,42 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
     defaultConfig: {
       title: 'Entre em Contato',
       fields: [
-        { name: 'name', type: 'text', label: 'Nome', required: true, placeholder: 'Seu nome' },
-        { name: 'email', type: 'email', label: 'E-mail', required: true, placeholder: 'seu@email.com' },
-        { name: 'phone', type: 'tel', label: 'Telefone', required: true, placeholder: '(00) 00000-0000' },
-        { name: 'message', type: 'textarea', label: 'Mensagem', required: false, placeholder: 'Sua mensagem' }
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Nome',
+          required: true,
+          placeholder: 'Seu nome',
+        },
+        {
+          name: 'email',
+          type: 'email',
+          label: 'E-mail',
+          required: true,
+          placeholder: 'seu@email.com',
+        },
+        {
+          name: 'phone',
+          type: 'tel',
+          label: 'Telefone',
+          required: true,
+          placeholder: '(00) 00000-0000',
+        },
+        {
+          name: 'message',
+          type: 'textarea',
+          label: 'Mensagem',
+          required: false,
+          placeholder: 'Sua mensagem',
+        },
       ],
       submitText: 'Enviar',
-      successMessage: 'Mensagem enviada com sucesso!'
+      successMessage: 'Mensagem enviada com sucesso!',
     } as FormBlockConfig,
     defaultStyles: {
       padding: '60px 20px',
-      backgroundColor: '#f9fafb'
-    }
+      backgroundColor: '#f9fafb',
+    },
   },
   [BlockType.CTA]: {
     type: BlockType.CTA,
@@ -685,12 +785,12 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
       buttonText: 'Falar com Especialista',
       buttonLink: '#contato',
       backgroundColor: '#2563eb',
-      textColor: '#ffffff'
+      textColor: '#ffffff',
     } as CTABlockConfig,
     defaultStyles: {
       padding: '80px 20px',
-      textAlign: 'center'
-    }
+      textAlign: 'center',
+    },
   },
   [BlockType.TEXT]: {
     type: BlockType.TEXT,
@@ -703,11 +803,11 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
       fontSize: 16,
       fontWeight: 400,
       color: '#111827',
-      alignment: 'left'
+      alignment: 'left',
     } as TextBlockConfig,
     defaultStyles: {
-      padding: '40px 20px'
-    }
+      padding: '40px 20px',
+    },
   },
   [BlockType.IMAGE]: {
     type: BlockType.IMAGE,
@@ -720,11 +820,11 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
       alt: 'Imagem',
       width: '100%',
       height: 'auto',
-      objectFit: 'cover'
+      objectFit: 'cover',
     } as ImageBlockConfig,
     defaultStyles: {
-      padding: '20px'
-    }
+      padding: '20px',
+    },
   },
   [BlockType.VIDEO]: {
     type: BlockType.VIDEO,
@@ -737,11 +837,11 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
       autoplay: false,
       loop: false,
       muted: false,
-      controls: true
+      controls: true,
     } as VideoBlockConfig,
     defaultStyles: {
-      padding: '20px'
-    }
+      padding: '20px',
+    },
   },
   [BlockType.SPACER]: {
     type: BlockType.SPACER,
@@ -750,9 +850,9 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
     icon: '↕️',
     category: 'layout',
     defaultConfig: {
-      height: 60
+      height: 60,
     } as SpacerBlockConfig,
-    defaultStyles: {}
+    defaultStyles: {},
   },
   [BlockType.DIVIDER]: {
     type: BlockType.DIVIDER,
@@ -764,11 +864,11 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
       style: 'solid',
       color: '#e5e7eb',
       thickness: 1,
-      width: '100%'
+      width: '100%',
     } as DividerBlockConfig,
     defaultStyles: {
-      padding: '20px 0'
-    }
+      padding: '20px 0',
+    },
   },
   [BlockType.STATS]: {
     type: BlockType.STATS,
@@ -780,14 +880,13 @@ export const BLOCK_METADATA: Record<BlockType, BlockMetadata> = {
       stats: [
         { value: '1000+', label: 'Clientes Satisfeitos', icon: '👥' },
         { value: '500+', label: 'Propriedades Vendidas', icon: '🏡' },
-        { value: '15', label: 'Anos de Experiência', icon: '⭐' }
+        { value: '15', label: 'Anos de Experiência', icon: '⭐' },
       ],
       columns: 3,
-      animated: true
+      animated: true,
     } as StatsBlockConfig,
     defaultStyles: {
-      padding: '60px 20px'
-    }
-  }
+      padding: '60px 20px',
+    },
+  },
 };
-

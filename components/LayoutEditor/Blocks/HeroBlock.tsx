@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block, HeroBlockConfig } from '../../../types';
 
@@ -11,42 +10,42 @@ export const HeroBlock: React.FC<HeroBlockProps> = ({ block, isEditing }) => {
   const config = block.config as HeroBlockConfig;
 
   return (
-    <div 
+    <div
       className="relative overflow-hidden flex items-center justify-center"
-      style={{ 
+      style={{
         height: config.height || 600,
         backgroundImage: `url(${config.backgroundImage})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
       }}
     >
       {/* Overlay */}
-      <div 
+      <div
         className="absolute inset-0 bg-black"
         style={{ opacity: config.overlayOpacity || 0.5 }}
       />
-      
+
       {/* Content */}
-      <div 
+      <div
         className="relative z-10 max-w-4xl px-6 text-center"
-        style={{ 
+        style={{
           textAlign: config.alignment,
-          color: config.textColor || '#ffffff'
+          color: config.textColor || '#ffffff',
         }}
       >
-        <h1 
+        <h1
           className="font-black mb-4 leading-tight"
           style={{ fontSize: 'clamp(32px, 5vw, 72px)' }}
         >
           {config.title || 'Título do Hero'}
         </h1>
-        
+
         {config.subtitle && (
           <p className="text-xl md:text-2xl mb-8 opacity-90">
             {config.subtitle}
           </p>
         )}
-        
+
         {config.ctaText && (
           <a
             href={config.ctaLink || '#'}

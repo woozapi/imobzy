@@ -1,6 +1,13 @@
-
 export type ImportMode = 'visual' | 'migration' | 'feed';
-export type ImportStatus = 'idle' | 'analyzing' | 'crawling' | 'processing' | 'review' | 'importing' | 'completed' | 'error';
+export type ImportStatus =
+  | 'idle'
+  | 'analyzing'
+  | 'crawling'
+  | 'processing'
+  | 'review'
+  | 'importing'
+  | 'completed'
+  | 'error';
 
 export interface VisualIdentity {
   palette: string[];

@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, FileText, AlertTriangle, CheckCircle, Upload, Clock, XCircle, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import {
+  ShieldCheck,
+  FileText,
+  AlertTriangle,
+  CheckCircle,
+  Upload,
+  Clock,
+  XCircle,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+} from 'lucide-react';
 import { supabase } from '../../services/supabase';
 
 type DocStatus = 'approved' | 'pending' | 'rejected' | 'missing';
@@ -15,40 +26,137 @@ interface ChecklistItem {
 
 const DEFAULT_CHECKLIST: ChecklistItem[] = [
   // Fundiário
-  { id: '1', name: 'Matrícula Atualizada (< 30 dias)', category: 'fundiario', status: 'missing' },
-  { id: '2', name: 'Certidão de Ônus Reais', category: 'fundiario', status: 'missing' },
-  { id: '3', name: 'CCIR (Certificado de Cadastro do Imóvel Rural)', category: 'fundiario', status: 'missing' },
-  { id: '4', name: 'ITR (Imposto Territorial Rural) em dia', category: 'fundiario', status: 'missing' },
-  { id: '5', name: 'Georreferenciamento / GEO INCRA', category: 'fundiario', status: 'missing' },
-  { id: '6', name: 'Certidão Negativa de Débitos Federais', category: 'fundiario', status: 'missing' },
-  { id: '7', name: 'Certidão de Ações Reipersecutórias', category: 'fundiario', status: 'missing' },
-  { id: '8', name: 'Contrato / Escritura Original', category: 'fundiario', status: 'missing' },
-  
+  {
+    id: '1',
+    name: 'Matrícula Atualizada (< 30 dias)',
+    category: 'fundiario',
+    status: 'missing',
+  },
+  {
+    id: '2',
+    name: 'Certidão de Ônus Reais',
+    category: 'fundiario',
+    status: 'missing',
+  },
+  {
+    id: '3',
+    name: 'CCIR (Certificado de Cadastro do Imóvel Rural)',
+    category: 'fundiario',
+    status: 'missing',
+  },
+  {
+    id: '4',
+    name: 'ITR (Imposto Territorial Rural) em dia',
+    category: 'fundiario',
+    status: 'missing',
+  },
+  {
+    id: '5',
+    name: 'Georreferenciamento / GEO INCRA',
+    category: 'fundiario',
+    status: 'missing',
+  },
+  {
+    id: '6',
+    name: 'Certidão Negativa de Débitos Federais',
+    category: 'fundiario',
+    status: 'missing',
+  },
+  {
+    id: '7',
+    name: 'Certidão de Ações Reipersecutórias',
+    category: 'fundiario',
+    status: 'missing',
+  },
+  {
+    id: '8',
+    name: 'Contrato / Escritura Original',
+    category: 'fundiario',
+    status: 'missing',
+  },
+
   // Ambiental
-  { id: '9', name: 'CAR (Cadastro Ambiental Rural)', category: 'ambiental', status: 'missing' },
-  { id: '10', name: 'Reserva Legal Averbada', category: 'ambiental', status: 'missing' },
-  { id: '11', name: 'Licença Ambiental (se aplicável)', category: 'ambiental', status: 'missing' },
-  { id: '12', name: 'Outorga de Uso de Água', category: 'ambiental', status: 'missing' },
-  { id: '13', name: 'Relatório de APP (Área de Preservação)', category: 'ambiental', status: 'missing' },
-  { id: '14', name: 'Laudo de Flora e Fauna', category: 'ambiental', status: 'missing' },
+  {
+    id: '9',
+    name: 'CAR (Cadastro Ambiental Rural)',
+    category: 'ambiental',
+    status: 'missing',
+  },
+  {
+    id: '10',
+    name: 'Reserva Legal Averbada',
+    category: 'ambiental',
+    status: 'missing',
+  },
+  {
+    id: '11',
+    name: 'Licença Ambiental (se aplicável)',
+    category: 'ambiental',
+    status: 'missing',
+  },
+  {
+    id: '12',
+    name: 'Outorga de Uso de Água',
+    category: 'ambiental',
+    status: 'missing',
+  },
+  {
+    id: '13',
+    name: 'Relatório de APP (Área de Preservação)',
+    category: 'ambiental',
+    status: 'missing',
+  },
+  {
+    id: '14',
+    name: 'Laudo de Flora e Fauna',
+    category: 'ambiental',
+    status: 'missing',
+  },
 ];
 
-const statusConfig: Record<DocStatus, { label: string; color: string; bg: string; icon: any }> = {
-  approved: { label: 'Aprovado', color: 'text-emerald-700', bg: 'bg-emerald-100', icon: CheckCircle },
-  pending: { label: 'Pendente', color: 'text-amber-700', bg: 'bg-amber-100', icon: Clock },
-  rejected: { label: 'Rejeitado', color: 'text-red-700', bg: 'bg-red-100', icon: XCircle },
-  missing: { label: 'Faltando', color: 'text-slate-500', bg: 'bg-slate-100', icon: AlertTriangle },
+const statusConfig: Record<
+  DocStatus,
+  { label: string; color: string; bg: string; icon: any }
+> = {
+  approved: {
+    label: 'Aprovado',
+    color: 'text-emerald-700',
+    bg: 'bg-emerald-100',
+    icon: CheckCircle,
+  },
+  pending: {
+    label: 'Pendente',
+    color: 'text-amber-700',
+    bg: 'bg-amber-100',
+    icon: Clock,
+  },
+  rejected: {
+    label: 'Rejeitado',
+    color: 'text-red-700',
+    bg: 'bg-red-100',
+    icon: XCircle,
+  },
+  missing: {
+    label: 'Faltando',
+    color: 'text-slate-500',
+    bg: 'bg-slate-100',
+    icon: AlertTriangle,
+  },
 };
 
 const DueDiligence: React.FC = () => {
-  const [checklist, setChecklist] = useState<ChecklistItem[]>(DEFAULT_CHECKLIST);
+  const [checklist, setChecklist] =
+    useState<ChecklistItem[]>(DEFAULT_CHECKLIST);
   const [expandedCategory, setExpandedCategory] = useState<string>('fundiario');
   const [selectedProperty, setSelectedProperty] = useState<string>('');
   const [properties, setProperties] = useState<any[]>([]);
 
   useEffect(() => {
     const loadProps = async () => {
-      const { data } = await supabase.from('properties').select('id, title').order('title');
+      const { data } = await supabase
+        .from('properties')
+        .select('id, title')
+        .order('title');
       setProperties(data || []);
     };
     loadProps();
@@ -56,20 +164,27 @@ const DueDiligence: React.FC = () => {
 
   const cycleStatus = (id: string) => {
     const order: DocStatus[] = ['missing', 'pending', 'approved', 'rejected'];
-    setChecklist(prev => prev.map(item => {
-      if (item.id !== id) return item;
-      const currentIdx = order.indexOf(item.status);
-      const nextIdx = (currentIdx + 1) % order.length;
-      return { ...item, status: order[nextIdx] };
-    }));
+    setChecklist((prev) =>
+      prev.map((item) => {
+        if (item.id !== id) return item;
+        const currentIdx = order.indexOf(item.status);
+        const nextIdx = (currentIdx + 1) % order.length;
+        return { ...item, status: order[nextIdx] };
+      })
+    );
   };
 
-  const fundiarioItems = checklist.filter(i => i.category === 'fundiario');
-  const ambientalItems = checklist.filter(i => i.category === 'ambiental');
-  
+  const fundiarioItems = checklist.filter((i) => i.category === 'fundiario');
+  const ambientalItems = checklist.filter((i) => i.category === 'ambiental');
+
   const calculateScore = (items: ChecklistItem[]) => {
     if (items.length === 0) return 0;
-    const weights: Record<DocStatus, number> = { approved: 100, pending: 50, rejected: 10, missing: 0 };
+    const weights: Record<DocStatus, number> = {
+      approved: 100,
+      pending: 50,
+      rejected: 10,
+      missing: 0,
+    };
     const total = items.reduce((acc, item) => acc + weights[item.status], 0);
     return Math.round(total / items.length);
   };
@@ -79,15 +194,22 @@ const DueDiligence: React.FC = () => {
   const overallScore = calculateScore(checklist);
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return { ring: 'border-emerald-500', text: 'text-emerald-600' };
-    if (score >= 50) return { ring: 'border-amber-500', text: 'text-amber-600' };
+    if (score >= 80)
+      return { ring: 'border-emerald-500', text: 'text-emerald-600' };
+    if (score >= 50)
+      return { ring: 'border-amber-500', text: 'text-amber-600' };
     return { ring: 'border-red-500', text: 'text-red-600' };
   };
 
-  const renderChecklist = (items: ChecklistItem[], title: string, icon: any, categoryKey: string) => {
+  const renderChecklist = (
+    items: ChecklistItem[],
+    title: string,
+    icon: any,
+    categoryKey: string
+  ) => {
     const Icon = icon;
     const isExpanded = expandedCategory === categoryKey;
-    
+
     return (
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
         <button
@@ -98,24 +220,39 @@ const DueDiligence: React.FC = () => {
             <Icon size={22} className="text-emerald-600" />
             <h3 className="text-lg font-bold text-black">{title}</h3>
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">
-              {items.filter(i => i.status === 'approved').length}/{items.length} aprovados
+              {items.filter((i) => i.status === 'approved').length}/
+              {items.length} aprovados
             </span>
           </div>
-          {isExpanded ? <ChevronUp size={20} className="text-slate-400" /> : <ChevronDown size={20} className="text-slate-400" />}
+          {isExpanded ? (
+            <ChevronUp size={20} className="text-slate-400" />
+          ) : (
+            <ChevronDown size={20} className="text-slate-400" />
+          )}
         </button>
-        
+
         {isExpanded && (
           <div className="px-6 pb-6 space-y-2">
             {items.map((item) => {
               const cfg = statusConfig[item.status];
               const StatusIcon = cfg.icon;
               return (
-                <div key={item.id} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 group hover:shadow-sm transition-all">
-                  <button onClick={() => cycleStatus(item.id)} className={`p-1.5 rounded-lg ${cfg.bg} ${cfg.color} transition-all hover:scale-110`}>
+                <div
+                  key={item.id}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 group hover:shadow-sm transition-all"
+                >
+                  <button
+                    onClick={() => cycleStatus(item.id)}
+                    className={`p-1.5 rounded-lg ${cfg.bg} ${cfg.color} transition-all hover:scale-110`}
+                  >
                     <StatusIcon size={16} />
                   </button>
-                  <span className="text-sm font-medium text-slate-700 flex-1">{item.name}</span>
-                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${cfg.bg} ${cfg.color}`}>
+                  <span className="text-sm font-medium text-slate-700 flex-1">
+                    {item.name}
+                  </span>
+                  <span
+                    className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${cfg.bg} ${cfg.color}`}
+                  >
                     {cfg.label}
                   </span>
                   <button className="invisible group-hover:visible p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all">
@@ -138,22 +275,29 @@ const DueDiligence: React.FC = () => {
           <ShieldCheck className="text-emerald-600" size={32} />
           Due Diligence Rural
         </h1>
-        <p className="text-black/60 font-medium">Checklists fundiários e ambientais, semáforo documental e score de risco.</p>
+        <p className="text-black/60 font-medium">
+          Checklists fundiários e ambientais, semáforo documental e score de
+          risco.
+        </p>
       </div>
 
       {/* Property Selector + Scores */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Property Selector */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200">
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Propriedade</label>
+          <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+            Propriedade
+          </label>
           <select
             value={selectedProperty}
             onChange={(e) => setSelectedProperty(e.target.value)}
             className="w-full mt-2 px-4 py-3 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-emerald-500/30"
           >
             <option value="">Selecione uma propriedade</option>
-            {properties.map(p => (
-              <option key={p.id} value={p.id}>{p.title}</option>
+            {properties.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title}
+              </option>
             ))}
           </select>
         </div>
@@ -166,14 +310,25 @@ const DueDiligence: React.FC = () => {
         ].map((item, idx) => {
           const colors = getScoreColor(item.score);
           return (
-            <div key={idx} className="bg-white p-6 rounded-2xl border border-slate-200 flex items-center gap-4">
-              <div className={`w-16 h-16 rounded-full border-4 ${colors.ring} flex items-center justify-center`}>
-                <span className={`text-xl font-black ${colors.text}`}>{item.score}</span>
+            <div
+              key={idx}
+              className="bg-white p-6 rounded-2xl border border-slate-200 flex items-center gap-4"
+            >
+              <div
+                className={`w-16 h-16 rounded-full border-4 ${colors.ring} flex items-center justify-center`}
+              >
+                <span className={`text-xl font-black ${colors.text}`}>
+                  {item.score}
+                </span>
               </div>
               <div>
                 <p className="text-sm font-bold text-black">{item.label}</p>
                 <p className="text-xs text-slate-400">
-                  {item.score >= 80 ? 'Excelente' : item.score >= 50 ? 'Atenção' : 'Crítico'}
+                  {item.score >= 80
+                    ? 'Excelente'
+                    : item.score >= 50
+                      ? 'Atenção'
+                      : 'Crítico'}
                 </p>
               </div>
             </div>
@@ -186,18 +341,36 @@ const DueDiligence: React.FC = () => {
         <h3 className="font-bold text-black mb-4">Semáforo Documental</h3>
         <div className="grid grid-cols-4 gap-3">
           {[
-            { status: 'approved' as DocStatus, count: checklist.filter(i => i.status === 'approved').length },
-            { status: 'pending' as DocStatus, count: checklist.filter(i => i.status === 'pending').length },
-            { status: 'rejected' as DocStatus, count: checklist.filter(i => i.status === 'rejected').length },
-            { status: 'missing' as DocStatus, count: checklist.filter(i => i.status === 'missing').length },
+            {
+              status: 'approved' as DocStatus,
+              count: checklist.filter((i) => i.status === 'approved').length,
+            },
+            {
+              status: 'pending' as DocStatus,
+              count: checklist.filter((i) => i.status === 'pending').length,
+            },
+            {
+              status: 'rejected' as DocStatus,
+              count: checklist.filter((i) => i.status === 'rejected').length,
+            },
+            {
+              status: 'missing' as DocStatus,
+              count: checklist.filter((i) => i.status === 'missing').length,
+            },
           ].map((item, idx) => {
             const cfg = statusConfig[item.status];
             const Ic = cfg.icon;
             return (
               <div key={idx} className={`p-4 rounded-xl ${cfg.bg} text-center`}>
                 <Ic size={24} className={`mx-auto mb-2 ${cfg.color}`} />
-                <p className={`text-2xl font-black ${cfg.color}`}>{item.count}</p>
-                <p className={`text-[10px] font-bold uppercase tracking-widest ${cfg.color}`}>{cfg.label}</p>
+                <p className={`text-2xl font-black ${cfg.color}`}>
+                  {item.count}
+                </p>
+                <p
+                  className={`text-[10px] font-bold uppercase tracking-widest ${cfg.color}`}
+                >
+                  {cfg.label}
+                </p>
               </div>
             );
           })}
@@ -205,8 +378,18 @@ const DueDiligence: React.FC = () => {
       </div>
 
       {/* Checklists */}
-      {renderChecklist(fundiarioItems, 'Checklist Fundiário', FileText, 'fundiario')}
-      {renderChecklist(ambientalItems, 'Checklist Ambiental', ShieldCheck, 'ambiental')}
+      {renderChecklist(
+        fundiarioItems,
+        'Checklist Fundiário',
+        FileText,
+        'fundiario'
+      )}
+      {renderChecklist(
+        ambientalItems,
+        'Checklist Ambiental',
+        ShieldCheck,
+        'ambiental'
+      )}
     </div>
   );
 };

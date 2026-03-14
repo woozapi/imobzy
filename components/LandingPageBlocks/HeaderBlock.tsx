@@ -22,14 +22,15 @@ interface HeaderBlockProps {
 
 const HeaderBlock: React.FC<HeaderBlockProps> = ({ config, theme }) => {
   const bg = config.backgroundColor || theme.primaryColor || '#ffffff';
-  const color = config.textColor || (config.transparent ? '#ffffff' : '#1f2937');
-  
+  const color =
+    config.textColor || (config.transparent ? '#ffffff' : '#1f2937');
+
   return (
     <header
       className={`${config.sticky ? 'sticky top-0 z-50' : ''} ${config.transparent ? 'absolute w-full' : ''}`}
       style={{
         backgroundColor: config.transparent ? 'transparent' : bg,
-        borderBottom: config.transparent ? 'none' : '1px solid rgba(0,0,0,0.1)'
+        borderBottom: config.transparent ? 'none' : '1px solid rgba(0,0,0,0.1)',
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,23 +38,20 @@ const HeaderBlock: React.FC<HeaderBlockProps> = ({ config, theme }) => {
           {/* Logo / Brand */}
           <div className="flex items-center gap-3">
             {config.logo && (
-              <img 
-                src={config.logo} 
-                alt="Logo" 
+              <img
+                src={config.logo}
+                alt="Logo"
                 className="h-10 md:h-12 w-auto"
               />
             )}
             <div>
               {config.brandName && (
-                <div 
-                  className="text-lg md:text-xl font-bold"
-                  style={{ color }}
-                >
+                <div className="text-lg md:text-xl font-bold" style={{ color }}>
                   {config.brandName}
                 </div>
               )}
               {config.tagline && (
-                <div 
+                <div
                   className="text-xs md:text-sm opacity-80"
                   style={{ color }}
                 >
@@ -77,7 +75,7 @@ const HeaderBlock: React.FC<HeaderBlockProps> = ({ config, theme }) => {
                 </span>
               </a>
             )}
-            
+
             {config.showWhatsApp && config.whatsappNumber && (
               <a
                 href={`https://wa.me/${config.whatsappNumber.replace(/\D/g, '')}`}

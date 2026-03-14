@@ -1,4 +1,3 @@
-
 export interface ContractTemplate {
   id: string;
   name: string;
@@ -25,7 +24,7 @@ export const CONTRACT_TEMPLATES: ContractTemplate[] = [
 3. Este contrato serve como título executivo extrajudicial entre as partes.
 
 Este documento foi gerado automaticamente pela plataforma ImobSaaS em {{current_date}}.
-    `
+    `,
   },
   {
     id: 'arrendamento',
@@ -47,7 +46,7 @@ Este documento foi gerado automaticamente pela plataforma ImobSaaS em {{current_
 - Benfeitorias deverão ser autorizadas previamente por escrito.
 
 Gerado via ImobSaaS em {{current_date}}.
-    `
+    `,
   },
   {
     id: 'parceria',
@@ -67,6 +66,6 @@ Gerado via ImobSaaS em {{current_date}}.
 - O outorgado fornece a mão de obra e manejo técnico.
 
 Documento de controle interno ImobSaaS - {{current_date}}.
-    `
-  }
+    `,
+  },
 ];

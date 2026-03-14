@@ -1,5 +1,11 @@
 import { supabase } from './supabase';
-import { Property, PropertyType, PropertyStatus, PropertyPurpose, PropertyAptitude } from '../types';
+import {
+  Property,
+  PropertyType,
+  PropertyStatus,
+  PropertyPurpose,
+  PropertyAptitude,
+} from '../types';
 
 export const propertyService = {
   // Listar Imóveis (Supports filtering by organizationId)
@@ -12,7 +18,7 @@ export const propertyService = {
     if (organizationId) {
       query = query.eq('organization_id', organizationId);
     }
-  
+
     const { data, error } = await query;
 
     if (error) throw error;
@@ -60,10 +66,7 @@ export const propertyService = {
 
   // Excluir Imóvel
   async delete(id: string) {
-    const { error } = await supabase
-      .from('properties')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('properties').delete().eq('id', id);
 
     if (error) throw error;
   },
@@ -72,7 +75,7 @@ export const propertyService = {
   async submit(property: Partial<Property>) {
     const payload = mapToDatabase(property);
     payload.status = 'Pendente'; // Força status pendente para submissões públicas
-    
+
     const { data, error } = await supabase
       .from('properties')
       .insert(payload)
@@ -81,7 +84,7 @@ export const propertyService = {
 
     if (error) throw error;
     return mapToModel(data);
-  }
+  },
 };
 
 // Mappers para converter entre Banco de Dados (snake_case/flat) e Modelo da Aplicação (CamelCase/Nested)
@@ -99,44 +102,98 @@ const mapToModel = (dbItem: any): Property => ({
     city: dbItem.city || '',
     neighborhood: dbItem.neighborhood || '',
     state: dbItem.state || '',
-    address: dbItem.address || ''
+    address: dbItem.address || '',
   },
   features: {
     ...dbItem.features,
     areaHectares: dbItem.area_total_ha || dbItem.features?.areaHectares || 0,
     // Garantir estrutura mínima para evitar erros de undefined
-    infra: dbItem.features?.infra || { casaSede: false, casasFuncionarios: 0, curral: false, brete: false, balanca: false, galpaes: 0, barracao: false, paiol: false, tulha: false, armazem: false, confinamento: false, cocheira: false, estabulo: false, cercas: '', piquetes: 0, estradasInternas: false, energiaEletrica: false, energiaSolar: false, pocoArtesiano: false, caixaDagua: false, irrigacao: false, pivotCentral: false },
-    water: dbItem.features?.water || { rio: false, corrego: false, riacho: false, nascente: false, represa: false, acude: false, lago: false, bebedouros: false, captacaoAgua: false, outorga: false },
-    livestock: dbItem.features?.livestock || { category: [], totalHeads: 0, ua: 0, confinamento: false },
-    agriculture: dbItem.features?.agriculture || { crops: [], safra: '', rotation: false, irrigatedArea: 0, mechanizableArea: 0 },
-    legal: dbItem.features?.legal || { 
-      matricula: '', 
-      escritura: false, 
-      ccir: false, 
-      ccirNumber: '',
-      car: false, 
-      carNumber: '',
-      itr: false, 
-      itrNumber: '',
-      geo: false, 
-      geoNumber: '',
-      reservaLegal: 0, 
-      app: 0, 
-      incra: '', 
-      outorgaAgua: false, 
-      regularizacaoFundiaria: false 
+    infra: dbItem.features?.infra || {
+      casaSede: false,
+      casasFuncionarios: 0,
+      curral: false,
+      brete: false,
+      balanca: false,
+      galpaes: 0,
+      barracao: false,
+      paiol: false,
+      tulha: false,
+      armazem: false,
+      confinamento: false,
+      cocheira: false,
+      estabulo: false,
+      cercas: '',
+      piquetes: 0,
+      estradasInternas: false,
+      energiaEletrica: false,
+      energiaSolar: false,
+      pocoArtesiano: false,
+      caixaDagua: false,
+      irrigacao: false,
+      pivotCentral: false,
     },
-    commercial: dbItem.features?.commercial || { pricePerHa: 0, pricePerAlqueire: 0, isPorteiraFechada: false, permuta: false, arrendamento: false, parcelado: false }
+    water: dbItem.features?.water || {
+      rio: false,
+      corrego: false,
+      riacho: false,
+      nascente: false,
+      represa: false,
+      acude: false,
+      lago: false,
+      bebedouros: false,
+      captacaoAgua: false,
+      outorga: false,
+    },
+    livestock: dbItem.features?.livestock || {
+      category: [],
+      totalHeads: 0,
+      ua: 0,
+      confinamento: false,
+    },
+    agriculture: dbItem.features?.agriculture || {
+      crops: [],
+      safra: '',
+      rotation: false,
+      irrigatedArea: 0,
+      mechanizableArea: 0,
+    },
+    legal: dbItem.features?.legal || {
+      matricula: '',
+      escritura: false,
+      ccir: false,
+      ccirNumber: '',
+      car: false,
+      carNumber: '',
+      itr: false,
+      itrNumber: '',
+      geo: false,
+      geoNumber: '',
+      reservaLegal: 0,
+      app: 0,
+      incra: '',
+      outorgaAgua: false,
+      regularizacaoFundiaria: false,
+    },
+    commercial: dbItem.features?.commercial || {
+      pricePerHa: 0,
+      pricePerAlqueire: 0,
+      isPorteiraFechada: false,
+      permuta: false,
+      arrendamento: false,
+      parcelado: false,
+    },
   },
   images: dbItem.images || [],
   highlighted: dbItem.highlighted,
   ownerInfo: dbItem.owner_info,
   brokerId: dbItem.broker_id || '',
   createdAt: dbItem.created_at,
-  analysis: dbItem.analysis
+  analysis: dbItem.analysis,
 });
 
-const mapToDatabase = (model: Partial<Property> & { organization_id?: string }): any => {
+const mapToDatabase = (
+  model: Partial<Property> & { organization_id?: string }
+): any => {
   const payload: any = {
     title: model.title,
     description: model.description,
@@ -160,14 +217,17 @@ const mapToDatabase = (model: Partial<Property> & { organization_id?: string }):
     // Novas colunas especializadas para filtros
     area_total_ha: model.features?.areaHectares,
     topography: model.features?.topography,
-    soil_texture: model.features?.soilTexture
+    soil_texture: model.features?.soilTexture,
   };
 
   // Cálculo de densidade de valor se o preço e a área existirem
-  if (model.price && model.features?.areaHectares && model.features.areaHectares > 0) {
+  if (
+    model.price &&
+    model.features?.areaHectares &&
+    model.features.areaHectares > 0
+  ) {
     payload.price_per_ha = model.price / model.features.areaHectares;
   }
 
   return payload;
 };
-

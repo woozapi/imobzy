@@ -1,10 +1,9 @@
-
 export enum PropertyStatus {
   AVAILABLE = 'Disponível',
   RENTED = 'Alugado',
   SOLD = 'Vendido',
   RESERVED = 'Reservado',
-  PENDING = 'Pendente'
+  PENDING = 'Pendente',
 }
 
 export enum PropertyType {
@@ -28,13 +27,13 @@ export enum PropertyType {
   GALPAO_INDUSTRIAL = 'Galpão Industrial',
   LOFT = 'Loft',
   STUDIO = 'Studio',
-  COBERTURA = 'Cobertura'
+  COBERTURA = 'Cobertura',
 }
 
 export enum PropertyPurpose {
   SALE = 'Venda',
   RENT = 'Aluguel',
-  BOTH = 'Venda e Aluguel'
+  BOTH = 'Venda e Aluguel',
 }
 
 export enum PropertyAptitude {
@@ -47,14 +46,14 @@ export enum PropertyAptitude {
   GRAINS = 'Grãos',
   FRUIT = 'Fruticultura',
   DAIRY = 'Leite',
-  REFORESTATION = 'Reflorestamento'
+  REFORESTATION = 'Reflorestamento',
 }
 
 export enum TopographyType {
   PLANA = 'Plana',
   ONDULADA = 'Ondulada',
   LEVE_ONDULADA = 'Levemente Ondulada',
-  MONTANHOSA = 'Montanhosa'
+  MONTANHOSA = 'Montanhosa',
 }
 
 export enum SoilTexture {
@@ -63,14 +62,14 @@ export enum SoilTexture {
   MISTO = 'Misto',
   MASSAPE = 'Massapê',
   TERRA_ROXA = 'Terra Roxa',
-  LATOSSOLO = 'Latossolo'
+  LATOSSOLO = 'Latossolo',
 }
 
 export enum AlqueireType {
   PAULISTA = 'Paulista (2.42 ha)',
   MINEIRO = 'Mineiro (4.84 ha)',
   GOIANO = 'Goiano (4.84 ha)',
-  BAIANO = 'Baiano (9.68 ha)'
+  BAIANO = 'Baiano (9.68 ha)',
 }
 
 export enum LivestockCategory {
@@ -79,7 +78,7 @@ export enum LivestockCategory {
   CRIA = 'Cria',
   RECRIA = 'Recria',
   ENGORDA = 'Engorda',
-  CICLO_COMPLETO = 'Ciclo Completo'
+  CICLO_COMPLETO = 'Ciclo Completo',
 }
 
 export interface Property {
@@ -101,20 +100,20 @@ export interface Property {
   };
   features: {
     // Área e Medidas
-    areaHectares: number;        
-    areaAlqueires?: number;      
+    areaHectares: number;
+    areaAlqueires?: number;
     alqueireType?: AlqueireType;
     areaAcres?: number;
     areaM2?: number;
     preferredUnit?: 'ha' | 'alqueire' | 'acre' | 'm2';
-    
+
     // Características da Terra
     topography?: TopographyType;
     soilTexture?: SoilTexture;
     altitude?: number;
     pluviometry?: number;
     supportCapacity?: number; // UA/ha
-    
+
     // Infraestrutura Rural
     infra?: {
       casaSede: boolean;
@@ -140,7 +139,7 @@ export interface Property {
       irrigacao: boolean;
       pivotCentral: boolean;
     };
-    
+
     // Recursos Hídricos
     water?: {
       rio: boolean;
@@ -154,7 +153,7 @@ export interface Property {
       captacaoAgua: boolean;
       outorga: boolean;
     };
-    
+
     // Pecuária
     livestock?: {
       category: LivestockCategory[];
@@ -162,7 +161,7 @@ export interface Property {
       ua: number;
       confinamento: boolean;
     };
-    
+
     // Agricultura
     agriculture?: {
       crops: string[];
@@ -171,7 +170,7 @@ export interface Property {
       irrigatedArea: number;
       mechanizableArea: number;
     };
-    
+
     // Documentação Legal
     legal?: {
       matricula: string;
@@ -190,7 +189,7 @@ export interface Property {
       outorgaAgua: boolean;
       regularizacaoFundiaria: boolean;
     };
-    
+
     // Comercialização
     commercial?: {
       pricePerHa?: number;
@@ -311,7 +310,7 @@ export enum BlockType {
   DIVIDER = 'divider',
   BROKER_CARD = 'broker_card',
   CTA = 'cta',
-  FOOTER = 'footer'
+  FOOTER = 'footer',
 }
 
 // Configuração de espaçamento
@@ -480,7 +479,6 @@ export interface LayoutConfig {
   globalStyles: GlobalStyles;
   breakpoints: Breakpoints;
 }
-
 
 export interface SiteSettings {
   id?: string; // Add optional ID for database persistence

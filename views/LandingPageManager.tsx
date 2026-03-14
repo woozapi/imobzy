@@ -3,17 +3,20 @@ import { useAuth } from '../context/AuthContext';
 import { landingPageService } from '../services/landingPages';
 import { propertyService } from '../services/properties';
 import { generateLandingPageFromProperty } from '../services/ai';
-import { getTemplateById, generateBlocksFromTemplate } from '../services/landingPageTemplates';
+import {
+  getTemplateById,
+  generateBlocksFromTemplate,
+} from '../services/landingPageTemplates';
 import { LandingPage, LandingPageStatus } from '../types/landingPage';
 import { Property } from '../types';
 import TemplateSelector from '../components/TemplateSelector';
-import { 
-  Plus, 
-  Edit2, 
-  Copy, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
+import {
+  Plus,
+  Edit2,
+  Copy,
+  Trash2,
+  Eye,
+  EyeOff,
   ExternalLink,
   Search,
   Filter,
@@ -21,7 +24,7 @@ import {
   Globe,
   FileText,
   Sparkles,
-  Loader
+  Loader,
 } from 'lucide-react';
 import AICloneModal from '../components/LandingPageEditor/AICloneModal';
 import CloneSiteWrapper from '../components/LandingPageEditor/CloneSiteWrapper';
@@ -31,11 +34,13 @@ const LandingPageManager: React.FC = () => {
   const [pages, setPages] = useState<LandingPage[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | LandingPageStatus>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | LandingPageStatus>(
+    'all'
+  );
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
-  
+
   useEffect(() => {
     loadPages();
   }, []);
@@ -88,10 +93,12 @@ const LandingPageManager: React.FC = () => {
     }
   };
 
-  const filteredPages = pages.filter(page => {
-    const matchesSearch = page.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         page.slug.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || page.status === statusFilter;
+  const filteredPages = pages.filter((page) => {
+    const matchesSearch =
+      page.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      page.slug.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === 'all' || page.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -99,17 +106,19 @@ const LandingPageManager: React.FC = () => {
     const styles = {
       [LandingPageStatus.DRAFT]: 'bg-gray-100 text-gray-800',
       [LandingPageStatus.PUBLISHED]: 'bg-green-100 text-green-800',
-      [LandingPageStatus.ARCHIVED]: 'bg-red-100 text-red-800'
+      [LandingPageStatus.ARCHIVED]: 'bg-red-100 text-red-800',
     };
 
     const labels = {
       [LandingPageStatus.DRAFT]: 'Rascunho',
       [LandingPageStatus.PUBLISHED]: 'Publicado',
-      [LandingPageStatus.ARCHIVED]: 'Arquivado'
+      [LandingPageStatus.ARCHIVED]: 'Arquivado',
     };
 
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status]}`}>
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status]}`}
+      >
         {labels[status]}
       </span>
     );
@@ -135,7 +144,7 @@ const LandingPageManager: React.FC = () => {
             </p>
           </div>
           <div className="flex gap-3">
-             <button
+            <button
               onClick={() => setShowAIModal(true)}
               data-ai-button
               className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl group"
@@ -144,12 +153,12 @@ const LandingPageManager: React.FC = () => {
               Criar com IA
             </button>
             <button
-               onClick={() => setShowCloneModal(true)}
-               className="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors shadow-lg hover:shadow-xl group"
-             >
-               <Copy size={20} />
-               Clonar Site
-             </button>
+              onClick={() => setShowCloneModal(true)}
+              className="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors shadow-lg hover:shadow-xl group"
+            >
+              <Copy size={20} />
+              Clonar Site
+            </button>
             <button
               onClick={() => setShowCreateModal(true)}
               className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors shadow-sm hover:shadow-md"
@@ -163,7 +172,10 @@ const LandingPageManager: React.FC = () => {
         {/* Filters */}
         <div className="flex gap-4 items-center">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={20}
+            />
             <input
               type="text"
               placeholder="Buscar por nome ou slug..."
@@ -206,7 +218,10 @@ const LandingPageManager: React.FC = () => {
             <div>
               <p className="text-gray-600 text-sm">Publicadas</p>
               <p className="text-2xl font-bold text-green-600">
-                {pages.filter(p => p.status === LandingPageStatus.PUBLISHED).length}
+                {
+                  pages.filter((p) => p.status === LandingPageStatus.PUBLISHED)
+                    .length
+                }
               </p>
             </div>
             <Globe className="text-green-600" size={32} />
@@ -218,7 +233,9 @@ const LandingPageManager: React.FC = () => {
             <div>
               <p className="text-gray-600 text-sm">Total de Visitas</p>
               <p className="text-2xl font-bold text-purple-600">
-                {pages.reduce((sum, p) => sum + p.viewsCount, 0).toLocaleString()}
+                {pages
+                  .reduce((sum, p) => sum + p.viewsCount, 0)
+                  .toLocaleString()}
               </p>
             </div>
             <Eye className="text-purple-600" size={32} />
@@ -230,7 +247,9 @@ const LandingPageManager: React.FC = () => {
             <div>
               <p className="text-gray-600 text-sm">Total de Leads</p>
               <p className="text-2xl font-bold text-orange-600">
-                {pages.reduce((sum, p) => sum + p.leadsCount, 0).toLocaleString()}
+                {pages
+                  .reduce((sum, p) => sum + p.leadsCount, 0)
+                  .toLocaleString()}
               </p>
             </div>
             <BarChart3 className="text-orange-600" size={32} />
@@ -243,16 +262,14 @@ const LandingPageManager: React.FC = () => {
         <div className="text-center py-12 bg-white rounded-lg shadow">
           <FileText className="mx-auto text-gray-400 mb-4" size={48} />
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            {searchTerm || statusFilter !== 'all' 
+            {searchTerm || statusFilter !== 'all'
               ? 'Nenhuma landing page encontrada'
-              : 'Nenhuma landing page criada ainda'
-            }
+              : 'Nenhuma landing page criada ainda'}
           </h3>
           <p className="text-gray-600 mb-6">
             {searchTerm || statusFilter !== 'all'
               ? 'Tente ajustar os filtros de busca'
-              : 'Comece criando sua primeira landing page personalizada'
-            }
+              : 'Comece criando sua primeira landing page personalizada'}
           </p>
           {!searchTerm && statusFilter === 'all' && (
             <button
@@ -266,7 +283,10 @@ const LandingPageManager: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPages.map((page) => (
-            <div key={page.id} className="bg-white rounded-lg shadow hover:shadow-xl transition-shadow overflow-hidden">
+            <div
+              key={page.id}
+              className="bg-white rounded-lg shadow hover:shadow-xl transition-shadow overflow-hidden"
+            >
               {/* Preview Image */}
               <div className="h-48 bg-gradient-to-br from-blue-500 to-purple-600 relative">
                 <div className="absolute inset-0 flex items-center justify-center text-white">
@@ -302,7 +322,8 @@ const LandingPageManager: React.FC = () => {
                   </div>
                   {page.leadsCount > 0 && page.viewsCount > 0 && (
                     <div className="text-green-600 font-medium">
-                      {((page.leadsCount / page.viewsCount) * 100).toFixed(1)}% conv.
+                      {((page.leadsCount / page.viewsCount) * 100).toFixed(1)}%
+                      conv.
                     </div>
                   )}
                 </div>
@@ -310,7 +331,9 @@ const LandingPageManager: React.FC = () => {
                 {/* Actions */}
                 <div className="flex gap-2">
                   <button
-                    onClick={() => window.location.href = `/admin/landing-pages/${page.id}`}
+                    onClick={() =>
+                      (window.location.href = `/admin/landing-pages/${page.id}`)
+                    }
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     <Edit2 size={16} />
@@ -324,7 +347,11 @@ const LandingPageManager: React.FC = () => {
                         ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         : 'bg-green-100 text-green-700 hover:bg-green-200'
                     }`}
-                    title={page.status === LandingPageStatus.PUBLISHED ? 'Despublicar' : 'Publicar'}
+                    title={
+                      page.status === LandingPageStatus.PUBLISHED
+                        ? 'Despublicar'
+                        : 'Publicar'
+                    }
                   >
                     {page.status === LandingPageStatus.PUBLISHED ? (
                       <EyeOff size={16} />
@@ -391,9 +418,7 @@ const LandingPageManager: React.FC = () => {
 
       {/* Clone Modal */}
       {showCloneModal && (
-        <CloneSiteWrapper 
-          onClose={() => setShowCloneModal(false)}
-        />
+        <CloneSiteWrapper onClose={() => setShowCloneModal(false)} />
       )}
     </div>
   );
@@ -408,9 +433,14 @@ interface CreateLandingPageModalProps {
   onCreated: () => void;
 }
 
-const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose, onCreated }) => {
+const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({
+  onClose,
+  onCreated,
+}) => {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'templates' | 'blank'>('templates');
+  const [activeTab, setActiveTab] = useState<'templates' | 'blank'>(
+    'templates'
+  );
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [creating, setCreating] = useState(false);
@@ -449,7 +479,7 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
         settings: {
           headerStyle: 'transparent',
           footerStyle: 'minimal',
-          showBranding: true
+          showBranding: true,
         },
         propertySelection: {
           mode: 'manual' as any,
@@ -457,7 +487,7 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
           filters: {},
           sortBy: 'price',
           sortOrder: 'desc',
-          limit: 12
+          limit: 12,
         },
         formConfig: {
           enabled: true,
@@ -465,9 +495,9 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
           submitText: 'Enviar Mensagem',
           successMessage: 'Mensagem enviada com sucesso!',
           whatsappEnabled: true,
-          emailEnabled: true
+          emailEnabled: true,
         },
-        status: LandingPageStatus.DRAFT
+        status: LandingPageStatus.DRAFT,
       });
 
       // Redirecionar para o editor
@@ -509,7 +539,7 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
             base: '16px',
             heading1: '48px',
             heading2: '36px',
-            heading3: '24px'
+            heading3: '24px',
           },
           borderRadius: '8px',
           spacing: {
@@ -517,14 +547,14 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
             sm: '8px',
             md: '16px',
             lg: '24px',
-            xl: '32px'
-          }
+            xl: '32px',
+          },
         },
         blocks: [],
         settings: {
           headerStyle: 'transparent',
           footerStyle: 'minimal',
-          showBranding: true
+          showBranding: true,
         },
         propertySelection: {
           mode: 'manual' as any,
@@ -532,7 +562,7 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
           filters: {},
           sortBy: 'price',
           sortOrder: 'desc',
-          limit: 12
+          limit: 12,
         },
         formConfig: {
           enabled: true,
@@ -540,9 +570,9 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
           submitText: 'Enviar Mensagem',
           successMessage: 'Mensagem enviada com sucesso!',
           whatsappEnabled: true,
-          emailEnabled: true
+          emailEnabled: true,
         },
-        status: LandingPageStatus.DRAFT
+        status: LandingPageStatus.DRAFT,
       });
 
       // Redirecionar para o editor
@@ -557,7 +587,9 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
   const handleCreateWithAI = () => {
     onClose();
     // Trigger AI modal
-    const aiButton = document.querySelector('[data-ai-button]') as HTMLButtonElement;
+    const aiButton = document.querySelector(
+      '[data-ai-button]'
+    ) as HTMLButtonElement;
     if (aiButton) aiButton.click();
   };
 
@@ -617,10 +649,16 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
             <div className="p-8 max-w-md mx-auto">
               <h3 className="text-xl font-bold mb-4">Criar Página em Branco</h3>
               <p className="text-gray-600 mb-6">
-                Comece do zero e construa sua landing page com total flexibilidade
+                Comece do zero e construa sua landing page com total
+                flexibilidade
               </p>
 
-              <form onSubmit={(e) => { e.preventDefault(); handleCreateBlank(); }}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleCreateBlank();
+                }}
+              >
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Nome da Landing Page
@@ -686,19 +724,28 @@ const CreateLandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose
 // AI CREATE MODAL COMPONENT
 // ============================================
 
-const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClose, onCreated }) => {
+const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({
+  onClose,
+  onCreated,
+}) => {
   const { user, profile } = useAuth();
-  const [step, setStep] = useState<'template' | 'property' | 'generating'>('template');
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [step, setStep] = useState<'template' | 'property' | 'generating'>(
+    'template'
+  );
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
+    null
+  );
   const [properties, setProperties] = useState<Property[]>([]);
   const [loadingProps, setLoadingProps] = useState(true);
   const [selectedPropId, setSelectedPropId] = useState<string | null>(null);
   const [searchProp, setSearchProp] = useState('');
-  const [generationStage, setGenerationStage] = useState('Analizando imóvel...');
+  const [generationStage, setGenerationStage] = useState(
+    'Analizando imóvel...'
+  );
 
   useEffect(() => {
     if (profile?.organization_id) {
-        loadProperties();
+      loadProperties();
     }
   }, [profile?.organization_id]);
 
@@ -723,14 +770,17 @@ const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClo
     console.log('handleGenerate called');
     console.log('Selected Prop ID:', selectedPropId);
     console.log('User ID:', user?.id);
-    
+
     if (!selectedPropId || !user?.id) {
-      console.error('Missing required data for generation', { selectedPropId, userId: user?.id });
+      console.error('Missing required data for generation', {
+        selectedPropId,
+        userId: user?.id,
+      });
       alert('Erro: Informações do usuário incompletas.');
       return;
     }
 
-    const property = properties.find(p => p.id === selectedPropId);
+    const property = properties.find((p) => p.id === selectedPropId);
     if (!property) {
       console.error('Property not found');
       return;
@@ -738,15 +788,15 @@ const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClo
 
     try {
       setStep('generating');
-      
+
       // AI Generation
       setGenerationStage('Escrevendo copy persuasiva...');
       console.log('Calling generateLandingPageFromProperty...');
       const aiData = await generateLandingPageFromProperty(property);
       console.log('AI Data received:', aiData);
-      
+
       setGenerationStage('Montando layout v2.0...');
-      
+
       // Slug Generation
       const baseSlug = (aiData.name || property.title)
         .toLowerCase()
@@ -770,14 +820,14 @@ const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClo
         settings: {
           headerStyle: 'transparent',
           footerStyle: 'minimal',
-          showBranding: true
+          showBranding: true,
         },
         propertySelection: {
           mode: 'manual',
           propertyIds: [property.id],
           filters: {},
           sortBy: 'price',
-          limit: 1
+          limit: 1,
         },
         formConfig: {
           enabled: true,
@@ -785,47 +835,55 @@ const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClo
           submitText: 'Agendar Visita',
           successMessage: 'Recebemos seu contato!',
           whatsappEnabled: true,
-          emailEnabled: true
+          emailEnabled: true,
         },
-        status: LandingPageStatus.DRAFT
+        status: LandingPageStatus.DRAFT,
       } as any);
 
       console.log('Page created:', newPage);
 
       // Redirect
       window.location.href = `/admin/landing-pages/${newPage.id}`;
-
     } catch (error: any) {
-      console.error("AI Generation failed:", error);
-      alert("Falha na geração: " + error.message);
+      console.error('AI Generation failed:', error);
+      alert('Falha na geração: ' + error.message);
       setStep('property');
     }
   };
 
-  const filteredProps = properties.filter(p => 
-    p.title.toLowerCase().includes(searchProp.toLowerCase()) || 
-    p.location.city.toLowerCase().includes(searchProp.toLowerCase())
+  const filteredProps = properties.filter(
+    (p) =>
+      p.title.toLowerCase().includes(searchProp.toLowerCase()) ||
+      p.location.city.toLowerCase().includes(searchProp.toLowerCase())
   );
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full flex flex-col max-h-[90vh] overflow-hidden">
-        
         {step === 'template' && (
           <>
             <div className="p-6 border-b border-gray-100">
-               <div className="flex items-center justify-between">
-                 <div className="flex items-center gap-3">
-                   <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
-                     <Sparkles size={24} />
-                   </div>
-                   <div>
-                     <h2 className="text-xl font-bold text-gray-900">✨ Criar com IA - Escolha um Template</h2>
-                     <p className="text-sm text-gray-500">Selecione um design base para sua landing page</p>
-                   </div>
-                 </div>
-                 <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-2xl">✕</button>
-               </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
+                    <Sparkles size={24} />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">
+                      ✨ Criar com IA - Escolha um Template
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      Selecione um design base para sua landing page
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={onClose}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto">
@@ -841,103 +899,125 @@ const CreateAILandingPageModal: React.FC<CreateLandingPageModalProps> = ({ onClo
         {step === 'property' && (
           <>
             <div className="p-6 border-b border-gray-100">
-               <div className="flex items-center gap-3 mb-2">
-                 <button 
-                   onClick={() => setStep('template')} 
-                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl"
-                   title="Voltar para templates"
-                 >
-                   ←
-                 </button>
-                 <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
-                   <Sparkles size={24} />
-                 </div>
-                 <div>
-                   <h2 className="text-xl font-bold text-gray-900">Escolha o Imóvel</h2>
-                   <p className="text-sm text-gray-500">A IA vai gerar conteúdo personalizado para este imóvel</p>
-                 </div>
-               </div>
+              <div className="flex items-center gap-3 mb-2">
+                <button
+                  onClick={() => setStep('template')}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl"
+                  title="Voltar para templates"
+                >
+                  ←
+                </button>
+                <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
+                  <Sparkles size={24} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Escolha o Imóvel
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    A IA vai gerar conteúdo personalizado para este imóvel
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="p-4 border-b border-gray-100 bg-gray-50">
-               <div className="relative">
-                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                 <input 
-                   type="text"
-                   placeholder="Buscar imóvel..."
-                   className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-                   value={searchProp}
-                   onChange={e => setSearchProp(e.target.value)}
-                 />
-               </div>
+              <div className="relative">
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  size={18}
+                />
+                <input
+                  type="text"
+                  placeholder="Buscar imóvel..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={searchProp}
+                  onChange={(e) => setSearchProp(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">
-               {loadingProps ? (
-                 <div className="text-center py-10 text-gray-400">Carregando imóveis...</div>
-               ) : (
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                   {filteredProps.map(p => (
-                     <div 
-                       key={p.id}
-                       onClick={() => setSelectedPropId(p.id)}
-                       className={`border rounded-xl p-3 cursor-pointer transition-all hover:shadow-md flex gap-3 ${selectedPropId === p.id ? 'border-purple-500 ring-2 ring-purple-500/20 bg-purple-50' : 'border-gray-200 bg-white'}`}
-                     >
-                       <img 
-                         src={p.images[0] || 'https://via.placeholder.com/100'} 
-                         className="w-16 h-16 rounded-lg object-cover bg-gray-100"
-                       />
-                       <div className="flex-1 overflow-hidden">
-                          <h4 className="font-bold text-gray-800 truncate text-sm">{p.title}</h4>
-                          <p className="text-xs text-gray-500 truncate">{p.location.city} - {p.location.state}</p>
-                          <p className="text-xs font-semibold text-purple-600 mt-1">R$ {p.price.toLocaleString('pt-BR')}</p>
-                       </div>
-                     </div>
-                   ))}
-                 </div>
-               )}
+              {loadingProps ? (
+                <div className="text-center py-10 text-gray-400">
+                  Carregando imóveis...
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {filteredProps.map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => setSelectedPropId(p.id)}
+                      className={`border rounded-xl p-3 cursor-pointer transition-all hover:shadow-md flex gap-3 ${selectedPropId === p.id ? 'border-purple-500 ring-2 ring-purple-500/20 bg-purple-50' : 'border-gray-200 bg-white'}`}
+                    >
+                      <img
+                        src={p.images[0] || 'https://via.placeholder.com/100'}
+                        className="w-16 h-16 rounded-lg object-cover bg-gray-100"
+                      />
+                      <div className="flex-1 overflow-hidden">
+                        <h4 className="font-bold text-gray-800 truncate text-sm">
+                          {p.title}
+                        </h4>
+                        <p className="text-xs text-gray-500 truncate">
+                          {p.location.city} - {p.location.state}
+                        </p>
+                        <p className="text-xs font-semibold text-purple-600 mt-1">
+                          R$ {p.price.toLocaleString('pt-BR')}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
-               <button 
-                 onClick={onClose}
-                 className="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-200 rounded-xl transition-colors"
-               >
-                 Cancelar
-               </button>
-               <button 
-                 onClick={handleGenerate}
-                 disabled={!selectedPropId}
-                 className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-indigo-200"
-               >
-                 <Sparkles size={18} />
-                 Gerar Página Mágica
-               </button>
+              <button
+                onClick={onClose}
+                className="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-200 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleGenerate}
+                disabled={!selectedPropId}
+                className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-indigo-200"
+              >
+                <Sparkles size={18} />
+                Gerar Página Mágica
+              </button>
             </div>
           </>
         )}
 
         {step === 'generating' && (
           <div className="flex flex-col items-center justify-center p-12 text-center h-[500px]">
-             <div className="relative mb-8">
-               <div className="absolute inset-0 bg-indigo-500 blur-xl opacity-20 animate-pulse rounded-full"></div>
-               <div className="relative bg-white p-4 rounded-full shadow-xl">
-                 <Sparkles size={48} className="text-indigo-600 animate-spin-slow" />
-               </div>
-             </div>
-             
-             <h3 className="text-2xl font-bold text-gray-900 mb-2">Criando sua Landing Page</h3>
-             <p className="text-gray-500 mb-8 max-w-sm mx-auto">
-               Nossa IA está analisando os dados do imóvel, escrevendo textos persuasivos e montando o layout perfeito.
-             </p>
+            <div className="relative mb-8">
+              <div className="absolute inset-0 bg-indigo-500 blur-xl opacity-20 animate-pulse rounded-full"></div>
+              <div className="relative bg-white p-4 rounded-full shadow-xl">
+                <Sparkles
+                  size={48}
+                  className="text-indigo-600 animate-spin-slow"
+                />
+              </div>
+            </div>
 
-             <div className="flex items-center gap-3 bg-indigo-50 px-5 py-2 rounded-full">
-               <Loader size={16} className="text-indigo-600 animate-spin" />
-               <span className="text-sm font-medium text-indigo-700">{generationStage}</span>
-             </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
+              Criando sua Landing Page
+            </h3>
+            <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+              Nossa IA está analisando os dados do imóvel, escrevendo textos
+              persuasivos e montando o layout perfeito.
+            </p>
+
+            <div className="flex items-center gap-3 bg-indigo-50 px-5 py-2 rounded-full">
+              <Loader size={16} className="text-indigo-600 animate-spin" />
+              <span className="text-sm font-medium text-indigo-700">
+                {generationStage}
+              </span>
+            </div>
           </div>
         )}
-
       </div>
     </div>
   );

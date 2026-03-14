@@ -12,11 +12,13 @@ export interface LandingPageTemplate {
 }
 
 // Helper para gerar blocos com IDs únicos
-export const generateBlocksFromTemplate = (templateBlocks: Omit<Block, 'id'>[]): Block[] => {
+export const generateBlocksFromTemplate = (
+  templateBlocks: Omit<Block, 'id'>[]
+): Block[] => {
   return templateBlocks.map((block, index) => ({
     ...block,
     id: uuidv4(),
-    order: index
+    order: index,
   }));
 };
 
@@ -27,7 +29,8 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
   {
     id: 'sonho-rural-premium',
     name: 'Sonho Rural Premium',
-    description: 'Hero impactante com formulário em destaque e badges de benefícios',
+    description:
+      'Hero impactante com formulário em destaque e badges de benefícios',
     thumbnail: '🏔️',
     category: 'Fazendas',
     themeConfig: {
@@ -37,8 +40,19 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       textColor: '#1f2937',
       fontFamily: 'Montserrat',
       borderRadius: '0.5rem',
-      spacing: { xs: '0.5rem', sm: '1rem', md: '1.5rem', lg: '2rem', xl: '3rem' },
-      fontSize: { base: '1rem', heading1: '3rem', heading2: '2.25rem', heading3: '1.875rem' }
+      spacing: {
+        xs: '0.5rem',
+        sm: '1rem',
+        md: '1.5rem',
+        lg: '2rem',
+        xl: '3rem',
+      },
+      fontSize: {
+        base: '1rem',
+        heading1: '3rem',
+        heading2: '2.25rem',
+        heading3: '1.875rem',
+      },
     },
     blocks: [
       {
@@ -54,10 +68,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           ctaLink: '#contato',
           height: 600,
           alignment: 'left',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '0' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.STATS,
@@ -67,12 +81,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           stats: [
             { icon: '🌾', value: '500+', label: 'Hectares Disponíveis' },
             { icon: '📍', value: '15+', label: 'Regiões Premium' },
-            { icon: '🌳', value: '100%', label: 'Natureza Preservada' }
+            { icon: '🌳', value: '100%', label: 'Natureza Preservada' },
           ],
-          columns: 3
-        },
+          columns: 3,
+        } as any,
         styles: { padding: '60px 20px', backgroundColor: '#f9fafb' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.TEXT,
@@ -85,10 +99,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           fontSize: 18,
           fontWeight: 400,
           color: '#374151',
-          alignment: 'center'
+          alignment: 'center',
         },
         styles: { padding: '60px 40px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.PROPERTY_GRID,
@@ -100,10 +114,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           showFilters: false,
           maxItems: 6,
           sortBy: 'price',
-          cardStyle: 'modern'
+          cardStyle: 'modern',
         },
         styles: { padding: '60px 20px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.CTA,
@@ -111,14 +125,15 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           title: 'Pronto para Conhecer Sua Próxima Propriedade?',
-          description: 'Agende uma visita exclusiva e veja pessoalmente o potencial do seu futuro investimento',
+          description:
+            'Agende uma visita exclusiva e veja pessoalmente o potencial do seu futuro investimento',
           buttonText: 'Falar com Especialista Agora',
           buttonLink: 'https://wa.me/5544997223030',
           backgroundColor: '#1e40af',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '80px 20px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.FORM,
@@ -127,18 +142,43 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         config: {
           title: 'Agende Sua Visita',
           fields: [
-            { name: 'name', type: 'text', label: 'Nome Completo', required: true, placeholder: 'Como prefere ser chamado?' },
-            { name: 'phone', type: 'tel', label: 'WhatsApp', required: true, placeholder: '(00) 00000-0000' },
-            { name: 'email', type: 'email', label: 'E-mail', required: false, placeholder: 'seu@email.com' },
-            { name: 'message', type: 'textarea', label: 'Quando gostaria de visitar?', required: false, placeholder: 'Conte-nos sobre suas expectativas...' }
+            {
+              name: 'name',
+              type: 'text',
+              label: 'Nome Completo',
+              required: true,
+              placeholder: 'Como prefere ser chamado?',
+            },
+            {
+              name: 'phone',
+              type: 'tel',
+              label: 'WhatsApp',
+              required: true,
+              placeholder: '(00) 00000-0000',
+            },
+            {
+              name: 'email',
+              type: 'email',
+              label: 'E-mail',
+              required: false,
+              placeholder: 'seu@email.com',
+            },
+            {
+              name: 'message',
+              type: 'textarea',
+              label: 'Quando gostaria de visitar?',
+              required: false,
+              placeholder: 'Conte-nos sobre suas expectativas...',
+            },
           ],
           submitText: 'Confirmar Agendamento',
-          successMessage: 'Recebemos seu interesse! Entraremos em contato em até 2 horas.'
+          successMessage:
+            'Recebemos seu interesse! Entraremos em contato em até 2 horas.',
         },
         styles: { padding: '60px 20px', backgroundColor: '#f9fafb' },
-        responsive: {}
-      }
-    ]
+        responsive: {},
+      },
+    ],
   },
 
   // ============================================
@@ -157,8 +197,19 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       textColor: '#1f2937',
       fontFamily: 'Poppins',
       borderRadius: '0.75rem',
-      spacing: { xs: '0.5rem', sm: '1rem', md: '1.5rem', lg: '2rem', xl: '3rem' },
-      fontSize: { base: '1rem', heading1: '2.75rem', heading2: '2.25rem', heading3: '1.875rem' }
+      spacing: {
+        xs: '0.5rem',
+        sm: '1rem',
+        md: '1.5rem',
+        lg: '2rem',
+        xl: '3rem',
+      },
+      fontSize: {
+        base: '1rem',
+        heading1: '2.75rem',
+        heading2: '2.25rem',
+        heading3: '1.875rem',
+      },
     },
     blocks: [
       {
@@ -167,17 +218,18 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           title: 'Fazendas à Venda',
-          subtitle: 'Invista no Seu Refúgio Rural com Segurança e Rentabilidade',
+          subtitle:
+            'Invista no Seu Refúgio Rural com Segurança e Rentabilidade',
           backgroundImage: '',
           overlayOpacity: 0.5,
           ctaText: 'Ver Propriedades Disponíveis',
           ctaLink: '#propriedades',
           height: 650,
           alignment: 'center',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '0' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.FEATURES,
@@ -185,14 +237,26 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           features: [
-            { title: 'Áreas de Cultivo Preparadas', description: 'Solo fértil pronto para produção', icon: '🌾' },
-            { title: 'Criação de Gado Premium', description: 'Pastagens de alta qualidade', icon: '🐄' },
-            { title: 'Lagos e Mata Nativa', description: 'Água abundante e natureza preservada', icon: '🌳' }
+            {
+              title: 'Áreas de Cultivo Preparadas',
+              description: 'Solo fértil pronto para produção',
+              icon: '🌾',
+            },
+            {
+              title: 'Criação de Gado Premium',
+              description: 'Pastagens de alta qualidade',
+              icon: '🐄',
+            },
+            {
+              title: 'Lagos e Mata Nativa',
+              description: 'Água abundante e natureza preservada',
+              icon: '🌳',
+            },
           ],
-          columns: 3
+          columns: 3,
         },
         styles: { padding: '60px 20px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.TEXT,
@@ -204,10 +268,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           fontSize: 18,
           fontWeight: 400,
           color: '#374151',
-          alignment: 'center'
+          alignment: 'center',
         },
         styles: { padding: '40px 20px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.PROPERTY_GRID,
@@ -219,10 +283,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           showFilters: false,
           maxItems: 3,
           sortBy: 'price',
-          cardStyle: 'modern'
+          cardStyle: 'modern',
         },
         styles: { padding: '40px 20px', backgroundColor: '#f9fafb' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.STATS,
@@ -232,12 +296,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           stats: [
             { icon: '✓', value: '200+', label: 'Propriedades Vendidas' },
             { icon: '★', value: '98%', label: 'Clientes Satisfeitos' },
-            { icon: '⚡', value: '15', label: 'Anos de Experiência' }
+            { icon: '⚡', value: '15', label: 'Anos de Experiência' },
           ],
-          columns: 3
-        },
+          columns: 3,
+        } as any,
         styles: { padding: '80px 20px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.FORM,
@@ -246,17 +310,39 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         config: {
           title: 'Solicite Mais Informações',
           fields: [
-            { name: 'name', type: 'text', label: 'Nome', required: true, placeholder: 'Seu nome' },
-            { name: 'phone', type: 'tel', label: 'Telefone', required: true, placeholder: '(00) 00000-0000' },
-            { name: 'email', type: 'email', label: 'E-mail', required: true, placeholder: 'seu@email.com' }
+            {
+              name: 'name',
+              type: 'text',
+              label: 'Nome',
+              required: true,
+              placeholder: 'Seu nome',
+            },
+            {
+              name: 'phone',
+              type: 'tel',
+              label: 'Telefone',
+              required: true,
+              placeholder: '(00) 00000-0000',
+            },
+            {
+              name: 'email',
+              type: 'email',
+              label: 'E-mail',
+              required: true,
+              placeholder: 'seu@email.com',
+            },
           ],
           submitText: 'Enviar Solicitação',
-          successMessage: 'Obrigado! Entraremos em contato em breve.'
+          successMessage: 'Obrigado! Entraremos em contato em breve.',
         },
-        styles: { padding: '60px 20px', backgroundColor: '#15803d', color: '#ffffff' },
-        responsive: {}
-      }
-    ]
+        styles: {
+          padding: '60px 20px',
+          backgroundColor: '#15803d',
+          color: '#ffffff',
+        } as any,
+        responsive: {},
+      },
+    ],
   },
 
   // ============================================
@@ -265,7 +351,8 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
   {
     id: 'sonho-dourado',
     name: 'Sonho Dourado',
-    description: 'Layout split com destaque para benefícios e formulário dourado',
+    description:
+      'Layout split com destaque para benefícios e formulário dourado',
     thumbnail: '⭐',
     category: 'Fazendas',
     themeConfig: {
@@ -275,8 +362,19 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       textColor: '#1f2937',
       fontFamily: 'Raleway',
       borderRadius: '1rem',
-      spacing: { xs: '0.5rem', sm: '1rem', md: '1.5rem', lg: '2rem', xl: '3rem' },
-      fontSize: { base: '1rem', heading1: '2.5rem', heading2: '2rem', heading3: '1.75rem' }
+      spacing: {
+        xs: '0.5rem',
+        sm: '1rem',
+        md: '1.5rem',
+        lg: '2rem',
+        xl: '3rem',
+      },
+      fontSize: {
+        base: '1rem',
+        heading1: '2.5rem',
+        heading2: '2rem',
+        heading3: '1.75rem',
+      },
     },
     blocks: [
       {
@@ -292,10 +390,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           ctaLink: '#form',
           height: 550,
           alignment: 'left',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '0' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.FEATURES,
@@ -303,15 +401,31 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           features: [
-            { title: 'Propriedades Agrícolas', description: 'Terras produtivas de alta qualidade', icon: '✓' },
-            { title: 'Ideal para Pecuária', description: 'Pastagens preparadas e infraestrutura', icon: '✓' },
-            { title: 'Áreas de Lazer e Lagoas', description: 'Espaços de convivência e relaxamento',  icon: '✓' },
-            { title: 'Documentação Regularizada', description: 'Segurança jurídica total', icon: '✓' }
+            {
+              title: 'Propriedades Agrícolas',
+              description: 'Terras produtivas de alta qualidade',
+              icon: '✓',
+            },
+            {
+              title: 'Ideal para Pecuária',
+              description: 'Pastagens preparadas e infraestrutura',
+              icon: '✓',
+            },
+            {
+              title: 'Áreas de Lazer e Lagoas',
+              description: 'Espaços de convivência e relaxamento',
+              icon: '✓',
+            },
+            {
+              title: 'Documentação Regularizada',
+              description: 'Segurança jurídica total',
+              icon: '✓',
+            },
           ],
-          columns: 2
+          columns: 2,
         },
         styles: { padding: '60px 20px', backgroundColor: '#ffffff' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.PROPERTY_CAROUSEL,
@@ -322,10 +436,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           autoplay: true,
           autoplayDelay: 5000,
           showThumbnails: true,
-          showDots: true
-        },
+          showDots: true,
+        } as any,
         styles: { padding: '60px 20px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.FORM,
@@ -334,15 +448,37 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         config: {
           title: 'Fale Conosco Agora!',
           fields: [
-            { name: 'name', type: 'text', label: 'Seu Nome', required: true, placeholder: 'Nome completo' },
-            { name: 'email', type: 'email', label: 'Seu E-mail', required: true, placeholder: 'seu@email.com' },
-            { name: 'phone', type: 'tel', label: 'Telefone', required: true, placeholder: '(00) 00000-0000' }
+            {
+              name: 'name',
+              type: 'text',
+              label: 'Seu Nome',
+              required: true,
+              placeholder: 'Nome completo',
+            },
+            {
+              name: 'email',
+              type: 'email',
+              label: 'Seu E-mail',
+              required: true,
+              placeholder: 'seu@email.com',
+            },
+            {
+              name: 'phone',
+              type: 'tel',
+              label: 'Telefone',
+              required: true,
+              placeholder: '(00) 00000-0000',
+            },
           ],
           submitText: 'Envie Agora',
-          successMessage: 'Mensagem enviada! Retornaremos em breve.'
+          successMessage: 'Mensagem enviada! Retornaremos em breve.',
         },
-        styles: { padding: '60px 40px', backgroundColor: '#eab308', color: '#1f2937' },
-        responsive: {}
+        styles: {
+          padding: '60px 40px',
+          backgroundColor: '#eab308',
+          color: '#1f2937',
+        } as any,
+        responsive: {},
       },
       {
         type: BlockType.CTA,
@@ -350,16 +486,17 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           title: 'Oportunidade Limitada!',
-          description: 'Propriedades exclusivas com preços especiais por tempo limitado',
+          description:
+            'Propriedades exclusivas com preços especiais por tempo limitado',
           buttonText: 'WhatsApp: Falar com Corretor',
           buttonLink: 'https://wa.me/5544997223030',
           backgroundColor: '#16a34a',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '80px 20px' },
-        responsive: {}
-      }
-    ]
+        responsive: {},
+      },
+    ],
   },
 
   // ============================================
@@ -378,8 +515,19 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       textColor: '#1f2937',
       fontFamily: 'Inter',
       borderRadius: '0.5rem',
-      spacing: { xs: '0.5rem', sm: '1rem', md: '1.5rem', lg: '2rem', xl: '3rem' },
-      fontSize: { base: '1rem', heading1: '2.5rem', heading2: '2rem', heading3: '1.75rem' }
+      spacing: {
+        xs: '0.5rem',
+        sm: '1rem',
+        md: '1.5rem',
+        lg: '2rem',
+        xl: '3rem',
+      },
+      fontSize: {
+        base: '1rem',
+        heading1: '2.5rem',
+        heading2: '2rem',
+        heading3: '1.75rem',
+      },
     },
     blocks: [
       {
@@ -395,10 +543,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           ctaLink: '#propriedades',
           height: 700,
           alignment: 'center',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '0' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.STATS,
@@ -409,12 +557,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
             { icon: '🏆', value: '1000+', label: 'Hectares Comercializados' },
             { icon: '👥', value: '500+', label: 'Famílias Realizadas' },
             { icon: '🌟', value: '25', label: 'Anos de Tradição' },
-            { icon: '💚', value: '100%', label: 'Compromisso com Você' }
+            { icon: '💚', value: '100%', label: 'Compromisso com Você' },
           ],
-          columns: 4
-        },
+          columns: 4,
+        } as any,
         styles: { padding: '80px 20px', backgroundColor: '#f0fdfa' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.TEXT,
@@ -428,10 +576,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           fontSize: 20,
           fontWeight: 400,
           color: '#374151',
-          alignment: 'left'
+          alignment: 'left',
         },
         styles: { padding: '80px 60px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.PROPERTY_CAROUSEL,
@@ -442,10 +590,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           autoplay: false,
           autoplayDelay: 4000,
           showThumbnails: true,
-          showDots: true
-        },
+          showDots: true,
+        } as any,
         styles: { padding: '60px 20px', backgroundColor: '#f9fafb' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.FEATURES,
@@ -453,15 +601,31 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           features: [
-            { title: 'Infraestrutura Completa', description: 'Energia, água, acesso pavimentado', icon: '⚡' },
-            { title: 'Áreas Produtivas', description: 'Solo preparado para agricultura', icon: '🌱' },
-            { title: 'Sustentabilidade', description: 'Preservação ambiental certificada', icon: '🌍' },
-            { title: 'Suporte Total', description: 'Acompanhamento jurídico e técnico', icon: '🤝' }
+            {
+              title: 'Infraestrutura Completa',
+              description: 'Energia, água, acesso pavimentado',
+              icon: '⚡',
+            },
+            {
+              title: 'Áreas Produtivas',
+              description: 'Solo preparado para agricultura',
+              icon: '🌱',
+            },
+            {
+              title: 'Sustentabilidade',
+              description: 'Preservação ambiental certificada',
+              icon: '🌍',
+            },
+            {
+              title: 'Suporte Total',
+              description: 'Acompanhamento jurídico e técnico',
+              icon: '🤝',
+            },
           ],
-          columns: 2
+          columns: 2,
         },
         styles: { padding: '80px 40px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.CTA,
@@ -469,14 +633,15 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           title: 'Pronto para Começar?',
-          description: 'Entre em contato e descubra como podemos ajudar você a realizar esse sonho',
+          description:
+            'Entre em contato e descubra como podemos ajudar você a realizar esse sonho',
           buttonText: 'Falar com Especialista',
           buttonLink: 'https://wa.me/5544997223030',
           backgroundColor: '#059669',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '100px 20px' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.FORM,
@@ -485,18 +650,42 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         config: {
           title: 'Receba Nossa Consultoria Gratuita',
           fields: [
-            { name: 'name', type: 'text', label: 'Nome', required: true, placeholder: 'Seu nome completo' },
-            { name: 'email', type: 'email', label: 'E-mail', required: true, placeholder: 'seu@email.com' },
-            { name: 'phone', type: 'tel', label: 'Telefone', required: true, placeholder: '(00) 00000-0000' },
-            { name: 'message', type: 'textarea', label: 'Conte-nos sobre seus objetivos', required: false, placeholder: 'O que você busca em uma propriedade rural?' }
+            {
+              name: 'name',
+              type: 'text',
+              label: 'Nome',
+              required: true,
+              placeholder: 'Seu nome completo',
+            },
+            {
+              name: 'email',
+              type: 'email',
+              label: 'E-mail',
+              required: true,
+              placeholder: 'seu@email.com',
+            },
+            {
+              name: 'phone',
+              type: 'tel',
+              label: 'Telefone',
+              required: true,
+              placeholder: '(00) 00000-0000',
+            },
+            {
+              name: 'message',
+              type: 'textarea',
+              label: 'Conte-nos sobre seus objetivos',
+              required: false,
+              placeholder: 'O que você busca em uma propriedade rural?',
+            },
           ],
           submitText: 'Solicitar Consultoria',
-          successMessage: 'Obrigado! Nossa equipe entrará em contato em breve.'
+          successMessage: 'Obrigado! Nossa equipe entrará em contato em breve.',
         },
         styles: { padding: '80px 40px', backgroundColor: '#f0fdfa' },
-        responsive: {}
-      }
-    ]
+        responsive: {},
+      },
+    ],
   },
 
   // ============================================
@@ -505,7 +694,8 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
   {
     id: 'vista-panoramica',
     name: 'Vista Panorâmica',
-    description: 'Layout imersivo com hero full-screen, timeline visual e mapa integrado',
+    description:
+      'Layout imersivo com hero full-screen, timeline visual e mapa integrado',
     thumbnail: '🌄',
     category: 'Fazendas',
     themeConfig: {
@@ -516,7 +706,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       fontFamily: 'Montserrat',
       borderRadius: '0px',
       spacing: { xs: '1rem', sm: '2rem', md: '3rem', lg: '4rem', xl: '5rem' },
-      fontSize: { base: '1rem', heading1: '3.5rem', heading2: '2.5rem', heading3: '2rem' }
+      fontSize: {
+        base: '1rem',
+        heading1: '3.5rem',
+        heading2: '2.5rem',
+        heading3: '2rem',
+      },
     },
     blocks: [
       {
@@ -529,10 +724,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           whatsappNumber: '5544997223030',
           sticky: true,
           transparent: true,
-          textColor: '#ffffff'
-        },
+          textColor: '#ffffff',
+        } as any,
         styles: { padding: '0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.HERO,
@@ -541,16 +736,17 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         config: {
           title: 'Seu Refúgio Particular',
           subtitle: '6.110m² de natureza em Morretes, PR',
-          backgroundImage: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+          backgroundImage:
+            'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
           overlayOpacity: 0.3,
           ctaText: 'Agendar Visita Presencial',
           ctaLink: '#contato',
           height: 800,
           alignment: 'center',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.STATS,
@@ -560,12 +756,21 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           stats: [
             { icon: '🌳', value: '6.110m²', label: 'Área Total' },
             { icon: '🏠', value: '02', label: 'Casas' },
-            { icon: '🐟', value: '03', label: 'Tanques de Peixe' }
+            { icon: '🐟', value: '03', label: 'Tanques de Peixe' },
           ],
-          columns: 3
-        },
-        styles: { padding: '60px 20px', backgroundColor: '#ffffff', marginTop: '-100px', position: 'relative', zIndex: 10, borderRadius: '20px 20px 0 0', maxWidth: '1200px', margin: '-100px auto 0' },
-        containerWidth: 'xl'
+          columns: 3,
+        } as any,
+        styles: {
+          padding: '60px 20px',
+          backgroundColor: '#ffffff',
+          marginTop: '-100px',
+          position: 'relative',
+          zIndex: 10,
+          borderRadius: '20px 20px 0 0',
+          maxWidth: '1200px',
+          margin: '-100px auto 0',
+        } as any,
+        containerWidth: 'xl',
       },
       {
         type: BlockType.TEXT,
@@ -578,10 +783,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           fontSize: 18,
           fontWeight: 400,
           color: '#374151',
-          alignment: 'center'
+          alignment: 'center',
         },
         styles: { padding: '80px 20px' },
-        containerWidth: 'md'
+        containerWidth: 'md',
       },
       {
         type: BlockType.PROPERTY_CAROUSEL,
@@ -592,10 +797,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           autoplay: true,
           autoplayDelay: 4000,
           showThumbnails: true,
-          showDots: true
-        },
+          showDots: true,
+        } as any,
         styles: { padding: '0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.TIMELINE,
@@ -604,14 +809,30 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         config: {
           title: 'Conheça a Propriedade',
           items: [
-            { title: 'Entrada Privativa', description: 'Porteira fechada com acesso exclusivo e seguro.', time: 'Chegada' },
-            { title: 'Casa Principal', description: 'Ampla varanda, 3 quartos e sala integrada.', time: 'Conforto' },
-            { title: 'Área de Lazer', description: 'Churrasqueira, piscina natural e pomar.', time: 'Diversão' },
-            { title: 'Tanques de Peixe', description: '3 lagos prontos para piscicultura ou lazer.', time: 'Natureza' }
-          ]
+            {
+              title: 'Entrada Privativa',
+              description: 'Porteira fechada com acesso exclusivo e seguro.',
+              time: 'Chegada',
+            },
+            {
+              title: 'Casa Principal',
+              description: 'Ampla varanda, 3 quartos e sala integrada.',
+              time: 'Conforto',
+            },
+            {
+              title: 'Área de Lazer',
+              description: 'Churrasqueira, piscina natural e pomar.',
+              time: 'Diversão',
+            },
+            {
+              title: 'Tanques de Peixe',
+              description: '3 lagos prontos para piscicultura ou lazer.',
+              time: 'Natureza',
+            },
+          ],
         },
         styles: { padding: '80px 20px', backgroundColor: '#f9fafb' },
-        containerWidth: 'lg'
+        containerWidth: 'lg',
       },
       {
         type: BlockType.MAP,
@@ -623,10 +844,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           description: 'Fácil acesso, próximo à natureza e à cidade.',
           zoom: 13,
           height: 450,
-          showCard: true
-        },
+          showCard: true,
+        } as any,
         styles: { padding: '0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.CTA,
@@ -638,10 +859,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           buttonText: 'Chamar no WhatsApp',
           buttonLink: 'https://wa.me/5544997223030',
           backgroundColor: '#2d5016',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '100px 20px' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.FOOTER,
@@ -654,12 +875,13 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           whatsapp: '5544997223030',
           email: 'contato@fazendasbrasil.com.br',
           address: 'Av. Brasil, 1234 - Maringá, PR',
-          copyrightText: '© 2024 Fazendas Brasil. Todos os direitos reservados.'
-        },
+          copyrightText:
+            '© 2024 Fazendas Brasil. Todos os direitos reservados.',
+        } as any,
         styles: { padding: '0' },
-        containerWidth: 'full'
-      }
-    ]
+        containerWidth: 'full',
+      },
+    ],
   },
 
   // ============================================
@@ -668,7 +890,8 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
   {
     id: 'luxo-no-campo',
     name: 'Luxo no Campo',
-    description: 'Design sofisticado com cores escuras e toques dourados para propriedades de alto padrão',
+    description:
+      'Design sofisticado com cores escuras e toques dourados para propriedades de alto padrão',
     thumbnail: '✨',
     category: 'Fazendas',
     themeConfig: {
@@ -678,8 +901,19 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       textColor: '#f3f4f6',
       fontFamily: 'Playfair Display',
       borderRadius: '0px',
-      spacing: { xs: '1.5rem', sm: '2.5rem', md: '3.5rem', lg: '5rem', xl: '6rem' },
-      fontSize: { base: '1.1rem', heading1: '4rem', heading2: '3rem', heading3: '2.5rem' }
+      spacing: {
+        xs: '1.5rem',
+        sm: '2.5rem',
+        md: '3.5rem',
+        lg: '5rem',
+        xl: '6rem',
+      },
+      fontSize: {
+        base: '1.1rem',
+        heading1: '4rem',
+        heading2: '3rem',
+        heading3: '2.5rem',
+      },
     },
     blocks: [
       {
@@ -691,10 +925,13 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           showWhatsApp: false,
           sticky: true,
           transparent: true,
-          textColor: '#ffffff'
-        },
-        styles: { padding: '0', borderBottom: '1px solid rgba(255,255,255,0.1)' },
-        containerWidth: 'full'
+          textColor: '#ffffff',
+        } as any,
+        styles: {
+          padding: '0',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+        } as any,
+        containerWidth: 'full',
       },
       {
         type: BlockType.HERO,
@@ -703,16 +940,17 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         config: {
           title: 'Exclusividade e Natureza',
           subtitle: 'Uma propriedade única para quem exige o extraordinário.',
-          backgroundImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+          backgroundImage:
+            'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
           overlayOpacity: 0.5,
           ctaText: 'Solicitar Dossiê Privado',
           ctaLink: '#contato',
           height: 900,
           alignment: 'center',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.TEXT,
@@ -724,10 +962,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           fontSize: 24,
           fontWeight: 300,
           color: '#d1d5db',
-          alignment: 'center'
+          alignment: 'center',
         },
         styles: { padding: '120px 20px', backgroundColor: '#111111' },
-        containerWidth: 'lg'
+        containerWidth: 'lg',
       },
       {
         type: BlockType.STATS,
@@ -738,12 +976,17 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
             { icon: '💎', value: '1.200ha', label: 'Área Total' },
             { icon: '🚁', value: 'Heliporto', label: 'Privativo' },
             { icon: '🍷', value: 'Adega', label: 'Subterrânea' },
-            { icon: '🏇', value: 'Haras', label: 'Completo' }
+            { icon: '🏇', value: 'Haras', label: 'Completo' },
           ],
-          columns: 4
-        },
-        styles: { padding: '80px 20px', backgroundColor: '#1a1a1a', borderTop: '1px solid #333', borderBottom: '1px solid #333' },
-        containerWidth: 'xl'
+          columns: 4,
+        } as any,
+        styles: {
+          padding: '80px 20px',
+          backgroundColor: '#1a1a1a',
+          borderTop: '1px solid #333',
+          borderBottom: '1px solid #333',
+        } as any,
+        containerWidth: 'xl',
       },
       {
         type: BlockType.PROPERTY_CAROUSEL,
@@ -753,10 +996,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           images: [],
           autoplay: false,
           showThumbnails: true,
-          showDots: false
-        },
+          showDots: false,
+        } as any,
         styles: { padding: '120px 0', backgroundColor: '#111111' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.TIMELINE,
@@ -766,13 +1009,28 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           title: 'História e Legado',
           color: '#c9a961',
           items: [
-            { title: 'Fundação', description: 'Estabelecida em 1950, mantendo a arquitetura colonial original.', time: '1950' },
-            { title: 'Restauração', description: 'Restauro completo da casa sede premiado internacionalmente.', time: '2018' },
-            { title: 'Modernização', description: 'Implementação de sistemas sustentáveis e automação.', time: '2022' }
-          ]
+            {
+              title: 'Fundação',
+              description:
+                'Estabelecida em 1950, mantendo a arquitetura colonial original.',
+              time: '1950',
+            },
+            {
+              title: 'Restauração',
+              description:
+                'Restauro completo da casa sede premiado internacionalmente.',
+              time: '2018',
+            },
+            {
+              title: 'Modernização',
+              description:
+                'Implementação de sistemas sustentáveis e automação.',
+              time: '2022',
+            },
+          ],
         },
         styles: { padding: '100px 20px', backgroundColor: '#1a1a1a' },
-        containerWidth: 'lg'
+        containerWidth: 'lg',
       },
       {
         type: BlockType.CTA,
@@ -780,14 +1038,15 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           title: 'Atendimento Personalizado',
-          description: 'Nossa equipe de concierge está à disposição para agendar sua visita.',
+          description:
+            'Nossa equipe de concierge está à disposição para agendar sua visita.',
           buttonText: 'Contatar Concierge',
           buttonLink: 'https://wa.me/5544997223030',
           backgroundColor: '#c9a961',
-          textColor: '#000000'
+          textColor: '#000000',
         },
         styles: { padding: '120px 20px', backgroundColor: '#111111' },
-        containerWidth: 'md'
+        containerWidth: 'md',
       },
       {
         type: BlockType.FOOTER,
@@ -800,12 +1059,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           email: 'private@imperial.com',
           copyrightText: '© 2024 Imperial Realty. Exclusive Rights.',
           backgroundColor: '#000000',
-          textColor: '#6b7280'
-        },
+          textColor: '#6b7280',
+        } as any,
         styles: { padding: '0' },
-        containerWidth: 'full'
-      }
-    ]
+        containerWidth: 'full',
+      },
+    ],
   },
 
   // ============================================
@@ -814,7 +1073,8 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
   {
     id: 'vida-rural',
     name: 'Vida Rural Autêntica',
-    description: 'Estilo editorial tipo blog/revista para contar a história da propriedade',
+    description:
+      'Estilo editorial tipo blog/revista para contar a história da propriedade',
     thumbnail: '🏡',
     category: 'Sítios',
     themeConfig: {
@@ -825,7 +1085,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       fontFamily: 'Merriweather',
       borderRadius: '8px',
       spacing: { xs: '1rem', sm: '1.5rem', md: '2rem', lg: '3rem', xl: '4rem' },
-      fontSize: { base: '1.125rem', heading1: '3rem', heading2: '2.25rem', heading3: '1.5rem' }
+      fontSize: {
+        base: '1.125rem',
+        heading1: '3rem',
+        heading2: '2.25rem',
+        heading3: '1.5rem',
+      },
     },
     blocks: [
       {
@@ -836,10 +1101,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           brandName: 'Vida no Campo',
           sticky: false,
           backgroundColor: '#fffbeb',
-          textColor: '#4b5563'
-        },
-        styles: { padding: '0', borderBottom: '1px solid #e5e7eb' },
-        containerWidth: 'full'
+          textColor: '#4b5563',
+        } as any,
+        styles: { padding: '0', borderBottom: '1px solid #e5e7eb' } as any,
+        containerWidth: 'full',
       },
       {
         type: BlockType.HERO,
@@ -847,17 +1112,19 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           title: 'Onde o Tempo Passa Mais Devagar',
-          subtitle: 'Uma jornada para reencontrar suas raízes e viver com propósito',
-          backgroundImage: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+          subtitle:
+            'Uma jornada para reencontrar suas raízes e viver com propósito',
+          backgroundImage:
+            'https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
           overlayOpacity: 0.2,
           ctaText: 'Ler a História',
           ctaLink: '#historia',
           height: 600,
           alignment: 'center',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.TEXT,
@@ -870,10 +1137,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           fontSize: 20,
           fontWeight: 400,
           color: '#4b5563',
-          alignment: 'left'
+          alignment: 'left',
         },
-        styles: { padding: '80px 20px', maxWidth: '800px', margin: '0 auto' },
-        containerWidth: 'md'
+        styles: { padding: '80px 20px', maxWidth: '800px', margin: '0 auto' } as any,
+        containerWidth: 'md',
       },
       {
         type: BlockType.PROPERTY_CAROUSEL,
@@ -883,10 +1150,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           images: [],
           autoplay: false,
           showThumbnails: false,
-          showDots: true
-        },
+          showDots: true,
+        } as any,
         styles: { padding: '40px 0' },
-        containerWidth: 'lg'
+        containerWidth: 'lg',
       },
       {
         type: BlockType.TIMELINE,
@@ -896,14 +1163,31 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           title: 'Um Dia no Sítio',
           color: '#6b8e23',
           items: [
-            { title: '06:00 - O Despertar', description: 'Café da manhã na varanda vendo o nascer do sol.', time: 'Manhã' },
-            { title: '09:00 - Horta e Jardim', description: 'Colheita de vegetais frescos para o almoço.', time: 'Manhã' },
-            { title: '14:00 - Pesca e Leitura', description: 'Tarde tranquila à beira do lago.', time: 'Tarde' },
-            { title: '19:00 - Fogueira', description: 'Fim de dia reunido ao redor do fogo sob as estrelas.', time: 'Noite' }
-          ]
+            {
+              title: '06:00 - O Despertar',
+              description: 'Café da manhã na varanda vendo o nascer do sol.',
+              time: 'Manhã',
+            },
+            {
+              title: '09:00 - Horta e Jardim',
+              description: 'Colheita de vegetais frescos para o almoço.',
+              time: 'Manhã',
+            },
+            {
+              title: '14:00 - Pesca e Leitura',
+              description: 'Tarde tranquila à beira do lago.',
+              time: 'Tarde',
+            },
+            {
+              title: '19:00 - Fogueira',
+              description:
+                'Fim de dia reunido ao redor do fogo sob as estrelas.',
+              time: 'Noite',
+            },
+          ],
         },
         styles: { padding: '80px 20px', backgroundColor: '#f3f4f6' },
-        containerWidth: 'lg'
+        containerWidth: 'lg',
       },
       {
         type: BlockType.MAP,
@@ -913,10 +1197,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           address: 'Serra da Mantiqueira, Brasil',
           title: 'Escondido nas Montanhas',
           zoom: 12,
-          height: 500
-        },
+          height: 500,
+        } as any,
         styles: { padding: '60px 0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.FORM,
@@ -927,12 +1211,24 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           submitText: 'Enviar Mensagem',
           successMessage: 'Mensagem enviada com carinho!',
           fields: [
-            { name: 'name', type: 'text', label: 'Nome', required: true, placeholder: '' },
-            { name: 'message', type: 'textarea', label: 'Mensagem', required: true, placeholder: 'Conte-nos o que você busca...' }
-          ]
+            {
+              name: 'name',
+              type: 'text',
+              label: 'Nome',
+              required: true,
+              placeholder: '',
+            },
+            {
+              name: 'message',
+              type: 'textarea',
+              label: 'Mensagem',
+              required: true,
+              placeholder: 'Conte-nos o que você busca...',
+            },
+          ],
         },
         styles: { padding: '80px 20px', backgroundColor: '#fffbeb' },
-        containerWidth: 'sm'
+        containerWidth: 'sm',
       },
       {
         type: BlockType.FOOTER,
@@ -942,12 +1238,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           companyName: 'Vida no Campo Imóveis',
           copyrightText: '© 2024. Feito com amor.',
           backgroundColor: '#8b4513',
-          textColor: '#ffffff'
-        },
+          textColor: '#ffffff',
+        } as any,
         styles: { padding: '0' },
-        containerWidth: 'full'
-      }
-    ]
+        containerWidth: 'full',
+      },
+    ],
   },
 
   // ============================================
@@ -956,7 +1252,8 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
   {
     id: 'investimento-garantido',
     name: 'Investimento Garantido',
-    description: 'Focado em dados, ROI e segurança para investidores do agronegócio',
+    description:
+      'Focado em dados, ROI e segurança para investidores do agronegócio',
     thumbnail: '💰',
     category: 'Investimento',
     themeConfig: {
@@ -967,7 +1264,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       fontFamily: 'Inter',
       borderRadius: '4px',
       spacing: { xs: '1rem', sm: '2rem', md: '3rem', lg: '4rem', xl: '5rem' },
-      fontSize: { base: '1rem', heading1: '3rem', heading2: '2.25rem', heading3: '1.5rem' }
+      fontSize: {
+        base: '1rem',
+        heading1: '3rem',
+        heading2: '2.25rem',
+        heading3: '1.5rem',
+      },
     },
     blocks: [
       {
@@ -980,10 +1282,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           phoneNumber: '0800 123 4567',
           sticky: true,
           backgroundColor: '#1e3a8a',
-          textColor: '#ffffff'
-        },
+          textColor: '#ffffff',
+        } as any,
         styles: { padding: '0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.HERO,
@@ -992,16 +1294,17 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         config: {
           title: 'Oportunidade de Alto Retorno',
           subtitle: 'Fazenda Produtiva com ROI Estimado de 12% a.a.',
-          backgroundImage: 'https://images.unsplash.com/photo-1625246333195-58197b3c4895?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+          backgroundImage:
+            'https://images.unsplash.com/photo-1625246333195-58197b3c4895?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
           overlayOpacity: 0.6,
           ctaText: 'Baixar Prospecto',
           ctaLink: '#download',
           height: 600,
           alignment: 'left',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '0' },
-        containerWidth: 'full'
+        containerWidth: 'full',
       },
       {
         type: BlockType.STATS,
@@ -1012,12 +1315,16 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
             { icon: '📈', value: '12%', label: 'Retorno Anual' },
             { icon: '💰', value: 'R$ 15M', label: 'Valor de Mercado' },
             { icon: '🚜', value: '100%', label: 'Maquinário Incluso' },
-            { icon: '📜', value: '100%', label: 'Documentação OK' }
+            { icon: '📜', value: '100%', label: 'Documentação OK' },
           ],
-          columns: 4
+          columns: 4,
+        } as any,
+        styles: {
+          padding: '60px 20px',
+          backgroundColor: '#ffffff',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
         },
-        styles: { padding: '60px 20px', backgroundColor: '#ffffff', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' },
-        containerWidth: 'xl'
+        containerWidth: 'xl',
       },
       {
         type: BlockType.TEXT,
@@ -1034,10 +1341,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           fontSize: 18,
           fontWeight: 400,
           color: '#334155',
-          alignment: 'left'
+          alignment: 'left',
         },
         styles: { padding: '80px 20px' },
-        containerWidth: 'lg'
+        containerWidth: 'lg',
       },
       {
         type: BlockType.PROPERTY_GRID,
@@ -1049,10 +1356,10 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           showFilters: false,
           maxItems: 4,
           sortBy: 'price',
-          cardStyle: 'modern'
+          cardStyle: 'modern',
         },
         styles: { padding: '60px 20px', backgroundColor: '#f1f5f9' },
-        containerWidth: 'xl'
+        containerWidth: 'xl',
       },
       {
         type: BlockType.CTA,
@@ -1060,14 +1367,15 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           title: 'Receba o Valuation Completo',
-          description: 'Acesse o relatório detalhado com fluxo de caixa projetado e análise de mercado.',
+          description:
+            'Acesse o relatório detalhado com fluxo de caixa projetado e análise de mercado.',
           buttonText: 'Solicitar Acesso',
           buttonLink: '#cadastro',
           backgroundColor: '#1e3a8a',
-          textColor: '#ffffff'
+          textColor: '#ffffff',
         },
         styles: { padding: '100px 20px' },
-        containerWidth: 'md'
+        containerWidth: 'md',
       },
       {
         type: BlockType.FOOTER,
@@ -1077,12 +1385,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           companyName: 'Agro Invest Capital',
           copyrightText: '© 2024 Agro Invest. Todos os direitos reservados.',
           backgroundColor: '#0f172a',
-          textColor: '#94a3b8'
-        },
+          textColor: '#94a3b8',
+        } as any,
         styles: { padding: '0' },
-        containerWidth: 'full'
-      }
-    ]
+        containerWidth: 'full',
+      },
+    ],
   },
   // ============================================
   // TEMPLATE 7: FAZENDA DOS SONHOS (NOVO)
@@ -1090,7 +1398,8 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
   {
     id: 'fazenda-dos-sonhos',
     name: 'Fazenda dos Sonhos',
-    description: 'Réplica exata do modelo rural premium com captura de leads lateral',
+    description:
+      'Réplica exata do modelo rural premium com captura de leads lateral',
     thumbnail: '🚜',
     category: 'Fazendas',
     themeConfig: {
@@ -1102,7 +1411,12 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
       headingFontFamily: 'Lora',
       borderRadius: '4px',
       spacing: { xs: '4px', sm: '8px', md: '16px', lg: '24px', xl: '32px' },
-      fontSize: { base: '16px', heading1: '56px', heading2: '36px', heading3: '24px' }
+      fontSize: {
+        base: '16px',
+        heading1: '56px',
+        heading2: '36px',
+        heading3: '24px',
+      },
     },
     blocks: [
       {
@@ -1111,29 +1425,68 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
         visible: true,
         config: {
           title: 'Encontre sua Fazenda dos Sonhos',
-          subtitle: 'Assine para receber ofertas exclusivas e novidades sobre os melhores imóveis rurais.',
-          backgroundImage: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80',
+          subtitle:
+            'Assine para receber ofertas exclusivas e novidades sobre os melhores imóveis rurais.',
+          backgroundImage:
+            'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=80',
           overlayOpacity: 0.2,
           formTitle: 'Receba novas oportunidades em imóveis rurais!',
-          formSubtitle: 'Cadastre-se para receber ofertas e novidades de imóveis rurais. Prometemos não enviar spam.',
+          formSubtitle:
+            'Cadastre-se para receber ofertas e novidades de imóveis rurais. Prometemos não enviar spam.',
           submitText: 'Quero Receber Ofertas Exclusivas',
           fields: [
-            { name: 'name', type: 'text', label: 'Nome completo', required: true, placeholder: 'Nome completo' },
-            { name: 'email', type: 'email', label: 'Seu e-mail', required: true, placeholder: 'Seu e-mail' },
-            { name: 'phone', type: 'tel', label: 'Telefone (WhatsApp)', required: true, placeholder: 'Telefone (WhatsApp)' },
-            { name: 'region', type: 'select', label: 'Região de Interesse', required: false, options: ['Norte', 'Sul', 'Centro-Oeste', 'Sudeste', 'Nordeste'] }
+            {
+              name: 'name',
+              type: 'text',
+              label: 'Nome completo',
+              required: true,
+              placeholder: 'Nome completo',
+            },
+            {
+              name: 'email',
+              type: 'email',
+              label: 'Seu e-mail',
+              required: true,
+              placeholder: 'Seu e-mail',
+            },
+            {
+              name: 'phone',
+              type: 'tel',
+              label: 'Telefone (WhatsApp)',
+              required: true,
+              placeholder: 'Telefone (WhatsApp)',
+            },
+            {
+              name: 'region',
+              type: 'select',
+              label: 'Região de Interesse',
+              required: false,
+              options: ['Norte', 'Sul', 'Centro-Oeste', 'Sudeste', 'Nordeste'],
+            },
           ],
           height: 700,
           textColor: '#ffffff',
           showBadges: true,
           badges: [
-            { icon: 'shield', title: 'Cadastro 100% seguro', description: 'Seus dados protegidos.' },
-            { icon: 'star', title: 'Ofertas exclusivas', description: 'Receba propriedades selecionadas.' },
-            { icon: 'clock', title: 'Primeiro a saber', description: 'Acesse novas oportunidades antes de todos.' }
-          ]
+            {
+              icon: 'shield',
+              title: 'Cadastro 100% seguro',
+              description: 'Seus dados protegidos.',
+            },
+            {
+              icon: 'star',
+              title: 'Ofertas exclusivas',
+              description: 'Receba propriedades selecionadas.',
+            },
+            {
+              icon: 'clock',
+              title: 'Primeiro a saber',
+              description: 'Acesse novas oportunidades antes de todos.',
+            },
+          ],
         },
         styles: { padding: '0' },
-        responsive: {}
+        responsive: {},
       },
       {
         type: BlockType.PROPERTY_GRID,
@@ -1144,23 +1497,26 @@ export const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [
           gap: 24,
           maxItems: 6,
           sortBy: 'price',
-          cardStyle: 'modern'
-        },
+          cardStyle: 'modern',
+        } as any,
         styles: { padding: '60px 20px', backgroundColor: '#f5f2eb' },
-        responsive: {}
-      }
-    ]
-  }
+        responsive: {},
+      },
+    ],
+  },
 ];
 
-
 // Helper para buscar template por ID
-export const getTemplateById = (id: string): LandingPageTemplate | undefined => {
-  return LANDING_PAGE_TEMPLATES.find(t => t.id === id);
+export const getTemplateById = (
+  id: string
+): LandingPageTemplate | undefined => {
+  return LANDING_PAGE_TEMPLATES.find((t) => t.id === id);
 };
 
 // Helper para filtrar templates por categoria
-export const getTemplatesByCategory = (category: string): LandingPageTemplate[] => {
+export const getTemplatesByCategory = (
+  category: string
+): LandingPageTemplate[] => {
   if (category === 'all') return LANDING_PAGE_TEMPLATES;
-  return LANDING_PAGE_TEMPLATES.filter(t => t.category === category);
+  return LANDING_PAGE_TEMPLATES.filter((t) => t.category === category);
 };

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block } from '../../../types';
 import { Phone, Mail, Instagram, MapPin } from 'lucide-react';
@@ -9,13 +8,16 @@ interface BrokerCardBlockProps {
   isEditing?: boolean;
 }
 
-export const BrokerCardBlock: React.FC<BrokerCardBlockProps> = ({ block, isEditing }) => {
+export const BrokerCardBlock: React.FC<BrokerCardBlockProps> = ({
+  block,
+  isEditing,
+}) => {
   const config = block.config as any;
   const { settings } = useSettings();
-  
+
   // Usar dados do broker das settings ou do config do bloco
-  const broker = config.useBrokerFromSettings 
-    ? settings.homeContent?.broker 
+  const broker = config.useBrokerFromSettings
+    ? settings.homeContent?.broker
     : config.broker;
 
   const name = broker?.name || 'Nome do Corretor';
@@ -32,18 +34,24 @@ export const BrokerCardBlock: React.FC<BrokerCardBlockProps> = ({ block, isEditi
       <div className="flex items-center gap-6 bg-white rounded-2xl p-6 border border-slate-100">
         <div className="w-24 h-24 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
           {photoUrl ? (
-            <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
+            <img
+              src={photoUrl}
+              alt={name}
+              className="w-full h-full object-cover"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-3xl text-slate-400">
               👤
             </div>
           )}
         </div>
-        
+
         <div className="flex-1">
           <h3 className="text-2xl font-bold text-slate-900">{name}</h3>
-          <p className="text-sm text-slate-500 mb-3">{creci} • {specialty}</p>
-          
+          <p className="text-sm text-slate-500 mb-3">
+            {creci} • {specialty}
+          </p>
+
           <div className="flex gap-3">
             {phone && (
               <a
@@ -76,18 +84,22 @@ export const BrokerCardBlock: React.FC<BrokerCardBlockProps> = ({ block, isEditi
     <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm max-w-sm mx-auto text-center">
       <div className="w-32 h-32 rounded-full bg-slate-200 overflow-hidden mx-auto mb-6">
         {photoUrl ? (
-          <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
+          <img
+            src={photoUrl}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-5xl text-slate-400">
             👤
           </div>
         )}
       </div>
-      
+
       <h3 className="text-2xl font-bold text-slate-900 mb-1">{name}</h3>
       <p className="text-sm text-slate-500 mb-2">{creci}</p>
       <p className="text-sm text-indigo-600 font-medium mb-6">{specialty}</p>
-      
+
       <div className="space-y-2">
         {phone && (
           <a

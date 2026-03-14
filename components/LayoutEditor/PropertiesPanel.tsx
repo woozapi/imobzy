@@ -1,8 +1,16 @@
-
 import React from 'react';
 import { useLayoutEditor } from '../../context/LayoutEditorContext';
 import { X, Settings } from 'lucide-react';
-import { HeroBlockConfig, TextBlockConfig, ImageBlockConfig, CTABlockConfig, StatsBlockConfig, FormBlockConfig, PropertyGridBlockConfig, BlockType } from '../../types';
+import {
+  HeroBlockConfig,
+  TextBlockConfig,
+  ImageBlockConfig,
+  CTABlockConfig,
+  StatsBlockConfig,
+  FormBlockConfig,
+  PropertyGridBlockConfig,
+  BlockType,
+} from '../../types';
 
 export const PropertiesPanel: React.FC = () => {
   const { selectedBlock, updateBlock, selectBlock } = useLayoutEditor();
@@ -13,7 +21,9 @@ export const PropertiesPanel: React.FC = () => {
         <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
           <Settings size={24} className="text-slate-400" />
         </div>
-        <h3 className="text-sm font-bold text-slate-900 mb-2">Nenhum bloco selecionado</h3>
+        <h3 className="text-sm font-bold text-slate-900 mb-2">
+          Nenhum bloco selecionado
+        </h3>
         <p className="text-xs text-slate-500">
           Clique em um bloco no canvas para editar suas propriedades
         </p>
@@ -23,13 +33,13 @@ export const PropertiesPanel: React.FC = () => {
 
   const updateConfig = (updates: Partial<any>) => {
     updateBlock(selectedBlock.id, {
-      config: { ...selectedBlock.config, ...updates }
+      config: { ...selectedBlock.config, ...updates },
     });
   };
 
   const updateStyles = (updates: Partial<any>) => {
     updateBlock(selectedBlock.id, {
-      styles: { ...selectedBlock.styles, ...updates }
+      styles: { ...selectedBlock.styles, ...updates },
     });
   };
 
@@ -40,7 +50,9 @@ export const PropertiesPanel: React.FC = () => {
         return (
           <>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Título</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Título
+              </label>
               <input
                 type="text"
                 value={heroConfig.title}
@@ -49,7 +61,9 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Subtítulo</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Subtítulo
+              </label>
               <input
                 type="text"
                 value={heroConfig.subtitle || ''}
@@ -58,11 +72,15 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Imagem de Fundo (URL)</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Imagem de Fundo (URL)
+              </label>
               <input
                 type="text"
                 value={heroConfig.backgroundImage}
-                onChange={(e) => updateConfig({ backgroundImage: e.target.value })}
+                onChange={(e) =>
+                  updateConfig({ backgroundImage: e.target.value })
+                }
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
@@ -76,21 +94,29 @@ export const PropertiesPanel: React.FC = () => {
                 max="1"
                 step="0.1"
                 value={heroConfig.overlayOpacity}
-                onChange={(e) => updateConfig({ overlayOpacity: parseFloat(e.target.value) })}
+                onChange={(e) =>
+                  updateConfig({ overlayOpacity: parseFloat(e.target.value) })
+                }
                 className="w-full"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Altura (px)</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Altura (px)
+              </label>
               <input
                 type="number"
                 value={heroConfig.height}
-                onChange={(e) => updateConfig({ height: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  updateConfig({ height: parseInt(e.target.value) })
+                }
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Texto do Botão</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Texto do Botão
+              </label>
               <input
                 type="text"
                 value={heroConfig.ctaText || ''}
@@ -99,7 +125,9 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Link do Botão</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Link do Botão
+              </label>
               <input
                 type="text"
                 value={heroConfig.ctaLink || ''}
@@ -115,7 +143,9 @@ export const PropertiesPanel: React.FC = () => {
         return (
           <>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Conteúdo</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Conteúdo
+              </label>
               <textarea
                 value={textConfig.content}
                 onChange={(e) => updateConfig({ content: e.target.value })}
@@ -124,16 +154,22 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Tamanho da Fonte (px)</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Tamanho da Fonte (px)
+              </label>
               <input
                 type="number"
                 value={textConfig.fontSize}
-                onChange={(e) => updateConfig({ fontSize: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  updateConfig({ fontSize: parseInt(e.target.value) })
+                }
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Cor do Texto</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Cor do Texto
+              </label>
               <input
                 type="color"
                 value={textConfig.color}
@@ -149,7 +185,9 @@ export const PropertiesPanel: React.FC = () => {
         return (
           <>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">URL da Imagem</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                URL da Imagem
+              </label>
               <input
                 type="text"
                 value={imageConfig.src}
@@ -158,7 +196,9 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Texto Alternativo</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Texto Alternativo
+              </label>
               <input
                 type="text"
                 value={imageConfig.alt}
@@ -167,7 +207,9 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Largura</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Largura
+              </label>
               <input
                 type="text"
                 value={imageConfig.width}
@@ -184,7 +226,9 @@ export const PropertiesPanel: React.FC = () => {
         return (
           <>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Título</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Título
+              </label>
               <input
                 type="text"
                 value={ctaConfig.title}
@@ -193,7 +237,9 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Descrição</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Descrição
+              </label>
               <textarea
                 value={ctaConfig.description || ''}
                 onChange={(e) => updateConfig({ description: e.target.value })}
@@ -202,7 +248,9 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Texto do Botão</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Texto do Botão
+              </label>
               <input
                 type="text"
                 value={ctaConfig.buttonText}
@@ -211,11 +259,15 @@ export const PropertiesPanel: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Cor de Fundo</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Cor de Fundo
+              </label>
               <input
                 type="color"
                 value={ctaConfig.backgroundColor}
-                onChange={(e) => updateConfig({ backgroundColor: e.target.value })}
+                onChange={(e) =>
+                  updateConfig({ backgroundColor: e.target.value })
+                }
                 className="w-full h-10 rounded-lg"
               />
             </div>
@@ -227,22 +279,30 @@ export const PropertiesPanel: React.FC = () => {
         return (
           <>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Colunas</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Colunas
+              </label>
               <input
                 type="number"
                 min="1"
                 max="4"
                 value={gridConfig.columns}
-                onChange={(e) => updateConfig({ columns: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  updateConfig({ columns: parseInt(e.target.value) })
+                }
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-2">Espaçamento (px)</label>
+              <label className="block text-xs font-bold text-slate-700 mb-2">
+                Espaçamento (px)
+              </label>
               <input
                 type="number"
                 value={gridConfig.gap}
-                onChange={(e) => updateConfig({ gap: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  updateConfig({ gap: parseInt(e.target.value) })
+                }
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
@@ -251,10 +311,14 @@ export const PropertiesPanel: React.FC = () => {
                 <input
                   type="checkbox"
                   checked={gridConfig.showFilters}
-                  onChange={(e) => updateConfig({ showFilters: e.target.checked })}
+                  onChange={(e) =>
+                    updateConfig({ showFilters: e.target.checked })
+                  }
                   className="rounded"
                 />
-                <span className="text-xs font-bold text-slate-700">Mostrar Filtros</span>
+                <span className="text-xs font-bold text-slate-700">
+                  Mostrar Filtros
+                </span>
               </label>
             </div>
           </>
@@ -290,34 +354,52 @@ export const PropertiesPanel: React.FC = () => {
       {/* Properties */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
         <div className="space-y-4">
-          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">Configurações</h4>
+          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+            Configurações
+          </h4>
           {renderConfigFields()}
         </div>
 
         {/* Spacing Controls */}
         <div className="space-y-4 pt-4 border-t border-slate-100">
-          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">Espaçamento</h4>
-          
+          <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
+            Espaçamento
+          </h4>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-slate-600 mb-1">Padding Top</label>
+              <label className="block text-xs text-slate-600 mb-1">
+                Padding Top
+              </label>
               <input
                 type="number"
                 value={selectedBlock.styles.padding?.top || 0}
-                onChange={(e) => updateStyles({
-                  padding: { ...selectedBlock.styles.padding, top: parseInt(e.target.value) }
-                })}
+                onChange={(e) =>
+                  updateStyles({
+                    padding: {
+                      ...selectedBlock.styles.padding,
+                      top: parseInt(e.target.value),
+                    },
+                  })
+                }
                 className="w-full px-2 py-1 border border-slate-300 rounded text-sm"
               />
             </div>
             <div>
-              <label className="block text-xs text-slate-600 mb-1">Padding Bottom</label>
+              <label className="block text-xs text-slate-600 mb-1">
+                Padding Bottom
+              </label>
               <input
                 type="number"
                 value={selectedBlock.styles.padding?.bottom || 0}
-                onChange={(e) => updateStyles({
-                  padding: { ...selectedBlock.styles.padding, bottom: parseInt(e.target.value) }
-                })}
+                onChange={(e) =>
+                  updateStyles({
+                    padding: {
+                      ...selectedBlock.styles.padding,
+                      bottom: parseInt(e.target.value),
+                    },
+                  })
+                }
                 className="w-full px-2 py-1 border border-slate-300 rounded text-sm"
               />
             </div>

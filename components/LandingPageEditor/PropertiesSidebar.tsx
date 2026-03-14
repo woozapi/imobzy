@@ -23,9 +23,11 @@ const PropertiesSidebar: React.FC<PropertiesSidebarProps> = ({
   onUpdate,
   onClose,
   page,
-  onUpdatePage
+  onUpdatePage,
 }) => {
-  const [activeTab, setActiveTab] = React.useState<'content' | 'style'>('content');
+  const [activeTab, setActiveTab] = React.useState<'content' | 'style'>(
+    'content'
+  );
 
   return (
     <div className="w-96 bg-white border-l border-gray-200 flex flex-col h-full">
@@ -94,10 +96,7 @@ function renderBlockSettings(
   switch (block.type) {
     case 'hero':
       return (
-        <HeroBlockSettings
-          config={block.config}
-          onUpdate={updateConfig}
-        />
+        <HeroBlockSettings config={block.config} onUpdate={updateConfig} />
       );
 
     case 'hero_with_form':
@@ -107,7 +106,6 @@ function renderBlockSettings(
           onUpdate={updateConfig}
         />
       );
-
 
     case 'property_grid':
       return (
@@ -121,34 +119,20 @@ function renderBlockSettings(
 
     case 'text':
       return (
-        <TextBlockSettings
-          config={block.config}
-          onUpdate={updateConfig}
-        />
+        <TextBlockSettings config={block.config} onUpdate={updateConfig} />
       );
 
     case 'form':
       return (
-        <FormBlockSettings
-          config={block.config}
-          onUpdate={updateConfig}
-        />
+        <FormBlockSettings config={block.config} onUpdate={updateConfig} />
       );
 
     case 'cta':
-      return (
-        <CTABlockSettings
-          config={block.config}
-          onUpdate={updateConfig}
-        />
-      );
+      return <CTABlockSettings config={block.config} onUpdate={updateConfig} />;
 
     case 'spacer':
       return (
-        <SpacerBlockSettings
-          config={block.config}
-          onUpdate={updateConfig}
-        />
+        <SpacerBlockSettings config={block.config} onUpdate={updateConfig} />
       );
 
     default:

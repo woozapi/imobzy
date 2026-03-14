@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Block } from '../../../types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -8,14 +7,17 @@ interface GalleryBlockProps {
   isEditing?: boolean;
 }
 
-export const GalleryBlock: React.FC<GalleryBlockProps> = ({ block, isEditing }) => {
+export const GalleryBlock: React.FC<GalleryBlockProps> = ({
+  block,
+  isEditing,
+}) => {
   const config = block.config as any;
   const [currentIndex, setCurrentIndex] = useState(0);
-  
+
   const images = config.images || [
     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9',
     'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-    'https://images.unsplash.com/photo-1600607686527-6fb886090705'
+    'https://images.unsplash.com/photo-1600607686527-6fb886090705',
   ];
 
   const layout = config.layout || 'grid'; // 'grid' | 'carousel' | 'masonry'
@@ -32,13 +34,13 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({ block, isEditing }) 
     return (
       <div className="relative">
         <div className="aspect-video bg-slate-200 rounded-2xl overflow-hidden">
-          <img 
-            src={images[currentIndex]} 
+          <img
+            src={images[currentIndex]}
             alt={`Gallery ${currentIndex + 1}`}
             className="w-full h-full object-cover"
           />
         </div>
-        
+
         {/* Navigation */}
         <button
           onClick={prevImage}
@@ -52,7 +54,7 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({ block, isEditing }) 
         >
           <ChevronRight size={20} />
         </button>
-        
+
         {/* Indicators */}
         <div className="flex gap-2 justify-center mt-4">
           {images.map((_, index) => (
@@ -71,18 +73,21 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({ block, isEditing }) 
 
   // Grid layout
   const columns = config.columns || 3;
-  
+
   return (
-    <div 
+    <div
       className="grid gap-4"
       style={{
-        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`
+        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
       }}
     >
       {images.map((image, index) => (
-        <div key={index} className="aspect-square bg-slate-200 rounded-xl overflow-hidden">
-          <img 
-            src={image} 
+        <div
+          key={index}
+          className="aspect-square bg-slate-200 rounded-xl overflow-hidden"
+        >
+          <img
+            src={image}
             alt={`Gallery ${index + 1}`}
             className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
           />

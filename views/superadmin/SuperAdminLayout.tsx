@@ -1,15 +1,14 @@
-
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Building2, 
+import {
+  LayoutDashboard,
+  Building2,
   CreditCard,
   HelpCircle,
   Users,
   Settings,
-  LogOut, 
-  Menu, 
+  LogOut,
+  Menu,
   X,
   ShieldAlert,
   Globe,
@@ -20,7 +19,7 @@ import {
   DollarSign,
   Activity,
   BarChart3,
-  Zap
+  Zap,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -46,7 +45,11 @@ const SuperAdminLayout: React.FC = () => {
     { icon: Users, label: 'Equipe', path: '/superadmin/team' },
     { icon: CreditCard, label: 'Planos', path: '/superadmin/plans' },
     { icon: DollarSign, label: 'Billing', path: '/superadmin/billing' },
-    { icon: ToggleRight, label: 'Feature Flags', path: '/superadmin/feature-flags' },
+    {
+      icon: ToggleRight,
+      label: 'Feature Flags',
+      path: '/superadmin/feature-flags',
+    },
     { icon: ScrollText, label: 'Audit Log', path: '/superadmin/audit-log' },
     { icon: Layout, label: 'Templates', path: '/superadmin/templates' },
     { icon: Globe, label: 'Domínios', path: '/superadmin/domains' },
@@ -55,36 +58,38 @@ const SuperAdminLayout: React.FC = () => {
   ];
 
   if (profile?.role !== 'superadmin') {
-     return (
-         <div className="h-screen flex flex-col items-center justify-center bg-red-50 text-red-800 p-4">
-             <ShieldAlert size={64} className="mb-4" />
-             <h1 className="text-2xl font-bold mb-2">Acesso Negado</h1>
-             <p className="mb-6">Você não tem permissão de Super Admin.</p>
-             <button 
-                onClick={() => navigate('/admin')}
-                className="px-4 py-2 bg-red-800 text-white rounded hover:bg-red-900"
-             >
-                 Voltar para Painel
-             </button>
-         </div>
-     )
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-red-50 text-red-800 p-4">
+        <ShieldAlert size={64} className="mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Acesso Negado</h1>
+        <p className="mb-6">Você não tem permissão de Super Admin.</p>
+        <button
+          onClick={() => navigate('/admin')}
+          className="px-4 py-2 bg-red-800 text-white rounded hover:bg-red-900"
+        >
+          Voltar para Painel
+        </button>
+      </div>
+    );
   }
 
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className={`
+      <aside
+        className={`
         fixed md:static inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transition-transform duration-200 ease-in-out
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-      `}>
+      `}
+      >
         <div className="h-full flex flex-col">
           {/* Header */}
           <div className="p-6 border-b border-slate-700 flex items-center justify-between">
             <div className="flex items-center gap-2 text-red-500 font-bold text-xl">
-                <ShieldAlert />
-                <span>Super Admin</span>
+              <ShieldAlert />
+              <span>Super Admin</span>
             </div>
-            <button 
+            <button
               onClick={() => setIsMobileMenuOpen(false)}
               className="md:hidden text-gray-400 hover:text-white"
             >
@@ -96,8 +101,11 @@ const SuperAdminLayout: React.FC = () => {
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = location.pathname === item.path || (item.path !== '/superadmin' && location.pathname.startsWith(item.path));
-              
+              const isActive =
+                location.pathname === item.path ||
+                (item.path !== '/superadmin' &&
+                  location.pathname.startsWith(item.path));
+
               return (
                 <button
                   key={item.path}
@@ -107,9 +115,11 @@ const SuperAdminLayout: React.FC = () => {
                   }}
                   className={`
                     w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                    ${isActive 
-                      ? 'bg-red-600 text-white shadow-lg shadow-red-900/20' 
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'}
+                    ${
+                      isActive
+                        ? 'bg-red-600 text-white shadow-lg shadow-red-900/20'
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    }
                   `}
                 >
                   <Icon size={20} />
@@ -126,11 +136,15 @@ const SuperAdminLayout: React.FC = () => {
                 {profile?.full_name?.charAt(0) || 'A'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">{profile?.full_name}</p>
-                <p className="text-xs text-slate-400 truncate">{profile?.email}</p>
+                <p className="text-sm font-medium text-white truncate">
+                  {profile?.full_name}
+                </p>
+                <p className="text-xs text-slate-400 truncate">
+                  {profile?.email}
+                </p>
               </div>
             </div>
-            
+
             <button
               onClick={handleSignOut}
               className="w-full flex items-center gap-2 px-2 py-2 text-sm font-medium text-red-500 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
@@ -147,7 +161,7 @@ const SuperAdminLayout: React.FC = () => {
         {/* Mobile Header */}
         <header className="md:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between">
           <div className="font-bold text-slate-800">Super Admin</div>
-          <button 
+          <button
             onClick={() => setIsMobileMenuOpen(true)}
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
           >

@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { textsService } from '../services/texts';
 
 interface TextsContextType {
@@ -58,36 +64,42 @@ export const TextsProvider: React.FC<TextsProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Tentar carregar do cache primeiro
       const cached = localStorage.getItem('site_texts');
       const cacheTime = localStorage.getItem('site_texts_cache_time');
-      
+
       // Cache válido por 1 hora
-      const isCacheValid = cacheTime && (Date.now() - parseInt(cacheTime)) < 3600000;
-      
+      const isCacheValid =
+        cacheTime && Date.now() - parseInt(cacheTime) < 3600000;
+
       if (cached && isCacheValid) {
         setTexts(JSON.parse(cached));
         setIsLoading(false);
-        
+
         // Carregar em background para atualizar cache
-        textsService.getAllTexts().then(({ texts: freshTexts }) => {
-          setTexts(freshTexts);
-          localStorage.setItem('site_texts', JSON.stringify(freshTexts));
-          localStorage.setItem('site_texts_cache_time', Date.now().toString());
-        }).catch(console.error);
-        
+        textsService
+          .getAllTexts()
+          .then(({ texts: freshTexts }) => {
+            setTexts(freshTexts);
+            localStorage.setItem('site_texts', JSON.stringify(freshTexts));
+            localStorage.setItem(
+              'site_texts_cache_time',
+              Date.now().toString()
+            );
+          })
+          .catch(console.error);
+
         return;
       }
-      
+
       // Carregar do servidor
       const { texts: freshTexts } = await textsService.getAllTexts();
       setTexts(freshTexts);
-      
+
       // Salvar no cache
       localStorage.setItem('site_texts', JSON.stringify(freshTexts));
       localStorage.setItem('site_texts_cache_time', Date.now().toString());
-      
     } catch (err) {
       console.error('Error loading texts:', err);
       setError('Erro ao carregar textos do site');
@@ -110,15 +122,14 @@ export const TextsProvider: React.FC<TextsProviderProps> = ({ children }) => {
   const updateText = async (key: string, value: string) => {
     try {
       await textsService.updateText(key, value);
-      
+
       // Atualizar estado local
-      setTexts(prev => ({ ...prev, [key]: value }));
-      
+      setTexts((prev) => ({ ...prev, [key]: value }));
+
       // Atualizar cache
       const updatedTexts = { ...texts, [key]: value };
       localStorage.setItem('site_texts', JSON.stringify(updatedTexts));
       localStorage.setItem('site_texts_cache_time', Date.now().toString());
-      
     } catch (err) {
       console.error('Error updating text:', err);
       throw err;
@@ -129,23 +140,22 @@ export const TextsProvider: React.FC<TextsProviderProps> = ({ children }) => {
   const bulkUpdate = async (updates: Array<{ key: string; value: string }>) => {
     try {
       const { results, errors } = await textsService.bulkUpdateTexts(updates);
-      
+
       if (errors.length > 0) {
         console.warn('Some texts failed to update:', errors);
       }
-      
+
       // Atualizar estado local
       const updatedTexts = { ...texts };
-      results.forEach(result => {
+      results.forEach((result) => {
         updatedTexts[result.key] = result.value;
       });
-      
+
       setTexts(updatedTexts);
-      
+
       // Atualizar cache
       localStorage.setItem('site_texts', JSON.stringify(updatedTexts));
       localStorage.setItem('site_texts_cache_time', Date.now().toString());
-      
     } catch (err) {
       console.error('Error in bulk update:', err);
       throw err;
@@ -156,15 +166,14 @@ export const TextsProvider: React.FC<TextsProviderProps> = ({ children }) => {
   const resetText = async (key: string) => {
     try {
       const resetData = await textsService.resetTextToDefault(key);
-      
+
       // Atualizar estado local
-      setTexts(prev => ({ ...prev, [key]: resetData.value }));
-      
+      setTexts((prev) => ({ ...prev, [key]: resetData.value }));
+
       // Atualizar cache
       const updatedTexts = { ...texts, [key]: resetData.value };
       localStorage.setItem('site_texts', JSON.stringify(updatedTexts));
       localStorage.setItem('site_texts_cache_time', Date.now().toString());
-      
     } catch (err) {
       console.error('Error resetting text:', err);
       throw err;
@@ -176,7 +185,7 @@ export const TextsProvider: React.FC<TextsProviderProps> = ({ children }) => {
     // Limpar cache
     localStorage.removeItem('site_texts');
     localStorage.removeItem('site_texts_cache_time');
-    
+
     await loadTexts();
   };
 
@@ -192,23 +201,21 @@ export const TextsProvider: React.FC<TextsProviderProps> = ({ children }) => {
     isVisualMode,
     setVisualMode,
     activeKey,
-    setActiveKey
+    setActiveKey,
   };
 
   return (
-    <TextsContext.Provider value={value}>
-      {children}
-    </TextsContext.Provider>
+    <TextsContext.Provider value={value}>{children}</TextsContext.Provider>
   );
 };
 
 // Hook para usar o contexto
 export const useTexts = (): TextsContextType => {
   const context = useContext(TextsContext);
-  
+
   if (!context) {
     throw new Error('useTexts must be used within a TextsProvider');
   }
-  
+
   return context;
 };

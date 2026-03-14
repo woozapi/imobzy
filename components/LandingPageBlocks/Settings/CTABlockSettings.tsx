@@ -6,7 +6,10 @@ interface CTABlockSettingsProps {
   onUpdate: (config: CTABlockConfig) => void;
 }
 
-const CTABlockSettings: React.FC<CTABlockSettingsProps> = ({ config, onUpdate }) => {
+const CTABlockSettings: React.FC<CTABlockSettingsProps> = ({
+  config,
+  onUpdate,
+}) => {
   const updateField = (field: keyof CTABlockConfig, value: any) => {
     onUpdate({ ...config, [field]: value });
   };

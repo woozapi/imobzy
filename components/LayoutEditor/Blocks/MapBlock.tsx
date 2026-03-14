@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block } from '../../../types';
 
@@ -9,7 +8,7 @@ interface MapBlockProps {
 
 export const MapBlock: React.FC<MapBlockProps> = ({ block, isEditing }) => {
   const config = block.config as any;
-  
+
   const latitude = config.latitude || -23.5505;
   const longitude = config.longitude || -46.6333;
   const zoom = config.zoom || 15;
@@ -23,8 +22,8 @@ export const MapBlock: React.FC<MapBlockProps> = ({ block, isEditing }) => {
       {config.title && (
         <h2 className="text-2xl font-bold mb-4">{config.title}</h2>
       )}
-      
-      <div 
+
+      <div
         className="rounded-2xl overflow-hidden border border-slate-200"
         style={{ height }}
       >
@@ -50,7 +49,7 @@ export const MapBlock: React.FC<MapBlockProps> = ({ block, isEditing }) => {
           />
         )}
       </div>
-      
+
       {config.address && (
         <p className="text-sm text-slate-600 mt-3 text-center">
           📍 {config.address}

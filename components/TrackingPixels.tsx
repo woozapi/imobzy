@@ -44,8 +44,14 @@ const TrackingPixels: React.FC = () => {
     }
 
     // Inicializar Google Analytics 4
-    if (config.google_analytics?.enabled && config.google_analytics.measurementId) {
-      initGoogleAnalytics(config.google_analytics.measurementId, config.google_analytics.testMode);
+    if (
+      config.google_analytics?.enabled &&
+      config.google_analytics.measurementId
+    ) {
+      initGoogleAnalytics(
+        config.google_analytics.measurementId,
+        config.google_analytics.testMode
+      );
     }
 
     // Inicializar Google Ads
@@ -63,7 +69,9 @@ const TrackingPixels: React.FC = () => {
  * Inicializa Facebook Pixel
  */
 function initFacebookPixel(pixelId: string, testMode?: boolean): void {
-  console.log(`📊 Inicializando Facebook Pixel: ${pixelId}${testMode ? ' (Test Mode)' : ''}`);
+  console.log(
+    `📊 Inicializando Facebook Pixel: ${pixelId}${testMode ? ' (Test Mode)' : ''}`
+  );
 
   // Criar script do Facebook Pixel
   const script = document.createElement('script');
@@ -87,9 +95,13 @@ function initFacebookPixel(pixelId: string, testMode?: boolean): void {
   document.body.appendChild(noscript);
 
   // Expor fbq globalmente para uso em outros componentes
-  (window as any).fbq = (window as any).fbq || function() {
-    ((window as any).fbq.queue = (window as any).fbq.queue || []).push(arguments);
-  };
+  (window as any).fbq =
+    (window as any).fbq ||
+    function () {
+      ((window as any).fbq.queue = (window as any).fbq.queue || []).push(
+        arguments
+      );
+    };
 
   console.log('✅ Facebook Pixel inicializado');
 }
@@ -98,7 +110,9 @@ function initFacebookPixel(pixelId: string, testMode?: boolean): void {
  * Inicializa Google Analytics 4
  */
 function initGoogleAnalytics(measurementId: string, testMode?: boolean): void {
-  console.log(`📊 Inicializando Google Analytics 4: ${measurementId}${testMode ? ' (Test Mode)' : ''}`);
+  console.log(
+    `📊 Inicializando Google Analytics 4: ${measurementId}${testMode ? ' (Test Mode)' : ''}`
+  );
 
   // Criar script do Google Analytics
   const script1 = document.createElement('script');
@@ -119,9 +133,13 @@ function initGoogleAnalytics(measurementId: string, testMode?: boolean): void {
   document.head.appendChild(script2);
 
   // Expor gtag globalmente
-  (window as any).gtag = (window as any).gtag || function() {
-    ((window as any).dataLayer = (window as any).dataLayer || []).push(arguments);
-  };
+  (window as any).gtag =
+    (window as any).gtag ||
+    function () {
+      ((window as any).dataLayer = (window as any).dataLayer || []).push(
+        arguments
+      );
+    };
 
   console.log('✅ Google Analytics 4 inicializado');
 }
@@ -130,7 +148,9 @@ function initGoogleAnalytics(measurementId: string, testMode?: boolean): void {
  * Inicializa Google Ads
  */
 function initGoogleAds(conversionId: string, testMode?: boolean): void {
-  console.log(`📊 Inicializando Google Ads: ${conversionId}${testMode ? ' (Test Mode)' : ''}`);
+  console.log(
+    `📊 Inicializando Google Ads: ${conversionId}${testMode ? ' (Test Mode)' : ''}`
+  );
 
   // Google Ads usa o mesmo gtag do Analytics
   if (!(window as any).gtag) {
@@ -148,9 +168,13 @@ function initGoogleAds(conversionId: string, testMode?: boolean): void {
     `;
     document.head.appendChild(script2);
 
-    (window as any).gtag = (window as any).gtag || function() {
-      ((window as any).dataLayer = (window as any).dataLayer || []).push(arguments);
-    };
+    (window as any).gtag =
+      (window as any).gtag ||
+      function () {
+        ((window as any).dataLayer = (window as any).dataLayer || []).push(
+          arguments
+        );
+      };
   } else {
     // Se gtag já existe (do Analytics), apenas adicionar config
     (window as any).gtag('config', conversionId);

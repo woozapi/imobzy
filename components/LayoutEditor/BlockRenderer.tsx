@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block, BlockType } from '../../types';
 import { HeroBlock } from './Blocks/HeroBlock';
@@ -22,7 +21,10 @@ interface BlockRendererProps {
   isEditing?: boolean;
 }
 
-export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, isEditing = true }) => {
+export const BlockRenderer: React.FC<BlockRendererProps> = ({
+  block,
+  isEditing = true,
+}) => {
   // Aplicar estilos do bloco
   const blockStyles: React.CSSProperties = {
     paddingTop: block.styles.padding?.top || 0,

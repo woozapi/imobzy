@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 
 /**
  * TENANT CONTEXT
@@ -23,7 +29,9 @@ interface TenantContextType {
 
 const TenantContext = createContext<TenantContextType | undefined>(undefined);
 
-export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const TenantProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,17 +40,17 @@ export const TenantProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     try {
       setLoading(true);
       setError(null);
-      
+
       // Buscar informações do tenant baseado no domínio atual
       const response = await fetch('/api/tenant/current');
-      
+
       if (!response.ok) {
         throw new Error('Falha ao carregar informações do site');
       }
-      
+
       const data = await response.json();
       setTenant(data);
-      
+
       console.log('✅ Tenant carregado:', data.name);
     } catch (err: any) {
       console.error('❌ Erro ao carregar tenant:', err);

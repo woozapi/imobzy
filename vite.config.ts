@@ -8,35 +8,35 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ mode }) => {
-    const env = loadEnv(mode, '.', '');
-    return {
-      root: process.cwd(),
-      server: {
-        port: 3005,
-        strictPort: true,
-        host: true,
-        proxy: {
-          '/api': {
-            target: 'http://localhost:3002',
-            changeOrigin: true,
-            secure: false,
-          }
-        }
+  const env = loadEnv(mode, '.', '');
+  return {
+    root: process.cwd(),
+    server: {
+      port: 3005,
+      strictPort: true,
+      host: true,
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3002',
+          changeOrigin: true,
+          secure: false,
+        },
       },
-      plugins: [react(), tailwindcss()],
-      define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+    },
+    plugins: [react(), tailwindcss()],
+    define: {
+      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(process.cwd(), '.'),
       },
-      resolve: {
-        alias: {
-          '@': path.resolve(process.cwd(), '.'),
-        }
-      },
-      test: {
-        globals: true,
-        environment: 'jsdom',
-        setupFiles: ['./src/test/setup.ts']
-      }
-    };
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: ['./src/test/setup.ts'],
+    },
+  };
 });

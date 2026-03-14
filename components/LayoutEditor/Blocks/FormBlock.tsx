@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block, FormBlockConfig } from '../../../types';
 
@@ -22,7 +21,7 @@ export const FormBlock: React.FC<FormBlockProps> = ({ block, isEditing }) => {
       {config.title && (
         <h2 className="text-3xl font-bold text-center mb-8">{config.title}</h2>
       )}
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {config.fields?.map((field, index) => (
           <div key={index}>
@@ -30,7 +29,7 @@ export const FormBlock: React.FC<FormBlockProps> = ({ block, isEditing }) => {
               {field.label}
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
-            
+
             {field.type === 'textarea' ? (
               <textarea
                 name={field.name}
@@ -50,7 +49,7 @@ export const FormBlock: React.FC<FormBlockProps> = ({ block, isEditing }) => {
             )}
           </div>
         ))}
-        
+
         <button
           type="submit"
           className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-lg transition-colors"

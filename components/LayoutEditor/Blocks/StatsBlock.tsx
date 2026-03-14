@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block, StatsBlockConfig } from '../../../types';
 
@@ -11,10 +10,10 @@ export const StatsBlock: React.FC<StatsBlockProps> = ({ block, isEditing }) => {
   const config = block.config as StatsBlockConfig;
 
   return (
-    <div 
+    <div
       className="grid gap-8"
       style={{
-        gridTemplateColumns: `repeat(${config.columns || 3}, minmax(0, 1fr))`
+        gridTemplateColumns: `repeat(${config.columns || 3}, minmax(0, 1fr))`,
       }}
     >
       {config.stats?.map((stat, index) => (

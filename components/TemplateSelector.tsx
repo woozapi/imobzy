@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Check, Eye, Sparkles } from 'lucide-react';
-import { LANDING_PAGE_TEMPLATES, LandingPageTemplate } from '../services/landingPageTemplates';
+import {
+  LANDING_PAGE_TEMPLATES,
+  LandingPageTemplate,
+} from '../services/landingPageTemplates';
 
 interface TemplateSelectorProps {
   onSelectTemplate: (templateId: string) => void;
@@ -11,10 +14,11 @@ interface TemplateSelectorProps {
 const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   onSelectTemplate,
   onCreateBlank,
-  onCreateWithAI
+  onCreateWithAI,
 }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [previewTemplate, setPreviewTemplate] = useState<LandingPageTemplate | null>(null);
+  const [previewTemplate, setPreviewTemplate] =
+    useState<LandingPageTemplate | null>(null);
 
   const handleSelect = (templateId: string) => {
     setSelectedId(templateId);
@@ -41,7 +45,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
         {LANDING_PAGE_TEMPLATES.map((template) => {
           const isSelected = selectedId === template.id;
-          
+
           return (
             <div
               key={template.id}
@@ -57,10 +61,12 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                 className="h-48 rounded-t-xl flex items-center justify-center text-6xl"
                 style={{
                   backgroundColor: template.themeConfig.primaryColor,
-                  opacity: 0.9
+                  opacity: 0.9,
                 }}
               >
-                <span className="filter drop-shadow-lg">{template.thumbnail}</span>
+                <span className="filter drop-shadow-lg">
+                  {template.thumbnail}
+                </span>
               </div>
 
               {/* Content */}
@@ -76,11 +82,15 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                 <div className="flex items-center gap-2 mb-3">
                   <div
                     className="w-6 h-6 rounded-full border-2 border-white shadow"
-                    style={{ backgroundColor: template.themeConfig.primaryColor }}
+                    style={{
+                      backgroundColor: template.themeConfig.primaryColor,
+                    }}
                   />
                   <div
                     className="w-6 h-6 rounded-full border-2 border-white shadow"
-                    style={{ backgroundColor: template.themeConfig.secondaryColor }}
+                    style={{
+                      backgroundColor: template.themeConfig.secondaryColor,
+                    }}
                   />
                   <span className="text-xs text-gray-500 ml-auto">
                     {template.blocks.length} blocos
@@ -218,19 +228,27 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 
               {/* Theme Info */}
               <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                <h4 className="font-semibold text-sm text-gray-700 mb-2">Cores do Tema</h4>
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                  Cores do Tema
+                </h4>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
                     <div
                       className="w-8 h-8 rounded border shadow-sm"
-                      style={{ backgroundColor: previewTemplate.themeConfig.primaryColor }}
+                      style={{
+                        backgroundColor:
+                          previewTemplate.themeConfig.primaryColor,
+                      }}
                     />
                     <span className="text-xs text-gray-600">Principal</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div
                       className="w-8 h-8 rounded border shadow-sm"
-                      style={{ backgroundColor: previewTemplate.themeConfig.secondaryColor }}
+                      style={{
+                        backgroundColor:
+                          previewTemplate.themeConfig.secondaryColor,
+                      }}
                     />
                     <span className="text-xs text-gray-600">Secundária</span>
                   </div>
@@ -242,7 +260,9 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 
               {/* Blocks List */}
               <div className="space-y-2 mb-6">
-                <h4 className="font-semibold text-sm text-gray-700 mb-2">Blocos Inclusos</h4>
+                <h4 className="font-semibold text-sm text-gray-700 mb-2">
+                  Blocos Inclusos
+                </h4>
                 {previewTemplate.blocks.map((block, idx) => (
                   <div
                     key={idx}

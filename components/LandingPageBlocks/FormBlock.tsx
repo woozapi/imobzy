@@ -13,7 +13,7 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,20 +22,21 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
 
     try {
       // Importar função de tracking
-      const { getTrackingData, trackFacebookEvent, trackGoogleEvent } = await import('../../utils/tracking');
-      
+      const { getTrackingData, trackFacebookEvent, trackGoogleEvent } =
+        await import('../../utils/tracking');
+
       // Capturar dados de tracking
       const trackingData = getTrackingData();
-      
+
       // Preparar dados do formulário
       const leadData = {
         name: formData.name || '',
         email: formData.email || '',
         phone: formData.phone || formData.telefone || '',
         message: formData.message || formData.mensagem || '',
-        ...trackingData
+        ...trackingData,
       };
-      
+
       // Enviar para API
       const response = await fetch('http://localhost:3002/api/contact', {
         method: 'POST',
@@ -47,21 +48,21 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
 
       if (response.ok) {
         setSubmitted(true);
-        
+
         // Disparar eventos de conversão
         trackFacebookEvent('Lead', {
           content_name: 'Landing Page Form',
           content_category: 'Lead Generation',
           value: 0,
-          currency: 'BRL'
+          currency: 'BRL',
         });
-        
+
         trackGoogleEvent('generate_lead', {
           event_category: 'Landing Page',
           event_label: 'Form Submission',
-          value: 0
+          value: 0,
         });
-        
+
         console.log('✅ Lead criado via landing page com tracking data');
       }
     } catch (error) {
@@ -90,7 +91,7 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
             className="text-2xl font-bold mb-2"
             style={{
               color: theme.textColor,
-              fontFamily: theme.headingFontFamily || theme.fontFamily
+              fontFamily: theme.headingFontFamily || theme.fontFamily,
             }}
           >
             {config.successMessage}
@@ -107,7 +108,7 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
           className="text-3xl font-bold text-center mb-8"
           style={{
             color: theme.textColor,
-            fontFamily: theme.headingFontFamily || theme.fontFamily
+            fontFamily: theme.headingFontFamily || theme.fontFamily,
           }}
         >
           {config.title}
@@ -134,7 +135,7 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
                   rows={4}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
                   style={{
-                    fontFamily: theme.fontFamily
+                    fontFamily: theme.fontFamily,
                   }}
                 />
               ) : field.type === 'select' && field.options ? (
@@ -145,7 +146,7 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
                   required={field.required}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
                   style={{
-                    fontFamily: theme.fontFamily
+                    fontFamily: theme.fontFamily,
                   }}
                 >
                   <option value="">Selecione...</option>
@@ -165,7 +166,7 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
                   required={field.required}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
                   style={{
-                    fontFamily: theme.fontFamily
+                    fontFamily: theme.fontFamily,
                   }}
                 />
               )}
@@ -177,7 +178,7 @@ const FormBlock: React.FC<FormBlockProps> = ({ config, theme }) => {
             disabled={submitting}
             className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-semibold text-lg text-white transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              backgroundColor: theme.primaryColor
+              backgroundColor: theme.primaryColor,
             }}
           >
             {submitting ? (

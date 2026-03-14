@@ -13,9 +13,11 @@ const HeroBlock: React.FC<HeroBlockProps> = ({ config, theme }) => {
       style={{
         height: `${config.height}px`,
         minHeight: '400px',
-        backgroundImage: config.backgroundImage ? `url(${config.backgroundImage})` : undefined,
+        backgroundImage: config.backgroundImage
+          ? `url(${config.backgroundImage})`
+          : undefined,
         backgroundSize: 'cover',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
       }}
     >
       {/* Overlay */}
@@ -36,7 +38,7 @@ const HeroBlock: React.FC<HeroBlockProps> = ({ config, theme }) => {
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 leading-tight"
             style={{
               color: config.textColor,
-              fontFamily: theme.headingFontFamily || theme.fontFamily
+              fontFamily: theme.headingFontFamily || theme.fontFamily,
             }}
           >
             {config.title}
@@ -57,7 +59,7 @@ const HeroBlock: React.FC<HeroBlockProps> = ({ config, theme }) => {
               className="inline-block px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg transition-transform hover:scale-105"
               style={{
                 backgroundColor: theme.primaryColor,
-                color: '#ffffff'
+                color: '#ffffff',
               }}
             >
               {config.ctaText}

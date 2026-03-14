@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { BlockType, BLOCK_METADATA } from '../../types/landingPage';
-import { 
-  Type, 
-  Image, 
-  Video, 
+import {
+  Type,
+  Image,
+  Video,
   Layout,
   FormInput,
   Target,
@@ -13,7 +13,7 @@ import {
   User,
   Minus,
   Code,
-  Search
+  Search,
 } from 'lucide-react';
 
 interface BlocksSidebarProps {
@@ -22,14 +22,16 @@ interface BlocksSidebarProps {
 
 const BlocksSidebar: React.FC<BlocksSidebarProps> = ({ onAddBlock }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'content' | 'property' | 'interactive' | 'layout'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<
+    'all' | 'content' | 'property' | 'interactive' | 'layout'
+  >('all');
 
   const blockCategories = [
     { id: 'all', label: 'Todos', icon: Layout },
     { id: 'content', label: 'Conteúdo', icon: Type },
     { id: 'property', label: 'Imóveis', icon: Layout },
     { id: 'interactive', label: 'Interativos', icon: Target },
-    { id: 'layout', label: 'Layout', icon: Minus }
+    { id: 'layout', label: 'Layout', icon: Minus },
   ];
 
   const blocks = [
@@ -38,14 +40,14 @@ const BlocksSidebar: React.FC<BlocksSidebarProps> = ({ onAddBlock }) => {
       name: 'Hero',
       description: 'Seção de destaque com imagem de fundo',
       icon: Image,
-      category: 'content'
+      category: 'content',
     },
     {
       type: BlockType.HERO_WITH_FORM,
       name: 'Hero com Formulário',
       description: 'Hero premium com captura de leads',
       icon: Target,
-      category: 'content'
+      category: 'content',
     },
 
     {
@@ -53,98 +55,100 @@ const BlocksSidebar: React.FC<BlocksSidebarProps> = ({ onAddBlock }) => {
       name: 'Grade de Imóveis',
       description: 'Exibe imóveis em formato de grade',
       icon: Layout,
-      category: 'property'
+      category: 'property',
     },
     {
       type: BlockType.TEXT,
       name: 'Texto',
       description: 'Bloco de texto editável',
       icon: Type,
-      category: 'content'
+      category: 'content',
     },
     {
       type: BlockType.IMAGE,
       name: 'Imagem',
       description: 'Imagem única',
       icon: Image,
-      category: 'content'
+      category: 'content',
     },
     {
       type: BlockType.VIDEO,
       name: 'Vídeo',
       description: 'Embed de vídeo',
       icon: Video,
-      category: 'content'
+      category: 'content',
     },
     {
       type: BlockType.FORM,
       name: 'Formulário',
       description: 'Formulário de contato',
       icon: FormInput,
-      category: 'interactive'
+      category: 'interactive',
     },
     {
       type: BlockType.CTA,
       name: 'Call to Action',
       description: 'Chamada para ação',
       icon: Target,
-      category: 'interactive'
+      category: 'interactive',
     },
     {
       type: BlockType.TESTIMONIALS,
       name: 'Depoimentos',
       description: 'Carrossel de depoimentos',
       icon: MessageSquare,
-      category: 'interactive'
+      category: 'interactive',
     },
     {
       type: BlockType.STATS,
       name: 'Estatísticas',
       description: 'Números de destaque',
       icon: BarChart3,
-      category: 'content'
+      category: 'content',
     },
     {
       type: BlockType.MAP,
       name: 'Mapa',
       description: 'Mapa interativo',
       icon: Map,
-      category: 'interactive'
+      category: 'interactive',
     },
     {
       type: BlockType.BROKER_CARD,
       name: 'Card do Corretor',
       description: 'Informações do corretor',
       icon: User,
-      category: 'content'
+      category: 'content',
     },
     {
       type: BlockType.SPACER,
       name: 'Espaçador',
       description: 'Espaço em branco',
       icon: Minus,
-      category: 'layout'
+      category: 'layout',
     },
     {
       type: BlockType.DIVIDER,
       name: 'Divisor',
       description: 'Linha divisória',
       icon: Minus,
-      category: 'layout'
+      category: 'layout',
     },
     {
       type: BlockType.CUSTOM_HTML,
       name: 'HTML Customizado',
       description: 'Código HTML personalizado',
       icon: Code,
-      category: 'layout'
-    }
+      category: 'layout',
+    },
   ];
 
-  const filteredBlocks = blocks.filter(block => {
-    const matchesSearch = block.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         block.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || block.category === selectedCategory;
+  const filteredBlocks = blocks.filter((block) => {
+    const matchesSearch =
+      block.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      block.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === 'all' || block.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -153,10 +157,13 @@ const BlocksSidebar: React.FC<BlocksSidebarProps> = ({ onAddBlock }) => {
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900 mb-3">Blocos</h2>
-        
+
         {/* Search */}
         <div className="relative mb-3">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={18}
+          />
           <input
             type="text"
             placeholder="Buscar blocos..."
@@ -168,7 +175,7 @@ const BlocksSidebar: React.FC<BlocksSidebarProps> = ({ onAddBlock }) => {
 
         {/* Categories */}
         <div className="flex gap-2 overflow-x-auto pb-2">
-          {blockCategories.map(category => (
+          {blockCategories.map((category) => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id as any)}
@@ -193,7 +200,7 @@ const BlocksSidebar: React.FC<BlocksSidebarProps> = ({ onAddBlock }) => {
           </div>
         ) : (
           <div className="space-y-2">
-            {filteredBlocks.map(block => {
+            {filteredBlocks.map((block) => {
               const Icon = block.icon;
               return (
                 <button

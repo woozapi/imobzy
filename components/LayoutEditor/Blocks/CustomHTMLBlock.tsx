@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Block } from '../../../types';
 
@@ -7,7 +6,10 @@ interface CustomHTMLBlockProps {
   isEditing?: boolean;
 }
 
-export const CustomHTMLBlock: React.FC<CustomHTMLBlockProps> = ({ block, isEditing }) => {
+export const CustomHTMLBlock: React.FC<CustomHTMLBlockProps> = ({
+  block,
+  isEditing,
+}) => {
   const config = block.config as any;
   const htmlContent = config.html || '<p>Digite seu HTML customizado...</p>';
 
@@ -27,7 +29,7 @@ export const CustomHTMLBlock: React.FC<CustomHTMLBlockProps> = ({ block, isEditi
   }
 
   return (
-    <div 
+    <div
       dangerouslySetInnerHTML={{ __html: htmlContent }}
       className="custom-html-block"
     />

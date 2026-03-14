@@ -10,14 +10,15 @@ interface InlineEditableProps {
   onClick?: (e: React.MouseEvent) => void;
 }
 
-const InlineEditable: React.FC<InlineEditableProps> = ({ 
-  textKey, 
-  children, 
-  className = '', 
+const InlineEditable: React.FC<InlineEditableProps> = ({
+  textKey,
+  children,
+  className = '',
   as: Component = 'span',
-  onClick
+  onClick,
 }) => {
-  const { isVisualMode, texts, updateText, activeKey, setActiveKey } = useTexts();
+  const { isVisualMode, texts, updateText, activeKey, setActiveKey } =
+    useTexts();
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
@@ -47,7 +48,7 @@ const InlineEditable: React.FC<InlineEditableProps> = ({
   };
 
   const handleStartEdit = (e: React.MouseEvent) => {
-    // If not in visual mode, or if user clicked but we have an onClick, 
+    // If not in visual mode, or if user clicked but we have an onClick,
     // we need to be careful. But here isVisualMode is already true (checked by caller or logic).
     e.preventDefault();
     e.stopPropagation();
@@ -61,7 +62,7 @@ const InlineEditable: React.FC<InlineEditableProps> = ({
       e.preventDefault();
       e.stopPropagation();
     }
-    
+
     setIsSaving(true);
     try {
       await updateText(textKey, editValue);
@@ -83,11 +84,15 @@ const InlineEditable: React.FC<InlineEditableProps> = ({
   };
 
   return (
-    <Component 
+    <Component
       className={`relative group transition-all duration-200 ${className} ${
-        isVisualMode && !isEditing ? 'outline-1 outline-dashed outline-indigo-400/50 outline-offset-2' : ''
+        isVisualMode && !isEditing
+          ? 'outline-1 outline-dashed outline-indigo-400/50 outline-offset-2'
+          : ''
       } ${
-        isHovered && !isEditing ? 'outline outline-2 outline-indigo-500 outline-offset-4 rounded cursor-cell bg-indigo-50/10 shadow-sm' : ''
+        isHovered && !isEditing
+          ? 'outline outline-2 outline-indigo-500 outline-offset-4 rounded cursor-cell bg-indigo-50/10 shadow-sm'
+          : ''
       } ${isEditing ? 'z-[100]' : ''} ${Component === 'span' ? 'inline-block' : 'block'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -116,14 +121,18 @@ const InlineEditable: React.FC<InlineEditableProps> = ({
             onClick={(e) => e.stopPropagation()}
           />
           <div className="absolute -bottom-10 right-0 flex gap-1 z-[100]">
-            <button 
+            <button
               onClick={handleSave}
               disabled={isSaving}
               className="p-2 bg-green-600 text-white rounded-full shadow-lg hover:bg-green-700 transition-colors"
             >
-              {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
+              {isSaving ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Check size={16} />
+              )}
             </button>
-            <button 
+            <button
               onClick={handleCancel}
               className="p-2 bg-slate-600 text-white rounded-full shadow-lg hover:bg-slate-700 transition-colors"
             >

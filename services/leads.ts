@@ -1,4 +1,3 @@
-
 import { supabase } from './supabase';
 import { Lead } from '../types';
 
@@ -19,13 +18,13 @@ export const leadService = {
         email: lead.email,
         property_id: lead.propertyId, // Map propertyId to property_id (snake_case)
         status: 'Novo',
-        source: lead.source || 'Site'
+        source: lead.source || 'Site',
       })
       .select()
       .single();
 
     if (error) throw error;
-    
+
     // --- TRIGGER WHATSAPP AUTOMATION (Async / Fire & Forget) ---
     (async () => {
       try {
@@ -41,10 +40,11 @@ export const leadService = {
         }
 
         const config = settingsData.integrations.evolutionApi;
-        
+
         // Formatar telefone
         const cleanPhone = lead.phone!.replace(/\D/g, '');
-        const formattedPhone = cleanPhone.length <= 11 ? `55${cleanPhone}` : cleanPhone;
+        const formattedPhone =
+          cleanPhone.length <= 11 ? `55${cleanPhone}` : cleanPhone;
 
         // Mensagem
         const propertyTitle = lead.property?.title || 'um de nossos imóveis';
@@ -52,17 +52,17 @@ export const leadService = {
 
         // Enviar via Evolution API
         const apiUrl = `${config.baseUrl}/message/sendText/${config.instanceName}`;
-        
+
         await fetch(apiUrl, {
           method: 'POST',
           headers: {
-            'apikey': config.token,
-            'Content-Type': 'application/json'
+            apikey: config.token,
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             number: formattedPhone,
-            text: message
-          })
+            text: message,
+          }),
         });
 
         console.log(`✅ WhatsApp enviado para ${lead.name}`);
@@ -78,22 +78,22 @@ export const leadService = {
   async list() {
     let query = supabase
       .from('crm_leads')
-      .select(`
+      .select(
+        `
         *,
         properties (
           title,
           price,
           images
         )
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
 
     const { data, error } = await query;
     if (error) throw error;
     return data.map(mapToModel);
   },
-
-
 
   // Update lead status (drag and drop)
   async updateStatus(id: string, status: string) {
@@ -106,11 +106,12 @@ export const leadService = {
 
     if (error) throw error;
     return mapToModel(data);
-  }
+  },
 };
 
 const mapToModel = (dbItem: any): Lead => ({
   id: dbItem.id,
+  organization_id: dbItem.organization_id,
   name: dbItem.name,
   email: dbItem.email,
   phone: dbItem.phone,
@@ -120,9 +121,11 @@ const mapToModel = (dbItem: any): Lead => ({
   preferences: {},
   createdAt: dbItem.created_at,
   propertyId: dbItem.property_id,
-  property: dbItem.properties ? {
-    title: dbItem.properties.title,
-    price: dbItem.properties.price,
-    image: dbItem.properties.images?.[0]
-  } : undefined
+  property: dbItem.properties
+    ? {
+        title: dbItem.properties.title,
+        price: dbItem.properties.price,
+        image: dbItem.properties.images?.[0],
+      }
+    : undefined,
 });

@@ -24,16 +24,22 @@ export interface TrackingData {
 export function captureUTMParameters(): void {
   const params = new URLSearchParams(window.location.search);
   const utmData: Record<string, string> = {};
-  
-  const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
-  
-  utmKeys.forEach(key => {
+
+  const utmKeys = [
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+  ];
+
+  utmKeys.forEach((key) => {
     const value = params.get(key);
     if (value) {
       utmData[key] = value;
     }
   });
-  
+
   // Salvar em sessionStorage se houver parâmetros
   if (Object.keys(utmData).length > 0) {
     sessionStorage.setItem('utm_params', JSON.stringify(utmData));
@@ -85,13 +91,18 @@ export function getGoogleAnalyticsClientId(): string | undefined {
         return `${parts[2]}.${parts[3]}`;
       }
     }
-    
+
     // Fallback: tentar pegar do gtag se disponível
     if (typeof window !== 'undefined' && (window as any).gtag) {
       return new Promise<string>((resolve) => {
-        (window as any).gtag('get', 'G-XXXXXXXXXX', 'client_id', (clientId: string) => {
-          resolve(clientId);
-        });
+        (window as any).gtag(
+          'get',
+          'G-XXXXXXXXXX',
+          'client_id',
+          (clientId: string) => {
+            resolve(clientId);
+          }
+        );
       }) as any;
     }
   } catch (error) {
@@ -119,7 +130,7 @@ export function getSessionData(): Record<string, any> {
  */
 export function getTrackingData(): TrackingData {
   const utmParams = getUTMParameters();
-  
+
   return {
     // UTM Parameters
     utm_source: utmParams.utm_source,
@@ -127,18 +138,18 @@ export function getTrackingData(): TrackingData {
     utm_campaign: utmParams.utm_campaign,
     utm_term: utmParams.utm_term,
     utm_content: utmParams.utm_content,
-    
+
     // Page Tracking
     referrer_url: document.referrer || undefined,
     landing_page_url: window.location.href,
-    
+
     // Google Analytics
     client_id: getGoogleAnalyticsClientId(),
-    
+
     // Facebook Pixel
     fbp: getFacebookPixelCookie(),
     fbc: getFacebookClickId(),
-    
+
     // Session Data
     session_data: getSessionData(),
   };
@@ -147,7 +158,10 @@ export function getTrackingData(): TrackingData {
 /**
  * Dispara evento customizado no Facebook Pixel
  */
-export function trackFacebookEvent(eventName: string, params?: Record<string, any>): void {
+export function trackFacebookEvent(
+  eventName: string,
+  params?: Record<string, any>
+): void {
   if (typeof window !== 'undefined' && (window as any).fbq) {
     (window as any).fbq('track', eventName, params);
     console.log(`📊 Facebook Pixel Event: ${eventName}`, params);
@@ -157,7 +171,10 @@ export function trackFacebookEvent(eventName: string, params?: Record<string, an
 /**
  * Dispara evento customizado no Google Analytics
  */
-export function trackGoogleEvent(eventName: string, params?: Record<string, any>): void {
+export function trackGoogleEvent(
+  eventName: string,
+  params?: Record<string, any>
+): void {
   if (typeof window !== 'undefined' && (window as any).gtag) {
     (window as any).gtag('event', eventName, params);
     console.log(`📊 Google Analytics Event: ${eventName}`, params);
@@ -167,7 +184,10 @@ export function trackGoogleEvent(eventName: string, params?: Record<string, any>
 /**
  * Dispara conversão no Google Ads
  */
-export function trackGoogleAdsConversion(conversionLabel: string, value?: number): void {
+export function trackGoogleAdsConversion(
+  conversionLabel: string,
+  value?: number
+): void {
   if (typeof window !== 'undefined' && (window as any).gtag) {
     (window as any).gtag('event', 'conversion', {
       send_to: conversionLabel,
@@ -184,7 +204,7 @@ export function trackGoogleAdsConversion(conversionLabel: string, value?: number
 if (typeof window !== 'undefined') {
   // Capturar UTM parameters imediatamente
   captureUTMParameters();
-  
+
   // Também capturar em mudanças de URL (para SPAs)
   window.addEventListener('popstate', captureUTMParameters);
 }

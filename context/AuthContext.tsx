@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { supabase } from '../services/supabase';
 import { User } from '@supabase/supabase-js';
 
@@ -33,7 +39,9 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,13 +53,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log('🔄 [AuthContext] Auth Event:', _event, 'User:', session?.user?.id);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      console.log(
+        '🔄 [AuthContext] Auth Event:',
+        _event,
+        'User:',
+        session?.user?.id
+      );
 
       // DEBOUNCE FIX: If SIGNED_IN fires before INITIAL_SESSION, skip it.
       // INITIAL_SESSION is the canonical first event and will follow immediately.
       if (_event === 'SIGNED_IN' && !initialSessionProcessed.current) {
-        console.log('⏭️ [AuthContext] Skipping early SIGNED_IN, waiting for INITIAL_SESSION');
+        console.log(
+          '⏭️ [AuthContext] Skipping early SIGNED_IN, waiting for INITIAL_SESSION'
+        );
         // Still set the user so we have it ready
         if (session?.user) setUser(session.user);
         return;
@@ -83,7 +100,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const loadProfile = async (userId: string) => {
     // If already fetching THIS user, don't repeat
     if (fetchInProgress.current === userId) return;
-    
+
     try {
       fetchInProgress.current = userId;
       // Define a flag to track if we're silently refreshing so we don't flicker the loading state
@@ -92,51 +109,70 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setLoading(true);
       }
       console.log('📡 [AuthContext] Querying profile for:', userId);
-      
+
       // Add a timeout promise to detect if query is hanging
       const queryPromise = supabase
         .from('profiles')
         .select('*, full_name:name, organization:organizations(*)')
         .eq('id', userId)
         .single();
-        
-      const timeoutPromise = new Promise((_, reject) => 
+
+      const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Profile query timeout')), 15000)
       );
 
-      const { data: profileData, error: profileError } = await Promise.race([queryPromise, timeoutPromise]) as any;
+      const { data: profileData, error: profileError } = (await Promise.race([
+        queryPromise,
+        timeoutPromise,
+      ])) as any;
 
-      console.log('📡 [AuthContext] Profile query resolved. Data:', !!profileData, 'Error:', profileError?.message);
+      console.log(
+        '📡 [AuthContext] Profile query resolved. Data:',
+        !!profileData,
+        'Error:',
+        profileError?.message
+      );
 
       if (profileError) {
         console.error('❌ [AuthContext] Error loading profile:', profileError);
-        setProfile(prev => (prev && prev.id === userId) ? prev : null);
+        setProfile((prev) => (prev && prev.id === userId ? prev : null));
         if (!profile) setIsImpersonating(false);
       } else if (profileData) {
-        console.log('✅ [AuthContext] Profile core data loaded:', profileData.role);
+        console.log(
+          '✅ [AuthContext] Profile core data loaded:',
+          profileData.role
+        );
         let finalProfile = { ...profileData };
-        
+
         // Handle impersonation
         const impOrgId = sessionStorage.getItem('impersonated_org_id');
-        
-        if (profileData.role === 'superadmin' && impOrgId && impOrgId !== 'null' && impOrgId !== 'undefined') {
+
+        if (
+          profileData.role === 'superadmin' &&
+          impOrgId &&
+          impOrgId !== 'null' &&
+          impOrgId !== 'undefined'
+        ) {
           console.log('🚀 [AuthContext] Checking impersonated org:', impOrgId);
           const { data: orgData, error: orgError } = await supabase
             .from('organizations')
             .select('*')
             .eq('id', impOrgId)
             .single();
-            
+
           if (!orgError && orgData) {
             console.log('✅ [AuthContext] Impersonation active:', orgData.name);
             finalProfile = {
               ...profileData,
               organization_id: orgData.id,
-              organization: orgData
+              organization: orgData,
             };
             setIsImpersonating(true);
           } else {
-            console.warn('⚠️ [AuthContext] Impersonation failed or org not found:', orgError);
+            console.warn(
+              '⚠️ [AuthContext] Impersonation failed or org not found:',
+              orgError
+            );
             sessionStorage.removeItem('impersonated_org_id');
             setIsImpersonating(false);
           }
@@ -146,27 +182,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             sessionStorage.removeItem('impersonated_org_id');
           }
         }
-        
+
         console.log('✅ [AuthContext] Final profile set.');
         setProfile(finalProfile);
       } else {
         console.warn('⚠️ [AuthContext] Profile query returned no data.');
-        setProfile(prev => (prev && prev.id === userId) ? prev : null);
+        setProfile((prev) => (prev && prev.id === userId ? prev : null));
       }
     } catch (err: any) {
       console.error('❌ [AuthContext] Critical exception in loadProfile:', err);
       if (err?.message?.includes('JWT expired')) {
-          console.warn('⚠️ Token expired, logging out...');
-          await signOut();
+        console.warn('⚠️ Token expired, logging out...');
+        await signOut();
       } else if (err?.message?.includes('timeout') && retryCount.current < 1) {
-          // RETRY FIX: On first timeout, retry once after a short delay
-          console.warn('🔄 [AuthContext] Timeout on first load, retrying in 2s...');
-          retryCount.current++;
-          fetchInProgress.current = null; // allow retry
-          setTimeout(() => loadProfile(userId), 2000);
-          return; // don't set loading=false yet
+        // RETRY FIX: On first timeout, retry once after a short delay
+        console.warn(
+          '🔄 [AuthContext] Timeout on first load, retrying in 2s...'
+        );
+        retryCount.current++;
+        fetchInProgress.current = null; // allow retry
+        setTimeout(() => loadProfile(userId), 2000);
+        return; // don't set loading=false yet
       } else {
-          setProfile(prev => (prev && prev.id === userId) ? prev : null);
+        setProfile((prev) => (prev && prev.id === userId ? prev : null));
       }
     } finally {
       console.log('🏁 [AuthContext] loadProfile finished.');
@@ -179,8 +217,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Clear any existing impersonation data on new login
     sessionStorage.removeItem('impersonated_org_id');
     setIsImpersonating(false);
-    
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) throw error;
   };
 
@@ -190,9 +231,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       password,
       options: {
         data: {
-          full_name: fullName
-        }
-      }
+          full_name: fullName,
+        },
+      },
     });
 
     if (error) throw error;
@@ -202,7 +243,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         id: data.user.id,
         email: data.user.email,
         full_name: fullName,
-        role: 'broker'
+        role: 'broker',
       });
     }
   };
@@ -229,13 +270,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Basic check for superadmin (will be enforced by RLS/Backend too)
     // We fetch current role again to be sure
     const { data: currentProfile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user?.id)
-        .single();
+      .from('profiles')
+      .select('role')
+      .eq('id', user?.id)
+      .single();
 
     if (currentProfile?.role !== 'superadmin') throw new Error('Unauthorized');
-    
+
     console.log('🚀 Starting impersonation of:', orgId);
     sessionStorage.setItem('impersonated_org_id', orgId);
     await loadProfile(user!.id);
@@ -248,18 +289,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      profile, 
-      loading, 
-      signIn, 
-      signUp, 
-      signOut, 
-      updateProfile, 
-      impersonateOrganization,
-      stopImpersonation,
-      isImpersonating
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        profile,
+        loading,
+        signIn,
+        signUp,
+        signOut,
+        updateProfile,
+        impersonateOrganization,
+        stopImpersonation,
+        isImpersonating,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

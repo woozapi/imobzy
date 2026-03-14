@@ -2,7 +2,14 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Block, BlockType, LandingPageTheme } from '../../types/landingPage';
-import { GripVertical, Eye, EyeOff, Copy, Trash2, Settings } from 'lucide-react';
+import {
+  GripVertical,
+  Eye,
+  EyeOff,
+  Copy,
+  Trash2,
+  Settings,
+} from 'lucide-react';
 import HeaderBlock from '../LandingPageBlocks/HeaderBlock';
 import FooterBlock from '../LandingPageBlocks/FooterBlock';
 import HeroBlock from '../LandingPageBlocks/HeroBlock';
@@ -43,7 +50,7 @@ const CanvasArea: React.FC<CanvasAreaProps> = ({
   onDeleteBlock,
   onDuplicateBlock,
   themeConfig,
-  viewMode
+  viewMode,
 }) => {
   const { settings } = useSettings();
 
@@ -88,7 +95,7 @@ const SortableBlock: React.FC<SortableBlockProps> = ({
   onDuplicate,
   themeConfig,
   viewMode,
-  settings
+  settings,
 }) => {
   const {
     attributes,
@@ -96,13 +103,13 @@ const SortableBlock: React.FC<SortableBlockProps> = ({
     setNodeRef,
     transform,
     transition,
-    isDragging
+    isDragging,
   } = useSortable({ id: block.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1
+    opacity: isDragging ? 0.5 : 1,
   };
 
   const handleToggleVisibility = (e: React.MouseEvent) => {
@@ -138,7 +145,9 @@ const SortableBlock: React.FC<SortableBlockProps> = ({
         {/* Toolbar */}
         <div
           className={`absolute -top-10 left-0 right-0 flex items-center justify-between bg-gray-900 text-white px-3 py-2 rounded-t-lg transition-opacity ${
-            isSelected || isDragging ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            isSelected || isDragging
+              ? 'opacity-100'
+              : 'opacity-0 group-hover:opacity-100'
           }`}
           style={{ zIndex: 10 }}
         >
@@ -150,7 +159,9 @@ const SortableBlock: React.FC<SortableBlockProps> = ({
             >
               <GripVertical size={16} />
             </div>
-            <span className="text-sm font-medium">{getBlockTypeName(block.type)}</span>
+            <span className="text-sm font-medium">
+              {getBlockTypeName(block.type)}
+            </span>
           </div>
 
           <div className="flex items-center gap-1">
@@ -187,9 +198,12 @@ const SortableBlock: React.FC<SortableBlockProps> = ({
   );
 };
 
-
-
-function renderBlock(block: Block, themeConfig: LandingPageTheme, viewMode: string, settings?: any) {
+function renderBlock(
+  block: Block,
+  themeConfig: LandingPageTheme,
+  viewMode: string,
+  settings?: any
+) {
   if (!block.visible) {
     return (
       <div className="bg-gray-100 border-2 border-dashed border-gray-300 p-8 text-center text-gray-500">
@@ -208,40 +222,42 @@ function renderBlock(block: Block, themeConfig: LandingPageTheme, viewMode: stri
 
     case BlockType.HERO:
       return <HeroBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.HERO_WITH_FORM:
       return <HeroWithFormBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.PROPERTY_GRID:
       return <PropertyGridBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.TEXT:
       return <TextBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.IMAGE:
       return <ImageBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.GALLERY:
       return <GalleryBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.PROPERTY_CAROUSEL:
-      return <PropertyCarouselBlock config={block.config} theme={themeConfig} />;
-    
+      return (
+        <PropertyCarouselBlock config={block.config} theme={themeConfig} />
+      );
+
     case BlockType.STATS:
       return <StatsBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.FORM:
       return <FormBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.CTA:
       return <CTABlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.MAP:
       return <MapBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.TIMELINE:
       return <TimelineBlock config={block.config} theme={themeConfig} />;
-    
+
     case BlockType.VIDEO:
       return <VideoBlock config={block.config} theme={themeConfig} />;
 
@@ -249,14 +265,20 @@ function renderBlock(block: Block, themeConfig: LandingPageTheme, viewMode: stri
       return <TestimonialsBlock config={block.config} theme={themeConfig} />;
 
     case BlockType.BROKER_CARD:
-      return <BrokerCardBlock config={block.config} theme={themeConfig} settings={settings} />;
+      return (
+        <BrokerCardBlock
+          config={block.config}
+          theme={themeConfig}
+          settings={settings}
+        />
+      );
 
     case BlockType.DIVIDER:
       return <DividerBlock config={block.config} />;
-    
+
     case BlockType.SPACER:
       return <SpacerBlock config={block.config} />;
-    
+
     default:
       return (
         <div className="bg-gray-100 border-2 border-dashed border-gray-300 p-8 text-center text-gray-500">
@@ -292,8 +314,7 @@ function getBlockTypeName(type: BlockType): string {
     [BlockType.FEATURES]: 'Funcionalidades',
     [BlockType.SPACER]: 'Espaçador',
     [BlockType.TIMELINE]: 'Linha do Tempo',
-    [BlockType.CUSTOM_HTML]: 'HTML Customizado'
-
+    [BlockType.CUSTOM_HTML]: 'HTML Customizado',
   };
 
   return names[type] || type;

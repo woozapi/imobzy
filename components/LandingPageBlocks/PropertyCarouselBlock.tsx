@@ -7,13 +7,16 @@ interface PropertyCarouselBlockProps {
   theme: LandingPageTheme;
 }
 
-const PropertyCarouselBlock: React.FC<PropertyCarouselBlockProps> = ({ config, theme }) => {
-  const { 
-    images = [], 
-    autoplay = false, 
+const PropertyCarouselBlock: React.FC<PropertyCarouselBlockProps> = ({
+  config,
+  theme,
+}) => {
+  const {
+    images = [],
+    autoplay = false,
     autoplayDelay = 4000,
     showThumbnails = true,
-    showDots = true 
+    showDots = true,
   } = config;
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -41,14 +44,22 @@ const PropertyCarouselBlock: React.FC<PropertyCarouselBlockProps> = ({ config, t
   };
 
   const currentImage = images[currentIndex];
-  const imageSrc = typeof currentImage === 'string' ? currentImage : currentImage?.src;
-  const imageAlt = typeof currentImage === 'string' ? `Foto ${currentIndex + 1}` : currentImage?.alt;
-  const imageCaption = typeof currentImage === 'string' ? '' : currentImage?.caption;
+  const imageSrc =
+    typeof currentImage === 'string' ? currentImage : currentImage?.src;
+  const imageAlt =
+    typeof currentImage === 'string'
+      ? `Foto ${currentIndex + 1}`
+      : currentImage?.alt;
+  const imageCaption =
+    typeof currentImage === 'string' ? '' : currentImage?.caption;
 
   return (
     <div className="relative">
       {/* Main Carousel */}
-      <div className="relative bg-black rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+      <div
+        className="relative bg-black rounded-xl overflow-hidden"
+        style={{ aspectRatio: '16/9' }}
+      >
         {/* Current Image */}
         <img
           src={imageSrc}

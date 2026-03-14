@@ -1,7 +1,13 @@
-
 import React, { useEffect, useState, useRef } from 'react';
-import { MapContainer, TileLayer, FeatureGroup, LayersControl, WMSTileLayer, useMap } from 'react-leaflet';
-import { EditControl } from "react-leaflet-draw";
+import {
+  MapContainer,
+  TileLayer,
+  FeatureGroup,
+  LayersControl,
+  WMSTileLayer,
+  useMap,
+} from 'react-leaflet';
+import { EditControl } from 'react-leaflet-draw';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -9,9 +15,12 @@ import 'leaflet-draw/dist/leaflet.draw.css';
 // Fix Leaflet marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  iconRetinaUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl:
+    'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
 interface RuralMapProps {
@@ -32,7 +41,12 @@ const ZoomToData: React.FC<{ data: any }> = ({ data }) => {
   return null;
 };
 
-const RuralMap: React.FC<RuralMapProps> = ({ onPolygonCreated, initialGeoJson, height = '400px', className }) => {
+const RuralMap: React.FC<RuralMapProps> = ({
+  onPolygonCreated,
+  initialGeoJson,
+  height = '400px',
+  className,
+}) => {
   const [geoJson, setGeoJson] = useState(initialGeoJson);
   const featureGroupRef = useRef<L.FeatureGroup>(null);
 
@@ -55,10 +69,13 @@ const RuralMap: React.FC<RuralMapProps> = ({ onPolygonCreated, initialGeoJson, h
   };
 
   return (
-    <div className={`rounded-2xl overflow-hidden border border-slate-200 shadow-sm ${className}`} style={{ height }}>
-      <MapContainer 
-        center={[-15.793889, -47.882778]} 
-        zoom={4} 
+    <div
+      className={`rounded-2xl overflow-hidden border border-slate-200 shadow-sm ${className}`}
+      style={{ height }}
+    >
+      <MapContainer
+        center={[-15.793889, -47.882778]}
+        zoom={4}
         style={{ height: '100%', width: '100%' }}
       >
         <LayersControl position="topright">
@@ -79,7 +96,7 @@ const RuralMap: React.FC<RuralMapProps> = ({ onPolygonCreated, initialGeoJson, h
               version="1.1.1"
             />
           </LayersControl.Overlay>
-          
+
           <LayersControl.Overlay name="CAR (Imóveis Rurais)">
             <WMSTileLayer
               url="https://geoserver.mma.gov.br/geoserver/mma/wms"
@@ -92,7 +109,7 @@ const RuralMap: React.FC<RuralMapProps> = ({ onPolygonCreated, initialGeoJson, h
 
         <FeatureGroup ref={featureGroupRef}>
           <EditControl
-            position='topleft'
+            position="topleft"
             onCreated={_onCreate}
             onEdited={_onEdited}
             draw={{

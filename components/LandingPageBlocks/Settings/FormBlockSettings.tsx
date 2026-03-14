@@ -7,7 +7,10 @@ interface FormBlockSettingsProps {
   onUpdate: (config: FormBlockConfig) => void;
 }
 
-const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({ config, onUpdate }) => {
+const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({
+  config,
+  onUpdate,
+}) => {
   const updateField = (field: keyof FormBlockConfig, value: any) => {
     onUpdate({ ...config, [field]: value });
   };
@@ -18,7 +21,7 @@ const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({ config, onUpdate 
       type: 'text',
       label: 'Novo Campo',
       required: false,
-      placeholder: ''
+      placeholder: '',
     };
     updateField('fields', [...config.fields, newField]);
   };
@@ -30,7 +33,10 @@ const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({ config, onUpdate 
   };
 
   const removeField = (index: number) => {
-    updateField('fields', config.fields.filter((_, i) => i !== index));
+    updateField(
+      'fields',
+      config.fields.filter((_, i) => i !== index)
+    );
   };
 
   return (
@@ -61,9 +67,14 @@ const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({ config, onUpdate 
 
         <div className="space-y-3">
           {config.fields.map((field, index) => (
-            <div key={index} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div
+              key={index}
+              className="p-3 bg-gray-50 rounded-lg border border-gray-200"
+            >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Campo {index + 1}</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Campo {index + 1}
+                </span>
                 <button
                   onClick={() => removeField(index)}
                   className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
@@ -76,7 +87,9 @@ const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({ config, onUpdate 
                 <input
                   type="text"
                   value={field.label}
-                  onChange={(e) => updateFieldConfig(index, { label: e.target.value })}
+                  onChange={(e) =>
+                    updateFieldConfig(index, { label: e.target.value })
+                  }
                   placeholder="Label"
                   className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -84,14 +97,18 @@ const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({ config, onUpdate 
                 <input
                   type="text"
                   value={field.name}
-                  onChange={(e) => updateFieldConfig(index, { name: e.target.value })}
+                  onChange={(e) =>
+                    updateFieldConfig(index, { name: e.target.value })
+                  }
                   placeholder="Nome do campo"
                   className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
 
                 <select
                   value={field.type}
-                  onChange={(e) => updateFieldConfig(index, { type: e.target.value as any })}
+                  onChange={(e) =>
+                    updateFieldConfig(index, { type: e.target.value as any })
+                  }
                   className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="text">Texto</option>
@@ -104,7 +121,9 @@ const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({ config, onUpdate 
                 <input
                   type="text"
                   value={field.placeholder || ''}
-                  onChange={(e) => updateFieldConfig(index, { placeholder: e.target.value })}
+                  onChange={(e) =>
+                    updateFieldConfig(index, { placeholder: e.target.value })
+                  }
                   placeholder="Placeholder"
                   className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -113,7 +132,9 @@ const FormBlockSettings: React.FC<FormBlockSettingsProps> = ({ config, onUpdate 
                   <input
                     type="checkbox"
                     checked={field.required}
-                    onChange={(e) => updateFieldConfig(index, { required: e.target.checked })}
+                    onChange={(e) =>
+                      updateFieldConfig(index, { required: e.target.checked })
+                    }
                     className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
                   Campo obrigatório

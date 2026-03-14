@@ -1,14 +1,21 @@
 import { Property } from '../types';
-import { LandingPage, BlockType, BlockConfig, LandingPageTheme, Block } from '../types/landingPage';
+import {
+  LandingPage,
+  BlockType,
+  BlockConfig,
+  LandingPageTheme,
+  Block,
+} from '../types/landingPage';
 import { v4 as uuidv4 } from 'uuid';
 import { geminiService } from './geminiService';
 
-export const generateLandingPageFromProperty = async (property: Property): Promise<Partial<LandingPage>> => {
+export const generateLandingPageFromProperty = async (
+  property: Property
+): Promise<Partial<LandingPage>> => {
   // Construct enhanced prompt with copywriting expertise
-  const propertyImages = property.images && property.images.length > 0 
-    ? property.images 
-    : [];
-  
+  const propertyImages =
+    property.images && property.images.length > 0 ? property.images : [];
+
   const prompt = `
 Você é um ESPECIALISTA em copywriting imobiliário e marketing de alto padrão, focado exclusivamente no mercado RURAL brasileiro.
 Sua missão: criar uma landing page IRRESISTÍVEL para vender este imóvel rural.
@@ -32,32 +39,44 @@ Sede: ${property.features.infra?.casaSede ? 'Sim' : 'Não'}
 Casas Func.: ${property.features.infra?.casasFuncionarios || 0}
 Galpões: ${property.features.infra?.galpaes || 0}
 Piquetes: ${property.features.infra?.piquetes || 0}
-Outros: ${[
-  property.features.infra?.curral ? 'Curral' : '',
-  property.features.infra?.brete ? 'Brete' : '',
-  property.features.infra?.balanca ? 'Balança' : '',
-  property.features.infra?.energiaSolar ? 'Energia Solar' : '',
-  property.features.infra?.irrigacao ? 'Sistema de Irrigação' : '',
-  property.features.infra?.pivotCentral ? 'Pivot Central' : ''
-].filter(Boolean).join(', ') || 'Básico'}
+Outros: ${
+    [
+      property.features.infra?.curral ? 'Curral' : '',
+      property.features.infra?.brete ? 'Brete' : '',
+      property.features.infra?.balanca ? 'Balança' : '',
+      property.features.infra?.energiaSolar ? 'Energia Solar' : '',
+      property.features.infra?.irrigacao ? 'Sistema de Irrigação' : '',
+      property.features.infra?.pivotCentral ? 'Pivot Central' : '',
+    ]
+      .filter(Boolean)
+      .join(', ') || 'Básico'
+  }
 
 --- RECURSOS HÍDRICOS ---
-Fontes: ${[
-  property.features.water?.rio ? 'Rio' : '',
-  property.features.water?.corrego ? 'Córrego' : '',
-  property.features.water?.nascente ? 'Nascente' : '',
-  property.features.water?.represa ? 'Represa' : '',
-  property.features.infra?.pocoArtesiano ? 'Poço Artesiano' : ''
-].filter(Boolean).join(', ') || 'Não detalhadas'}
+Fontes: ${
+    [
+      property.features.water?.rio ? 'Rio' : '',
+      property.features.water?.corrego ? 'Córrego' : '',
+      property.features.water?.nascente ? 'Nascente' : '',
+      property.features.water?.represa ? 'Represa' : '',
+      property.features.infra?.pocoArtesiano ? 'Poço Artesiano' : '',
+    ]
+      .filter(Boolean)
+      .join(', ') || 'Não detalhadas'
+  }
 
 --- DOCUMENTAÇÃO ---
-Regularização: ${[
-  property.features.legal?.car ? 'CAR' : '',
-  property.features.legal?.ccir ? 'CCIR' : '',
-  property.features.legal?.geo ? 'GEO' : '',
-  property.features.legal?.itr ? 'ITR' : '',
-  property.features.legal?.escritura ? 'Escritura' : ''
-].filter(Boolean).join(', ') || 'Consulte'}
+Regularização: ${
+    [
+      property.features.legal?.car ? 'CAR' : '',
+      property.features.legal?.ccir ? 'CCIR' : '',
+      property.features.legal?.geo ? 'GEO' : '',
+      property.features.legal?.itr ? 'ITR' : '',
+      property.features.legal?.escritura ? 'Escritura' : '',
+    ]
+      .filter(Boolean)
+      .join(', ') || 'Consulte'
+  }
 Reserva Legal: ${property.features.legal?.reservaLegal || 0}%
 APP: ${property.features.legal?.app || 0}%
 
@@ -132,39 +151,43 @@ RETORNE APENAS O JSON. SEM MARKDOWN. SEM EXPLICAÇÕES.
 
   try {
     const text = await geminiService.generateText(prompt);
-    
+
     const parsed = JSON.parse(text);
-    
+
     // Post-process to ensure IDs and types match our system
-    let blocks: Block[] = (parsed.blocks || []).map((b: any, index: number) => ({
-      id: uuidv4(),
-      type: b.type as BlockType,
-      order: index,
-      visible: true,
-      config: b.config,
-      styles: { padding: '40px 20px' },
-      responsive: {}
-    }));
+    let blocks: Block[] = (parsed.blocks || []).map(
+      (b: any, index: number) => ({
+        id: uuidv4(),
+        type: b.type as BlockType,
+        order: index,
+        visible: true,
+        config: b.config,
+        styles: { padding: '40px 20px' },
+        responsive: {},
+      })
+    );
 
     // FORCE property images into blocks (post-processing override)
     if (propertyImages.length > 0) {
       // 1. Find hero block and inject first image
-      const heroBlock = blocks.find(b => b.type === BlockType.HERO);
+      const heroBlock = blocks.find((b) => b.type === BlockType.HERO);
       if (heroBlock && heroBlock.config) {
         (heroBlock.config as any).backgroundImage = propertyImages[0];
       }
 
       // 2. Find or create PROPERTY_CAROUSEL block if 2+ images
       if (propertyImages.length >= 2) {
-        let carouselBlock = blocks.find(b => b.type === BlockType.PROPERTY_CAROUSEL);
-        
+        let carouselBlock = blocks.find(
+          (b) => b.type === BlockType.PROPERTY_CAROUSEL
+        );
+
         // Convert image URLs to carousel format
         const carouselImages = propertyImages.map((url, idx) => ({
           src: url,
           alt: `${property.title} - Vista ${idx + 1}`,
-          caption: `Explore cada detalhe desta propriedade`
+          caption: `Explore cada detalhe desta propriedade`,
         }));
-        
+
         if (!carouselBlock) {
           // Create new carousel block
           carouselBlock = {
@@ -177,10 +200,10 @@ RETORNE APENAS O JSON. SEM MARKDOWN. SEM EXPLICAÇÕES.
               autoplay: false,
               autoplayDelay: 4000,
               showThumbnails: true,
-              showDots: true
+              showDots: true,
             } as any,
             styles: { padding: '40px 20px' },
-            responsive: {}
+            responsive: {},
           };
           blocks.push(carouselBlock);
         } else {
@@ -191,7 +214,7 @@ RETORNE APENAS O JSON. SEM MARKDOWN. SEM EXPLICAÇÕES.
             autoplay: false,
             autoplayDelay: 4000,
             showThumbnails: true,
-            showDots: true
+            showDots: true,
           } as any;
         }
       }
@@ -202,8 +225,8 @@ RETORNE APENAS O JSON. SEM MARKDOWN. SEM EXPLICAÇÕES.
           block.config = {
             ...block.config,
             src: propertyImages[index + 1] || propertyImages[0],
-            alt: property.title
-          };
+            alt: property.title,
+          } as any;
         }
       });
     }
@@ -217,14 +240,26 @@ RETORNE APENAS O JSON. SEM MARKDOWN. SEM EXPLICAÇÕES.
         backgroundColor: '#ffffff',
         textColor: '#1f2937',
         borderRadius: '0.5rem',
-        spacing: { xs: '0.5rem', sm: '1rem', md: '1.5rem', lg: '2rem', xl: '3rem' },
-        fontSize: { base: '1rem', heading1: '2.5rem', heading2: '2rem', heading3: '1.75rem' }
+        spacing: {
+          xs: '0.5rem',
+          sm: '1rem',
+          md: '1.5rem',
+          lg: '2rem',
+          xl: '3rem',
+        },
+        fontSize: {
+          base: '1rem',
+          heading1: '2.5rem',
+          heading2: '2rem',
+          heading3: '1.75rem',
+        },
       } as LandingPageTheme,
-      blocks: blocks
+      blocks: blocks,
     };
-
   } catch (error) {
     console.error('Error generating landing page:', error);
-    throw new Error('Failed to generate landing page content: ' + (error as any).message);
+    throw new Error(
+      'Failed to generate landing page content: ' + (error as any).message
+    );
   }
 };

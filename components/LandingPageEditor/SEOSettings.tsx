@@ -8,7 +8,11 @@ interface SEOSettingsProps {
   onClose: () => void;
 }
 
-const SEOSettings: React.FC<SEOSettingsProps> = ({ page, onUpdate, onClose }) => {
+const SEOSettings: React.FC<SEOSettingsProps> = ({
+  page,
+  onUpdate,
+  onClose,
+}) => {
   const [localPage, setLocalPage] = useState<LandingPage>(page);
 
   const updateField = (field: keyof LandingPage, value: any) => {
@@ -27,7 +31,10 @@ const SEOSettings: React.FC<SEOSettingsProps> = ({ page, onUpdate, onClose }) =>
 
   const removeKeyword = (index: number) => {
     const keywords = localPage.metaKeywords || [];
-    updateField('metaKeywords', keywords.filter((_, i) => i !== index));
+    updateField(
+      'metaKeywords',
+      keywords.filter((_, i) => i !== index)
+    );
   };
 
   return (
@@ -37,7 +44,9 @@ const SEOSettings: React.FC<SEOSettingsProps> = ({ page, onUpdate, onClose }) =>
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Search className="text-blue-600" size={24} />
-            <h2 className="text-2xl font-bold text-gray-900">Configurações de SEO</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Configurações de SEO
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -81,7 +90,8 @@ const SEOSettings: React.FC<SEOSettingsProps> = ({ page, onUpdate, onClose }) =>
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <p className="text-xs text-gray-500 mt-1">
-              {(localPage.metaDescription || '').length}/160 caracteres (ideal: 150-160)
+              {(localPage.metaDescription || '').length}/160 caracteres (ideal:
+              150-160)
             </p>
           </div>
 
@@ -127,7 +137,8 @@ const SEOSettings: React.FC<SEOSettingsProps> = ({ page, onUpdate, onClose }) =>
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Imagem que aparecerá ao compartilhar em redes sociais (recomendado: 1200x630px)
+              Imagem que aparecerá ao compartilhar em redes sociais
+              (recomendado: 1200x630px)
             </p>
             {localPage.ogImage && (
               <div className="mt-3">
@@ -156,7 +167,9 @@ const SEOSettings: React.FC<SEOSettingsProps> = ({ page, onUpdate, onClose }) =>
                 {window.location.origin}/lp/{localPage.slug}
               </div>
               <div className="text-gray-600 text-sm line-clamp-2">
-                {localPage.metaDescription || localPage.description || 'Sem descrição'}
+                {localPage.metaDescription ||
+                  localPage.description ||
+                  'Sem descrição'}
               </div>
             </div>
           </div>

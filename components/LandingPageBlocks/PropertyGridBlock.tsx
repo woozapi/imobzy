@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { PropertyGridBlockConfig, LandingPageTheme } from '../../types/landingPage';
+import {
+  PropertyGridBlockConfig,
+  LandingPageTheme,
+} from '../../types/landingPage';
 import { Property } from '../../types';
 import { MapPin, Maximize2, DollarSign } from 'lucide-react';
 
@@ -9,100 +12,113 @@ interface PropertyGridBlockProps {
   properties?: Property[];
 }
 
-const PropertyGridBlock: React.FC<PropertyGridBlockProps> = ({ config, theme, properties = [] }) => {
+const PropertyGridBlock: React.FC<PropertyGridBlockProps> = ({
+  config,
+  theme,
+  properties = [],
+}) => {
   // Mock properties para preview no editor
-  const mockProperties: Property[] = properties.length > 0 ? properties : [
-    {
-      id: '1',
-      title: 'Fazenda Premium',
-      description: 'Linda fazenda com infraestrutura completa',
-      price: 2500000,
-      type: 'Fazenda' as any,
-      purpose: 'Venda' as any,
-      aptitude: [],
-      status: 'Disponível' as any,
-      location: {
-        city: 'Umuarama',
-        neighborhood: 'Rural',
-        state: 'PR',
-        address: 'Rodovia PR-000'
-      },
-      features: {
-        areaHectares: 150,
-        casaSede: true,
-        caseiros: 2,
-        galpoes: 3,
-        currais: true,
-        tipoSolo: 'Argiloso',
-        usoAtual: ['Pasto', 'Agricultura'],
-        temGado: true,
-        fontesAgua: ['Rio', 'Represa']
-      },
-      images: ['https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800'],
-      brokerId: '1',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '2',
-      title: 'Sítio com Nascente',
-      description: 'Sítio ideal para lazer e produção',
-      price: 850000,
-      type: 'Sítio' as any,
-      purpose: 'Venda' as any,
-      aptitude: [],
-      status: 'Disponível' as any,
-      location: {
-        city: 'Maringá',
-        neighborhood: 'Rural',
-        state: 'PR',
-        address: 'Estrada Municipal'
-      },
-      features: {
-        areaHectares: 45,
-        casaSede: true,
-        caseiros: 1,
-        galpoes: 1,
-        currais: false,
-        tipoSolo: 'Misto',
-        usoAtual: ['Pasto', 'Reflorestamento'],
-        temGado: false,
-        fontesAgua: ['Nascente']
-      },
-      images: ['https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800'],
-      brokerId: '1',
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: '3',
-      title: 'Chácara de Lazer',
-      description: 'Perfeita para finais de semana',
-      price: 450000,
-      type: 'Chácara' as any,
-      purpose: 'Venda' as any,
-      aptitude: [],
-      status: 'Disponível' as any,
-      location: {
-        city: 'Cianorte',
-        neighborhood: 'Rural',
-        state: 'PR',
-        address: 'Estrada Velha'
-      },
-      features: {
-        areaHectares: 12,
-        casaSede: true,
-        caseiros: 0,
-        galpoes: 1,
-        currais: false,
-        tipoSolo: 'Arenoso',
-        usoAtual: ['Lazer'],
-        temGado: false,
-        fontesAgua: ['Poço Artesiano']
-      },
-      images: ['https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800'],
-      brokerId: '1',
-      createdAt: new Date().toISOString()
-    }
-  ];
+  const mockProperties: Property[] =
+    properties.length > 0
+      ? properties
+      : [
+          {
+            id: '1',
+            title: 'Fazenda Premium',
+            description: 'Linda fazenda com infraestrutura completa',
+            price: 2500000,
+            type: 'Fazenda' as any,
+            purpose: 'Venda' as any,
+            aptitude: [],
+            status: 'Disponível' as any,
+            location: {
+              city: 'Umuarama',
+              neighborhood: 'Rural',
+              state: 'PR',
+              address: 'Rodovia PR-000',
+            },
+            features: {
+              areaHectares: 150,
+              casaSede: true,
+              caseiros: 2,
+              galpoes: 3,
+              currais: true,
+              tipoSolo: 'Argiloso',
+              usoAtual: ['Pasto', 'Agricultura'],
+              temGado: true,
+              fontesAgua: ['Rio', 'Represa'],
+            },
+            images: [
+              'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
+            ],
+            brokerId: '1',
+            createdAt: new Date().toISOString(),
+          },
+          {
+            id: '2',
+            title: 'Sítio com Nascente',
+            description: 'Sítio ideal para lazer e produção',
+            price: 850000,
+            type: 'Sítio' as any,
+            purpose: 'Venda' as any,
+            aptitude: [],
+            status: 'Disponível' as any,
+            location: {
+              city: 'Maringá',
+              neighborhood: 'Rural',
+              state: 'PR',
+              address: 'Estrada Municipal',
+            },
+            features: {
+              areaHectares: 45,
+              casaSede: true,
+              caseiros: 1,
+              galpoes: 1,
+              currais: false,
+              tipoSolo: 'Misto',
+              usoAtual: ['Pasto', 'Reflorestamento'],
+              temGado: false,
+              fontesAgua: ['Nascente'],
+            },
+            images: [
+              'https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800',
+            ],
+            brokerId: '1',
+            createdAt: new Date().toISOString(),
+          },
+          {
+            id: '3',
+            title: 'Chácara de Lazer',
+            description: 'Perfeita para finais de semana',
+            price: 450000,
+            type: 'Chácara' as any,
+            purpose: 'Venda' as any,
+            aptitude: [],
+            status: 'Disponível' as any,
+            location: {
+              city: 'Cianorte',
+              neighborhood: 'Rural',
+              state: 'PR',
+              address: 'Estrada Velha',
+            },
+            features: {
+              areaHectares: 12,
+              casaSede: true,
+              caseiros: 0,
+              galpoes: 1,
+              currais: false,
+              tipoSolo: 'Arenoso',
+              usoAtual: ['Lazer'],
+              temGado: false,
+              fontesAgua: ['Poço Artesiano'],
+            },
+            images: [
+              'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800',
+            ],
+            brokerId: '1',
+            createdAt: new Date().toISOString(),
+          },
+        ];
 
   const displayProperties = mockProperties.slice(0, config.maxItems);
 
@@ -133,7 +149,11 @@ interface PropertyCardProps {
   cardStyle: 'modern' | 'classic' | 'minimal';
 }
 
-const PropertyCard: React.FC<PropertyCardProps> = ({ property, theme, cardStyle }) => {
+const PropertyCard: React.FC<PropertyCardProps> = ({
+  property,
+  theme,
+  cardStyle,
+}) => {
   const getCardClasses = () => {
     switch (cardStyle) {
       case 'modern':
@@ -162,7 +182,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, theme, cardStyle 
             <Maximize2 size={48} />
           </div>
         )}
-        
+
         {/* Badge */}
         <div
           className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold text-white"
@@ -178,7 +198,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, theme, cardStyle 
           className="text-xl font-bold mb-2 line-clamp-2"
           style={{
             color: theme.textColor,
-            fontFamily: theme.headingFontFamily || theme.fontFamily
+            fontFamily: theme.headingFontFamily || theme.fontFamily,
           }}
         >
           {property.title}
@@ -186,7 +206,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property, theme, cardStyle 
 
         <div className="flex items-center text-gray-600 text-sm mb-3">
           <MapPin size={16} className="mr-1" />
-          <span>{property.location.city}, {property.location.state}</span>
+          <span>
+            {property.location.city}, {property.location.state}
+          </span>
         </div>
 
         <div className="flex items-center justify-between mb-3">

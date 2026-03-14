@@ -6,7 +6,10 @@ interface SpacerBlockSettingsProps {
   onUpdate: (config: SpacerBlockConfig) => void;
 }
 
-const SpacerBlockSettings: React.FC<SpacerBlockSettingsProps> = ({ config, onUpdate }) => {
+const SpacerBlockSettings: React.FC<SpacerBlockSettingsProps> = ({
+  config,
+  onUpdate,
+}) => {
   return (
     <div className="space-y-4">
       <div>

@@ -25,22 +25,21 @@ const AICloneModal: React.FC<AICloneModalProps> = ({ onClone, onClose }) => {
       setStatus('Acessando o site...');
 
       // Call Backend
-      const response = await axios.post('/api/ai/clone-site', { 
+      const response = await axios.post('/api/ai/clone-site', {
         url,
-        organizationId: user?.organizationId
+        organizationId: user?.organizationId,
       });
-      
+
       const layoutData = response.data.layout;
-      
+
       if (!layoutData || !layoutData.blocks) {
         throw new Error('Formato inválido recebido da IA');
       }
 
       setStatus('Clone realizado com sucesso! Atualizando editor...');
-      
+
       // Pass data back to parent
       onClone(layoutData);
-      
     } catch (err: any) {
       console.error('Erro ao clonar:', err);
       setError(err.response?.data?.error || err.message || 'Erro desconhecido');
@@ -63,7 +62,7 @@ const AICloneModal: React.FC<AICloneModalProps> = ({ onClone, onClose }) => {
               Copie o layout de qualquer site em segundos
             </p>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="text-white hover:bg-white/20 p-1 rounded transition-colors"
           >
@@ -77,7 +76,10 @@ const AICloneModal: React.FC<AICloneModalProps> = ({ onClone, onClose }) => {
             URL do Site para Clonar
           </label>
           <div className="relative mb-4">
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Globe
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             <input
               type="url"
               placeholder="https://exemplo.com.br"
@@ -95,12 +97,12 @@ const AICloneModal: React.FC<AICloneModalProps> = ({ onClone, onClose }) => {
           )}
 
           {status && !error && (
-             <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-lg text-sm flex items-center gap-2">
-               {loading && <Loader size={14} className="animate-spin" />}
-               {status}
-             </div>
+            <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-lg text-sm flex items-center gap-2">
+              {loading && <Loader size={14} className="animate-spin" />}
+              {status}
+            </div>
           )}
-          
+
           <div className="flex gap-3 mt-6">
             <button
               onClick={onClose}
@@ -127,9 +129,10 @@ const AICloneModal: React.FC<AICloneModalProps> = ({ onClone, onClose }) => {
               )}
             </button>
           </div>
-          
+
           <p className="text-xs text-gray-500 mt-4 text-center">
-            Nota: A IA analisará a estrutura HTML e criará uma versão editável aproximada.
+            Nota: A IA analisará a estrutura HTML e criará uma versão editável
+            aproximada.
           </p>
         </div>
       </div>

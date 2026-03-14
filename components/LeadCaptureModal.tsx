@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, MessageCircle, Loader2 } from 'lucide-react';
 import { leadService } from '../services/leads';
@@ -11,7 +10,12 @@ interface LeadCaptureModalProps {
   propertyId: string;
 }
 
-const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, propertyTitle, propertyId }) => {
+const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({
+  isOpen,
+  onClose,
+  propertyTitle,
+  propertyId,
+}) => {
   const { settings } = useSettings();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -31,7 +35,7 @@ const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, pr
           phone,
           propertyId: propertyId,
           source: 'WhatsApp',
-          status: 'Novo'
+          status: 'Novo',
         });
       } catch (dbError) {
         console.error('Failed to save lead to CRM:', dbError);
@@ -43,11 +47,11 @@ const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, pr
         await fetch('/api/send-welcome', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            name, 
-            phone, 
-            propertyTitle 
-          })
+          body: JSON.stringify({
+            name,
+            phone,
+            propertyTitle,
+          }),
         });
       } catch (apiError) {
         console.error('Failed to trigger automation:', apiError);
@@ -55,14 +59,18 @@ const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, pr
 
       // 3. Redirect to WhatsApp (User Interface)
       const message = `Olá! Me chamo ${name}. Gostaria de mais informações sobre o imóvel: ${propertyTitle}`;
-      const whatsappNumber = settings.socialLinks?.whatsapp?.replace(/\D/g, '') || '';
-      
+      const whatsappNumber =
+        settings.socialLinks?.whatsapp?.replace(/\D/g, '') || '';
+
       if (whatsappNumber) {
-         // Pequeno delay para garantir que a requisição anterior não seja cancelada pelo navegador
-         setTimeout(() => {
-            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
-            onClose();
-         }, 500);
+        // Pequeno delay para garantir que a requisição anterior não seja cancelada pelo navegador
+        setTimeout(() => {
+          window.open(
+            `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`,
+            '_blank'
+          );
+          onClose();
+        }, 500);
       } else {
         onClose();
       }
@@ -77,8 +85,7 @@ const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, pr
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-300">
-        
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
         >
@@ -90,17 +97,22 @@ const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, pr
             <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageCircle size={32} className="text-emerald-600" />
             </div>
-            <h2 className="text-2xl font-black text-slate-900 mb-2">Falar no WhatsApp</h2>
+            <h2 className="text-2xl font-black text-slate-900 mb-2">
+              Falar no WhatsApp
+            </h2>
             <p className="text-slate-500 text-sm">
-              Preencha seus dados para iniciar o atendimento sobre o imóvel <strong>{propertyTitle}</strong>.
+              Preencha seus dados para iniciar o atendimento sobre o imóvel{' '}
+              <strong>{propertyTitle}</strong>.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Seu Nome</label>
-              <input 
-                type="text" 
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                Seu Nome
+              </label>
+              <input
+                type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium"
@@ -108,11 +120,13 @@ const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, pr
                 required
               />
             </div>
-            
+
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Seu WhatsApp</label>
-              <input 
-                type="tel" 
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                Seu WhatsApp
+              </label>
+              <input
+                type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-medium"
@@ -121,7 +135,7 @@ const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, pr
               />
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className="w-full py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white font-black rounded-xl uppercase tracking-widest shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
@@ -138,9 +152,10 @@ const LeadCaptureModal: React.FC<LeadCaptureModalProps> = ({ isOpen, onClose, pr
                 </>
               )}
             </button>
-            
+
             <p className="text-center text-[10px] text-slate-400 mt-4">
-              Seus dados estão seguros e serão utilizados apenas para este atendimento.
+              Seus dados estão seguros e serão utilizados apenas para este
+              atendimento.
             </p>
           </form>
         </div>

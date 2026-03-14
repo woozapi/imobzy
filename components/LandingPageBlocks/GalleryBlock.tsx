@@ -19,15 +19,15 @@ const GalleryBlock: React.FC<GalleryBlockProps> = ({ config, theme }) => {
   }
 
   return (
-    <div 
+    <div
       className="grid gap-4"
       style={{
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: `${spacing}px`
+        gap: `${spacing}px`,
       }}
     >
       {images.map((img: any, idx: number) => (
-        <div 
+        <div
           key={idx}
           className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow cursor-pointer"
           style={{ aspectRatio: '4/3' }}

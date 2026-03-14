@@ -6,7 +6,10 @@ interface TextBlockSettingsProps {
   onUpdate: (config: TextBlockConfig) => void;
 }
 
-const TextBlockSettings: React.FC<TextBlockSettingsProps> = ({ config, onUpdate }) => {
+const TextBlockSettings: React.FC<TextBlockSettingsProps> = ({
+  config,
+  onUpdate,
+}) => {
   const updateField = (field: keyof TextBlockConfig, value: any) => {
     onUpdate({ ...config, [field]: value });
   };
@@ -24,9 +27,7 @@ const TextBlockSettings: React.FC<TextBlockSettingsProps> = ({ config, onUpdate 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
           placeholder="Digite seu texto aqui..."
         />
-        <p className="text-xs text-gray-500 mt-1">
-          Suporte básico a HTML
-        </p>
+        <p className="text-xs text-gray-500 mt-1">Suporte básico a HTML</p>
       </div>
 
       <div>
@@ -96,7 +97,13 @@ const TextBlockSettings: React.FC<TextBlockSettingsProps> = ({ config, onUpdate 
                   : 'bg-white text-gray-700 border-gray-300 hover:border-blue-500'
               }`}
             >
-              {align === 'left' ? '←' : align === 'center' ? '↔' : align === 'right' ? '→' : '⇔'}
+              {align === 'left'
+                ? '←'
+                : align === 'center'
+                  ? '↔'
+                  : align === 'right'
+                    ? '→'
+                    : '⇔'}
             </button>
           ))}
         </div>

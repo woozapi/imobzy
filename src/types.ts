@@ -26,7 +26,16 @@ export interface RuralProperty {
   company_id: string;
   internal_code: string;
   title: string;
-  property_type: 'FAZENDA' | 'SITIO' | 'CHACARA' | 'HARAS' | 'AREA_AGRICOLA' | 'AREA_PECUARIA' | 'REFLORESTAMENTO' | 'LAZER_RURAL' | 'ARRENDAMENTO';
+  property_type:
+    | 'FAZENDA'
+    | 'SITIO'
+    | 'CHACARA'
+    | 'HARAS'
+    | 'AREA_AGRICOLA'
+    | 'AREA_PECUARIA'
+    | 'REFLORESTAMENTO'
+    | 'LAZER_RURAL'
+    | 'ARRENDAMENTO';
   total_area: number;
   useful_area: number;
   state: string;

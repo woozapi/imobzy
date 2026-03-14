@@ -29,8 +29,12 @@ const VisualEditorToolbar: React.FC = () => {
             <Layout size={20} />
           </div>
           <div>
-            <h4 className="text-white font-black text-sm uppercase tracking-widest">Editor Visual</h4>
-            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Clique em qualquer texto para editar</p>
+            <h4 className="text-white font-black text-sm uppercase tracking-widest">
+              Editor Visual
+            </h4>
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+              Clique em qualquer texto para editar
+            </p>
           </div>
         </div>
 
@@ -42,7 +46,7 @@ const VisualEditorToolbar: React.FC = () => {
             <Save size={16} />
             Sincronizar
           </button>
-          
+
           <button
             onClick={() => setVisualMode(false)}
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all text-xs font-black uppercase tracking-widest shadow-lg shadow-indigo-600/30"

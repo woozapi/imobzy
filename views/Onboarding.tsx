@@ -1,10 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Building2, Palette, User, Check, ArrowRight, ArrowLeft,
-  Loader2, Sparkles, Globe, Wheat, Home, Crown, Zap, Shield,
-  Star, BarChart3, MessageCircle, Map, FileText, Eye,
-  ChevronDown, Lock, Mail, Phone, Upload, Image as ImageIcon
+  Building2,
+  Palette,
+  User,
+  Check,
+  ArrowRight,
+  ArrowLeft,
+  Loader2,
+  Sparkles,
+  Globe,
+  Wheat,
+  Home,
+  Crown,
+  Zap,
+  Shield,
+  Star,
+  BarChart3,
+  MessageCircle,
+  Map,
+  FileText,
+  Eye,
+  ChevronDown,
+  Lock,
+  Mail,
+  Phone,
+  Upload,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 // ==========================================
@@ -81,7 +103,8 @@ const PROFILES = [
     id: 'rural',
     name: 'Imobiliária Rural',
     icon: Wheat,
-    description: 'Fazendas, sítios, chácaras, haras, áreas agrícolas e pecuárias',
+    description:
+      'Fazendas, sítios, chácaras, haras, áreas agrícolas e pecuárias',
     color: 'from-green-600 to-emerald-800',
     features: ['Geointeligência', 'Mapas SIGEF/CAR', 'Due Diligence Rural'],
   },
@@ -137,18 +160,28 @@ const Onboarding: React.FC = () => {
   const totalSteps = 5;
 
   const update = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     setError('');
   };
 
   const canProceed = () => {
     switch (step) {
-      case 1: return !!formData.plan;
-      case 2: return !!formData.profileType;
-      case 3: return !!formData.email && !!formData.password && formData.password.length >= 6;
-      case 4: return !!formData.agencyName;
-      case 5: return true;
-      default: return false;
+      case 1:
+        return !!formData.plan;
+      case 2:
+        return !!formData.profileType;
+      case 3:
+        return (
+          !!formData.email &&
+          !!formData.password &&
+          formData.password.length >= 6
+        );
+      case 4:
+        return !!formData.agencyName;
+      case 5:
+        return true;
+      default:
+        return false;
     }
   };
 
@@ -184,8 +217,12 @@ const Onboarding: React.FC = () => {
   const renderPlanStep = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-black text-slate-900">Escolha seu Plano</h2>
-        <p className="text-slate-500 mt-1">Comece gratuitamente e escale quando precisar</p>
+        <h2 className="text-2xl font-black text-slate-900">
+          Escolha seu Plano
+        </h2>
+        <p className="text-slate-500 mt-1">
+          Comece gratuitamente e escale quando precisar
+        </p>
       </div>
 
       <div className="grid gap-4">
@@ -208,22 +245,35 @@ const Onboarding: React.FC = () => {
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${plan.color} flex items-center justify-center`}>
-                    {plan.id === 'free' ? <Zap size={16} className="text-white" /> :
-                     plan.id === 'basic' ? <Star size={16} className="text-white" /> :
-                     <Crown size={16} className="text-white" />}
+                  <div
+                    className={`w-8 h-8 rounded-lg bg-gradient-to-br ${plan.color} flex items-center justify-center`}
+                  >
+                    {plan.id === 'free' ? (
+                      <Zap size={16} className="text-white" />
+                    ) : plan.id === 'basic' ? (
+                      <Star size={16} className="text-white" />
+                    ) : (
+                      <Crown size={16} className="text-white" />
+                    )}
                   </div>
                   <h3 className="font-bold text-slate-800">{plan.name}</h3>
                 </div>
-                <p className="text-xs text-slate-400 mt-1">{plan.description}</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  {plan.description}
+                </p>
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {plan.features.slice(0, 4).map((f, i) => (
-                    <span key={i} className="text-[10px] bg-slate-50 text-slate-500 px-2 py-0.5 rounded-full">
+                    <span
+                      key={i}
+                      className="text-[10px] bg-slate-50 text-slate-500 px-2 py-0.5 rounded-full"
+                    >
                       {f}
                     </span>
                   ))}
                   {plan.features.length > 4 && (
-                    <span className="text-[10px] text-slate-400">+{plan.features.length - 4} mais</span>
+                    <span className="text-[10px] text-slate-400">
+                      +{plan.features.length - 4} mais
+                    </span>
                   )}
                 </div>
               </div>
@@ -255,7 +305,9 @@ const Onboarding: React.FC = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-black text-slate-900">Tipo de Operação</h2>
-        <p className="text-slate-500 mt-1">Selecionamos os recursos ideais para você</p>
+        <p className="text-slate-500 mt-1">
+          Selecionamos os recursos ideais para você
+        </p>
       </div>
 
       <div className="grid gap-4">
@@ -272,15 +324,24 @@ const Onboarding: React.FC = () => {
               }`}
             >
               <div className="flex items-start gap-4">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${profile.color} flex items-center justify-center flex-shrink-0`}>
+                <div
+                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${profile.color} flex items-center justify-center flex-shrink-0`}
+                >
                   <Icon size={24} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-800 text-lg">{profile.name}</h3>
-                  <p className="text-sm text-slate-500 mt-0.5">{profile.description}</p>
+                  <h3 className="font-bold text-slate-800 text-lg">
+                    {profile.name}
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    {profile.description}
+                  </p>
                   <div className="flex flex-wrap gap-1.5 mt-3">
                     {profile.features.map((f, i) => (
-                      <span key={i} className="text-[10px] bg-white border border-slate-200 text-slate-500 px-2 py-0.5 rounded-full font-medium">
+                      <span
+                        key={i}
+                        className="text-[10px] bg-white border border-slate-200 text-slate-500 px-2 py-0.5 rounded-full font-medium"
+                      >
                         {f}
                       </span>
                     ))}
@@ -301,52 +362,71 @@ const Onboarding: React.FC = () => {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-black text-slate-900">Crie sua Conta</h2>
-        <p className="text-slate-500 mt-1">Dados de acesso ao painel administrativo</p>
+        <p className="text-slate-500 mt-1">
+          Dados de acesso ao painel administrativo
+        </p>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Seu Nome</label>
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+            Seu Nome
+          </label>
           <div className="relative">
-            <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <User
+              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
             <input
               type="text"
               className="w-full pl-11 pr-4 py-3.5 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 focus:bg-white transition-colors outline-none text-slate-700"
               placeholder="Seu nome completo"
               value={formData.name}
-              onChange={e => update('name', e.target.value)}
+              onChange={(e) => update('name', e.target.value)}
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Email</label>
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+            Email
+          </label>
           <div className="relative">
-            <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Mail
+              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
             <input
               type="email"
               className="w-full pl-11 pr-4 py-3.5 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 focus:bg-white transition-colors outline-none text-slate-700"
               placeholder="seu@email.com"
               value={formData.email}
-              onChange={e => update('email', e.target.value)}
+              onChange={(e) => update('email', e.target.value)}
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Senha</label>
+          <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+            Senha
+          </label>
           <div className="relative">
-            <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Lock
+              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+            />
             <input
               type="password"
               className="w-full pl-11 pr-4 py-3.5 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 focus:bg-white transition-colors outline-none text-slate-700"
               placeholder="Mínimo 6 caracteres"
               value={formData.password}
-              onChange={e => update('password', e.target.value)}
+              onChange={(e) => update('password', e.target.value)}
             />
           </div>
           {formData.password && formData.password.length < 6 && (
-            <p className="text-xs text-red-500 mt-1">A senha precisa ter pelo menos 6 caracteres</p>
+            <p className="text-xs text-red-500 mt-1">
+              A senha precisa ter pelo menos 6 caracteres
+            </p>
           )}
         </div>
       </div>
@@ -359,78 +439,93 @@ const Onboarding: React.FC = () => {
   const renderOrgStep = () => {
     const slug = formData.agencyName
       .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
 
     return (
       <div className="space-y-5">
         <div className="text-center">
-          <h2 className="text-2xl font-black text-slate-900">Sua Imobiliária</h2>
+          <h2 className="text-2xl font-black text-slate-900">
+            Sua Imobiliária
+          </h2>
           <p className="text-slate-500 mt-1">Informações do seu negócio</p>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Nome da Imobiliária *</label>
+            <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+              Nome da Imobiliária *
+            </label>
             <input
               type="text"
               className="w-full p-3.5 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 focus:bg-white transition-colors outline-none font-bold text-slate-700"
               placeholder="Ex: Terra Nobre Imóveis"
               value={formData.agencyName}
-              onChange={e => update('agencyName', e.target.value)}
+              onChange={(e) => update('agencyName', e.target.value)}
             />
             {slug && (
               <div className="mt-2 flex items-center gap-2 text-xs">
                 <Globe size={12} className="text-emerald-500" />
                 <span className="text-slate-400">Sua URL:</span>
-                <span className="font-mono font-bold text-emerald-600">{slug}.imobzy.com.br</span>
+                <span className="font-mono font-bold text-emerald-600">
+                  {slug}.imobzy.com.br
+                </span>
               </div>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">CRECI</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+                CRECI
+              </label>
               <input
                 type="text"
                 className="w-full p-3.5 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 focus:bg-white transition-colors outline-none text-slate-700"
                 placeholder="J-12345"
                 value={formData.creci}
-                onChange={e => update('creci', e.target.value)}
+                onChange={(e) => update('creci', e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Região</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+                Região
+              </label>
               <input
                 type="text"
                 className="w-full p-3.5 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 focus:bg-white transition-colors outline-none text-slate-700"
                 placeholder="SP, MG..."
                 value={formData.region}
-                onChange={e => update('region', e.target.value)}
+                onChange={(e) => update('region', e.target.value)}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Telefone</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+                Telefone
+              </label>
               <input
                 type="tel"
                 className="w-full p-3.5 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 focus:bg-white transition-colors outline-none text-slate-700"
                 placeholder="(00) 0000-0000"
                 value={formData.phone}
-                onChange={e => update('phone', e.target.value)}
+                onChange={(e) => update('phone', e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">WhatsApp</label>
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+                WhatsApp
+              </label>
               <input
                 type="tel"
                 className="w-full p-3.5 bg-slate-50 rounded-xl border-2 border-slate-100 focus:border-emerald-500 focus:bg-white transition-colors outline-none text-slate-700"
                 placeholder="(00) 90000-0000"
                 value={formData.whatsapp}
-                onChange={e => update('whatsapp', e.target.value)}
+                onChange={(e) => update('whatsapp', e.target.value)}
               />
             </div>
           </div>
@@ -443,11 +538,12 @@ const Onboarding: React.FC = () => {
   // STEP 5: Confirmation
   // ==========================================
   const renderConfirmStep = () => {
-    const selectedPlan = PLANS.find(p => p.id === formData.plan);
-    const selectedProfile = PROFILES.find(p => p.id === formData.profileType);
+    const selectedPlan = PLANS.find((p) => p.id === formData.plan);
+    const selectedProfile = PROFILES.find((p) => p.id === formData.profileType);
     const slug = formData.agencyName
       .toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
 
@@ -467,28 +563,38 @@ const Onboarding: React.FC = () => {
               <Building2 size={18} className="text-slate-400" />
               <span className="text-sm text-slate-600">Imobiliária</span>
             </div>
-            <span className="font-bold text-slate-800">{formData.agencyName}</span>
+            <span className="font-bold text-slate-800">
+              {formData.agencyName}
+            </span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Globe size={18} className="text-slate-400" />
               <span className="text-sm text-slate-600">Domínio</span>
             </div>
-            <span className="font-mono text-sm font-bold text-emerald-600">{slug}.imobzy.com.br</span>
+            <span className="font-mono text-sm font-bold text-emerald-600">
+              {slug}.imobzy.com.br
+            </span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Crown size={18} className="text-slate-400" />
               <span className="text-sm text-slate-600">Plano</span>
             </div>
-            <span className="font-bold text-slate-800">{selectedPlan?.name}</span>
+            <span className="font-bold text-slate-800">
+              {selectedPlan?.name}
+            </span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {selectedProfile && <selectedProfile.icon size={18} className="text-slate-400" />}
+              {selectedProfile && (
+                <selectedProfile.icon size={18} className="text-slate-400" />
+              )}
               <span className="text-sm text-slate-600">Perfil</span>
             </div>
-            <span className="font-bold text-slate-800">{selectedProfile?.name}</span>
+            <span className="font-bold text-slate-800">
+              {selectedProfile?.name}
+            </span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -502,7 +608,10 @@ const Onboarding: React.FC = () => {
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
           <p className="text-xs text-emerald-700">
             <Shield size={14} className="inline mr-1" />
-            Seu site será publicado em <strong>{slug}.imobzy.com.br</strong> automaticamente via Vercel.
+            Seu site será publicado em <strong>
+              {slug}.imobzy.com.br
+            </strong>{' '}
+            automaticamente via Vercel.
           </p>
         </div>
       </div>
@@ -520,7 +629,9 @@ const Onboarding: React.FC = () => {
 
       <div>
         <h2 className="text-2xl font-black text-slate-900">Conta Criada!</h2>
-        <p className="text-slate-500 mt-2">Sua imobiliária está pronta para operar</p>
+        <p className="text-slate-500 mt-2">
+          Sua imobiliária está pronta para operar
+        </p>
       </div>
 
       {success && (
@@ -530,8 +641,12 @@ const Onboarding: React.FC = () => {
               <Lock size={20} className="text-blue-600" />
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Seu Painel de Controle</p>
-              <p className="text-sm text-slate-600 mb-2">Acesse com o email <strong>{success.user?.email}</strong></p>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">
+                Seu Painel de Controle
+              </p>
+              <p className="text-sm text-slate-600 mb-2">
+                Acesse com o email <strong>{success.user?.email}</strong>
+              </p>
               <a
                 href={success.panelUrl}
                 className="inline-flex items-center gap-2 font-bold text-blue-600 hover:text-blue-700 hover:underline"
@@ -540,7 +655,7 @@ const Onboarding: React.FC = () => {
               </a>
             </div>
           </div>
-          
+
           <div className="h-px bg-slate-200 w-full my-4"></div>
 
           <div className="flex items-start gap-4 opacity-80">
@@ -548,13 +663,16 @@ const Onboarding: React.FC = () => {
               <Globe size={20} className="text-emerald-600" />
             </div>
             <div>
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Site Público (Aguardando Propagação)</p>
+              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">
+                Site Público (Aguardando Propagação)
+              </p>
               <div className="font-mono text-sm font-bold text-emerald-700">
                 {success.domain?.fullDomain}
               </div>
               <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
                 <Loader2 size={10} className="inline mr-1 animate-spin" />
-                Estamos configurando o certificado SSL. O site pode levar até <strong>5 minutos</strong> para ficar online.
+                Estamos configurando o certificado SSL. O site pode levar até{' '}
+                <strong>5 minutos</strong> para ficar online.
               </p>
             </div>
           </div>
@@ -588,7 +706,9 @@ const Onboarding: React.FC = () => {
             <span className="text-emerald-700">IMOB</span>
             <span className="text-amber-500">ZY</span>
           </h1>
-          <p className="text-slate-400 text-xs uppercase tracking-[0.3em] mt-1">Plataforma Imobiliária Inteligente</p>
+          <p className="text-slate-400 text-xs uppercase tracking-[0.3em] mt-1">
+            Plataforma Imobiliária Inteligente
+          </p>
         </div>
 
         {/* Card */}
@@ -634,7 +754,7 @@ const Onboarding: React.FC = () => {
               <div className="flex gap-3 mt-6">
                 {step > 1 && (
                   <button
-                    onClick={() => setStep(s => s - 1)}
+                    onClick={() => setStep((s) => s - 1)}
                     className="flex-1 bg-white text-slate-600 border-2 border-slate-200 p-3.5 rounded-xl font-bold hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
                   >
                     <ArrowLeft size={16} /> Voltar
@@ -642,7 +762,7 @@ const Onboarding: React.FC = () => {
                 )}
                 {step < totalSteps ? (
                   <button
-                    onClick={() => setStep(s => s + 1)}
+                    onClick={() => setStep((s) => s + 1)}
                     disabled={!canProceed()}
                     className="flex-[2] bg-gradient-to-r from-slate-800 to-slate-900 text-white p-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:from-slate-900 hover:to-black transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                   >
@@ -676,7 +796,10 @@ const Onboarding: React.FC = () => {
         {step <= totalSteps && (
           <p className="text-center text-xs text-slate-400 mt-6">
             Já tem conta?{' '}
-            <button onClick={() => navigate('/login')} className="text-emerald-600 font-bold hover:underline">
+            <button
+              onClick={() => navigate('/login')}
+              className="text-emerald-600 font-bold hover:underline"
+            >
               Faça login
             </button>
           </p>

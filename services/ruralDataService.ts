@@ -17,7 +17,7 @@ export const ruralDataService = {
         label: 'Consulta SICAR (CAR)',
         url: `https://www.car.gov.br/#/consultar`,
         description: `Código: ${legal.carNumber}`,
-        portal: 'SICAR'
+        portal: 'SICAR',
       });
     }
 
@@ -26,7 +26,7 @@ export const ruralDataService = {
         label: 'Consulta SIGEF (GEO)',
         url: `https://sigef.incra.gov.br/consultar/parcelas/`,
         description: `Parcela Georreferenciada`,
-        portal: 'SIGEF/INCRA'
+        portal: 'SIGEF/INCRA',
       });
     }
 
@@ -35,7 +35,7 @@ export const ruralDataService = {
         label: 'Consulta SNCR (CCIR)',
         url: `https://sncr.incra.gov.br/sncr-web/consultarImovelRural.do`,
         description: `Código INCRA: ${legal.ccirNumber}`,
-        portal: 'INCRA'
+        portal: 'INCRA',
       });
     }
 
@@ -58,13 +58,13 @@ export const ruralDataService = {
    */
   async fetchCarData(carNumber: string) {
     const apiUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:3002'}/api/rural/car/${encodeURIComponent(carNumber)}`;
-    
+
     const response = await fetch(apiUrl);
     if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.error || 'Erro ao consultar CAR');
+      const err = await response.json();
+      throw new Error(err.error || 'Erro ao consultar CAR');
     }
-    
+
     const result = await response.json();
     return result.data;
   },
@@ -78,7 +78,7 @@ export const ruralDataService = {
       areaHectares: sicarData.area_imovel || 0,
       reservaLegal: sicarData.percentual_reserva_legal || 20,
       app: sicarData.area_app || 0,
-      status: sicarData.situacao || 'Ativo'
+      status: sicarData.situacao || 'Ativo',
     };
   },
 };

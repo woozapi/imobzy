@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
 import { useAuth } from '../context/AuthContext';
 import { landingPageService } from '../services/landingPages';
-import { LandingPage, Block, BlockType, LandingPageStatus } from '../types/landingPage';
-import { 
-  Save, 
-  Eye, 
-  Globe, 
-  Settings, 
+import {
+  LandingPage,
+  Block,
+  BlockType,
+  LandingPageStatus,
+} from '../types/landingPage';
+import {
+  Save,
+  Eye,
+  Globe,
+  Settings,
   Palette,
   Code,
   Smartphone,
@@ -88,9 +97,9 @@ const LandingPageEditor: React.FC = () => {
       console.log('📝 Dados para salvar:', {
         name: page.name,
         title: page.title,
-        blocksCount: page.blocks.length
+        blocksCount: page.blocks.length,
       });
-      
+
       await landingPageService.update(page.id, {
         name: page.name,
         title: page.title,
@@ -106,12 +115,12 @@ const LandingPageEditor: React.FC = () => {
         ogImage: page.ogImage,
         customCss: page.customCss,
         customJs: page.customJs,
-        customHead: page.customHead
+        customHead: page.customHead,
       });
-      
+
       console.log('✅ Salvo com sucesso!');
       setLastSaved(new Date());
-      
+
       if (!isAutoSave) {
         alert('Landing page salva com sucesso!');
       }
@@ -128,7 +137,11 @@ const LandingPageEditor: React.FC = () => {
   const handlePublish = async () => {
     if (!page) return;
 
-    if (!confirm('Deseja publicar esta landing page? Ela ficará visível publicamente.')) {
+    if (
+      !confirm(
+        'Deseja publicar esta landing page? Ela ficará visível publicamente.'
+      )
+    ) {
       return;
     }
 
@@ -155,12 +168,12 @@ const LandingPageEditor: React.FC = () => {
       visible: true,
       config: getDefaultBlockConfig(type),
       styles: getDefaultBlockStyles(type),
-      responsive: {}
+      responsive: {},
     };
 
     setPage({
       ...page,
-      blocks: [...page.blocks, newBlock]
+      blocks: [...page.blocks, newBlock],
     });
 
     setSelectedBlockId(newBlock.id);
@@ -171,9 +184,9 @@ const LandingPageEditor: React.FC = () => {
 
     setPage({
       ...page,
-      blocks: page.blocks.map(block =>
+      blocks: page.blocks.map((block) =>
         block.id === blockId ? { ...block, ...updates } : block
-      )
+      ),
     });
   };
 
@@ -184,7 +197,7 @@ const LandingPageEditor: React.FC = () => {
 
     setPage({
       ...page,
-      blocks: page.blocks.filter(block => block.id !== blockId)
+      blocks: page.blocks.filter((block) => block.id !== blockId),
     });
 
     if (selectedBlockId === blockId) {
@@ -195,18 +208,18 @@ const LandingPageEditor: React.FC = () => {
   const handleDuplicateBlock = (blockId: string) => {
     if (!page) return;
 
-    const blockToDuplicate = page.blocks.find(b => b.id === blockId);
+    const blockToDuplicate = page.blocks.find((b) => b.id === blockId);
     if (!blockToDuplicate) return;
 
     const duplicatedBlock: Block = {
       ...blockToDuplicate,
       id: `block_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      order: page.blocks.length
+      order: page.blocks.length,
     };
 
     setPage({
       ...page,
-      blocks: [...page.blocks, duplicatedBlock]
+      blocks: [...page.blocks, duplicatedBlock],
     });
   };
 
@@ -216,34 +229,36 @@ const LandingPageEditor: React.FC = () => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = page.blocks.findIndex(b => b.id === active.id);
-      const newIndex = page.blocks.findIndex(b => b.id === over.id);
+      const oldIndex = page.blocks.findIndex((b) => b.id === active.id);
+      const newIndex = page.blocks.findIndex((b) => b.id === over.id);
 
-      const reorderedBlocks = arrayMove(page.blocks, oldIndex, newIndex).map((block: Block, index: number) => ({
-        ...block,
-        order: index
-      }));
+      const reorderedBlocks = arrayMove(page.blocks, oldIndex, newIndex).map(
+        (block: Block, index: number) => ({
+          ...block,
+          order: index,
+        })
+      );
 
       setPage({
         ...page,
-        blocks: reorderedBlocks
+        blocks: reorderedBlocks,
       });
     }
   };
 
   const handlePreview = () => {
     if (!page) return;
-    
+
     // Salvar antes de visualizar
     handleSave(true);
-    
+
     // Abrir preview em nova aba
     window.open(`/lp/${page.slug}?preview=true`, '_blank');
   };
 
   const handleAICloneApply = (layoutConfig: any) => {
     if (!page || !layoutConfig.blocks) return;
-    
+
     // Replace blocks with AI generated ones
     // We Map them to ensure they have valid IDs and defaults
     const newBlocks = layoutConfig.blocks.map((b: any, index: number) => ({
@@ -252,14 +267,14 @@ const LandingPageEditor: React.FC = () => {
       order: index,
       visible: true,
       // Ensure config/styles exist if AI missed them
-      config: b.config || {}, 
+      config: b.config || {},
       styles: b.styles || {},
-      responsive: b.responsive || {} 
+      responsive: b.responsive || {},
     }));
 
     setPage({
       ...page,
-      blocks: newBlocks
+      blocks: newBlocks,
     });
 
     setShowAICloneModal(false);
@@ -282,7 +297,10 @@ const LandingPageEditor: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <Loader className="animate-spin mx-auto mb-4 text-blue-600" size={48} />
+          <Loader
+            className="animate-spin mx-auto mb-4 text-blue-600"
+            size={48}
+          />
           <p className="text-gray-600">Carregando editor...</p>
         </div>
       </div>
@@ -293,7 +311,9 @@ const LandingPageEditor: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <p className="text-xl text-gray-900 mb-4">Landing page não encontrada</p>
+          <p className="text-xl text-gray-900 mb-4">
+            Landing page não encontrada
+          </p>
           <button
             onClick={() => navigate('/landing-pages')}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -305,8 +325,8 @@ const LandingPageEditor: React.FC = () => {
     );
   }
 
-  const selectedBlock = selectedBlockId 
-    ? page.blocks.find(b => b.id === selectedBlockId) 
+  const selectedBlock = selectedBlockId
+    ? page.blocks.find((b) => b.id === selectedBlockId)
     : null;
 
   return (
@@ -330,7 +350,9 @@ const LandingPageEditor: React.FC = () => {
               className="text-lg font-semibold border-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1"
             />
             <p className="text-xs text-gray-500">
-              {lastSaved ? `Salvo às ${lastSaved.toLocaleTimeString()}` : 'Não salvo'}
+              {lastSaved
+                ? `Salvo às ${lastSaved.toLocaleTimeString()}`
+                : 'Não salvo'}
             </p>
           </div>
         </div>
@@ -369,13 +391,13 @@ const LandingPageEditor: React.FC = () => {
 
           {/* AI Clone Button */}
           <button
-             onClick={() => setShowAICloneModal(true)}
-             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all"
-             title="Clonar Site com IA"
-           >
-             <Wand2 size={18} />
-             <span className="hidden md:inline font-medium">Magic Clone</span>
-           </button>
+            onClick={() => setShowAICloneModal(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition-all"
+            title="Clonar Site com IA"
+          >
+            <Wand2 size={18} />
+            <span className="hidden md:inline font-medium">Magic Clone</span>
+          </button>
 
           {/* Actions */}
           <button
@@ -450,11 +472,11 @@ const LandingPageEditor: React.FC = () => {
 
         {/* Center - Canvas */}
         <div className="flex-1 overflow-auto bg-gray-100 p-6">
-          <div 
+          <div
             className="mx-auto bg-white shadow-lg transition-all duration-300"
-            style={{ 
+            style={{
               width: getViewModeWidth(),
-              minHeight: '100%'
+              minHeight: '100%',
             }}
           >
             <DndContext
@@ -462,7 +484,7 @@ const LandingPageEditor: React.FC = () => {
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={page.blocks.map(b => b.id)}
+                items={page.blocks.map((b) => b.id)}
                 strategy={verticalListSortingStrategy}
               >
                 <CanvasArea
@@ -549,32 +571,70 @@ function getDefaultBlockConfig(type: BlockType): any {
         ctaLink: '#',
         height: 600,
         alignment: 'center',
-        textColor: '#ffffff'
+        textColor: '#ffffff',
       };
 
     case BlockType.HERO_WITH_FORM:
       return {
         title: 'Encontre sua Fazenda dos Sonhos',
-        subtitle: 'Assine para receber ofertas exclusivas e novidades sobre os melhores imóveis rurais.',
+        subtitle:
+          'Assine para receber ofertas exclusivas e novidades sobre os melhores imóveis rurais.',
         backgroundImage: '',
         overlayOpacity: 0.3,
         formTitle: 'Receba novas oportunidades em imóveis rurais!',
-        formSubtitle: 'Cadastre-se para receber ofertas e novidades de imóveis rurais. Prometemos não enviar spam.',
+        formSubtitle:
+          'Cadastre-se para receber ofertas e novidades de imóveis rurais. Prometemos não enviar spam.',
         submitText: 'Quero Receber Ofertas Exclusivas',
         fields: [
-          { name: 'name', type: 'text', label: 'Nome completo', required: true, placeholder: 'Nome completo' },
-          { name: 'email', type: 'email', label: 'Seu e-mail', required: true, placeholder: 'Seu e-mail' },
-          { name: 'phone', type: 'tel', label: 'Telefone (WhatsApp)', required: true, placeholder: 'Telefone (WhatsApp)' },
-          { name: 'region', type: 'select', label: 'Região de Interesse', required: false, options: ['Norte', 'Sul', 'Centro-Oeste', 'Sudeste', 'Nordeste'] }
+          {
+            name: 'name',
+            type: 'text',
+            label: 'Nome completo',
+            required: true,
+            placeholder: 'Nome completo',
+          },
+          {
+            name: 'email',
+            type: 'email',
+            label: 'Seu e-mail',
+            required: true,
+            placeholder: 'Seu e-mail',
+          },
+          {
+            name: 'phone',
+            type: 'tel',
+            label: 'Telefone (WhatsApp)',
+            required: true,
+            placeholder: 'Telefone (WhatsApp)',
+          },
+          {
+            name: 'region',
+            type: 'select',
+            label: 'Região de Interesse',
+            required: false,
+            options: ['Norte', 'Sul', 'Centro-Oeste', 'Sudeste', 'Nordeste'],
+          },
         ],
         height: 700,
         textColor: '#ffffff',
         showBadges: true,
         badges: [
-          { icon: 'shield', title: 'Cadastro 100% seguro', description: 'Seus dados protegidos.' },
-          { icon: 'star', title: 'Ofertas exclusivas', description: 'Receba propriedades selecionadas.' },
-          { icon: 'clock', title: 'Primeiro a saber', description: 'Acesse novas oportunidades antes de todos.' }
-        ]
+          {
+            icon: 'shield',
+            title: 'Cadastro 100% seguro',
+            description: 'Seus dados protegidos.',
+          },
+          {
+            icon: 'star',
+            title: 'Ofertas exclusivas',
+            description: 'Receba propriedades selecionadas.',
+          },
+          {
+            icon: 'clock',
+            title: 'Primeiro a saber',
+            description: 'Acesse novas oportunidades antes de todos.',
+          },
+        ],
       };
 
     case BlockType.PROPERTY_GRID:
@@ -584,7 +644,7 @@ function getDefaultBlockConfig(type: BlockType): any {
         showFilters: false,
         maxItems: 12,
         sortBy: 'price',
-        cardStyle: 'modern'
+        cardStyle: 'modern',
       };
 
     case BlockType.TEXT:
@@ -593,7 +653,7 @@ function getDefaultBlockConfig(type: BlockType): any {
         fontSize: 16,
         fontWeight: 400,
         color: '#111827',
-        alignment: 'left'
+        alignment: 'left',
       };
 
     case BlockType.IMAGE:
@@ -603,7 +663,7 @@ function getDefaultBlockConfig(type: BlockType): any {
         width: '100%',
         height: 'auto',
         objectFit: 'cover',
-        link: ''
+        link: '',
       };
 
     case BlockType.GALLERY:
@@ -611,7 +671,7 @@ function getDefaultBlockConfig(type: BlockType): any {
         images: [],
         columns: 3,
         spacing: 16,
-        lightbox: true
+        lightbox: true,
       };
 
     case BlockType.PROPERTY_CAROUSEL:
@@ -620,7 +680,7 @@ function getDefaultBlockConfig(type: BlockType): any {
         autoplay: false,
         autoplayDelay: 4000,
         showThumbnails: true,
-        showDots: true
+        showDots: true,
       };
 
     case BlockType.STATS:
@@ -628,9 +688,9 @@ function getDefaultBlockConfig(type: BlockType): any {
         stats: [
           { value: '1000+', label: 'Clientes Satisfeitos', icon: '👥' },
           { value: '500+', label: 'Propriedades Vendidas', icon: '🏡' },
-          { value: '15', label: 'Anos de Experiência', icon: '⭐' }
+          { value: '15', label: 'Anos de Experiência', icon: '⭐' },
         ],
-        columns: 3
+        columns: 3,
       };
 
     case BlockType.FEATURES:
@@ -638,35 +698,59 @@ function getDefaultBlockConfig(type: BlockType): any {
         features: [
           { title: 'Característica 1', description: 'Descrição', icon: '✓' },
           { title: 'Característica 2', description: 'Descrição', icon: '✓' },
-          { title: 'Característica 3', description: 'Descrição', icon: '✓' }
+          { title: 'Característica 3', description: 'Descrição', icon: '✓' },
         ],
-        columns: 3
+        columns: 3,
       };
 
     case BlockType.TESTIMONIALS:
       return {
         testimonials: [
-          { 
-            name: 'Cliente 1', 
-            text: 'Excelente atendimento!', 
-            avatar: '', 
-            rating: 5 
-          }
+          {
+            name: 'Cliente 1',
+            text: 'Excelente atendimento!',
+            avatar: '',
+            rating: 5,
+          },
         ],
-        layout: 'carousel'
+        layout: 'carousel',
       };
 
     case BlockType.FORM:
       return {
         title: 'Entre em Contato',
         fields: [
-          { name: 'name', type: 'text', label: 'Nome', required: true, placeholder: 'Seu nome' },
-          { name: 'email', type: 'email', label: 'E-mail', required: true, placeholder: 'seu@email.com' },
-          { name: 'phone', type: 'tel', label: 'Telefone', required: true, placeholder: '(00) 00000-0000' },
-          { name: 'message', type: 'textarea', label: 'Mensagem', required: false, placeholder: 'Sua mensagem' }
+          {
+            name: 'name',
+            type: 'text',
+            label: 'Nome',
+            required: true,
+            placeholder: 'Seu nome',
+          },
+          {
+            name: 'email',
+            type: 'email',
+            label: 'E-mail',
+            required: true,
+            placeholder: 'seu@email.com',
+          },
+          {
+            name: 'phone',
+            type: 'tel',
+            label: 'Telefone',
+            required: true,
+            placeholder: '(00) 00000-0000',
+          },
+          {
+            name: 'message',
+            type: 'textarea',
+            label: 'Mensagem',
+            required: false,
+            placeholder: 'Sua mensagem',
+          },
         ],
         submitText: 'Enviar',
-        successMessage: 'Mensagem enviada com sucesso!'
+        successMessage: 'Mensagem enviada com sucesso!',
       };
 
     case BlockType.CTA:
@@ -676,12 +760,12 @@ function getDefaultBlockConfig(type: BlockType): any {
         buttonText: 'Falar com Especialista',
         buttonLink: '#contato',
         backgroundColor: '#2563eb',
-        textColor: '#ffffff'
+        textColor: '#ffffff',
       };
 
     case BlockType.SPACER:
       return {
-        height: 60
+        height: 60,
       };
 
     case BlockType.DIVIDER:
@@ -689,15 +773,15 @@ function getDefaultBlockConfig(type: BlockType): any {
         style: 'solid',
         color: '#e5e7eb',
         thickness: 1,
-        width: '100%'
+        width: '100%',
       };
 
     case BlockType.MAP:
       return {
-        latitude: -23.550520,
+        latitude: -23.55052,
         longitude: -46.633308,
         zoom: 15,
-        height: 400
+        height: 400,
       };
 
     case BlockType.BROKER_CARD:
@@ -707,7 +791,7 @@ function getDefaultBlockConfig(type: BlockType): any {
         creci: '',
         phone: '',
         email: '',
-        bio: 'Especialista em imóveis rurais'
+        bio: 'Especialista em imóveis rurais',
       };
 
     case BlockType.FOOTER:
@@ -717,11 +801,11 @@ function getDefaultBlockConfig(type: BlockType): any {
             title: 'Empresa',
             links: [
               { text: 'Sobre', url: '#' },
-              { text: 'Contato', url: '#' }
-            ]
-          }
+              { text: 'Contato', url: '#' },
+            ],
+          },
         ],
-        copyright: '© 2024 Todos os direitos reservados'
+        copyright: '© 2024 Todos os direitos reservados',
       };
 
     default:
@@ -734,35 +818,35 @@ function getDefaultBlockStyles(type: BlockType): any {
     case BlockType.HERO:
       return {
         padding: '80px 20px',
-        textAlign: 'center'
+        textAlign: 'center',
       };
 
     case BlockType.HERO_WITH_FORM:
       return {
         padding: '0px',
-        textAlign: 'center'
+        textAlign: 'center',
       };
 
     case BlockType.PROPERTY_GRID:
     case BlockType.FORM:
       return {
-        padding: '60px 20px'
+        padding: '60px 20px',
       };
 
     case BlockType.TEXT:
       return {
-        padding: '40px 20px'
+        padding: '40px 20px',
       };
 
     case BlockType.CTA:
       return {
         padding: '80px 20px',
-        textAlign: 'center'
+        textAlign: 'center',
       };
 
     default:
       return {
-        padding: '20px'
+        padding: '20px',
       };
   }
 }

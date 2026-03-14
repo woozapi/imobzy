@@ -1,6 +1,17 @@
-
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { Block, BlockType, LayoutConfig, BlockStyles, ResponsiveConfig } from '../types';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from 'react';
+import {
+  Block,
+  BlockType,
+  LayoutConfig,
+  BlockStyles,
+  ResponsiveConfig,
+} from '../types';
 import { useSettings } from './SettingsContext';
 
 interface LayoutEditorContextType {
@@ -10,7 +21,7 @@ interface LayoutEditorContextType {
   device: 'mobile' | 'tablet' | 'desktop';
   history: Block[][];
   historyIndex: number;
-  
+
   // Actions
   addBlock: (type: BlockType, position?: number) => void;
   removeBlock: (id: string) => void;
@@ -18,29 +29,32 @@ interface LayoutEditorContextType {
   moveBlock: (fromIndex: number, toIndex: number) => void;
   selectBlock: (id: string | null) => void;
   duplicateBlock: (id: string) => void;
-  
+
   // Mode & Device
   setMode: (mode: 'edit' | 'preview') => void;
   setDevice: (device: 'mobile' | 'tablet' | 'desktop') => void;
-  
+
   // History
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
   canRedo: boolean;
-  
+
   // Persistence
   saveLayout: () => Promise<void>;
   loadLayout: () => Promise<void>;
   resetLayout: () => void;
-  
+
   // Utility
   getBlockById: (id: string) => Block | undefined;
 }
 
-const LayoutEditorContext = createContext<LayoutEditorContextType | undefined>(undefined);
+const LayoutEditorContext = createContext<LayoutEditorContextType | undefined>(
+  undefined
+);
 
-const generateBlockId = () => `block_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const generateBlockId = () =>
+  `block_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 const createDefaultBlock = (type: BlockType, order: number): Block => {
   const baseBlock: Block = {
@@ -51,9 +65,9 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
     config: {},
     styles: {
       padding: { top: 40, right: 20, bottom: 40, left: 20 },
-      margin: { top: 0, right: 0, bottom: 0, left: 0 }
+      margin: { top: 0, right: 0, bottom: 0, left: 0 },
     },
-    responsive: {}
+    responsive: {},
   };
 
   // Default configs por tipo
@@ -62,11 +76,12 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
       baseBlock.config = {
         title: 'Título do Hero',
         subtitle: 'Subtítulo opcional',
-        backgroundImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9',
+        backgroundImage:
+          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9',
         overlayOpacity: 0.5,
         height: 600,
         alignment: 'center',
-        textColor: '#ffffff'
+        textColor: '#ffffff',
       };
       break;
     case BlockType.TEXT:
@@ -75,7 +90,7 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
         fontSize: 16,
         fontWeight: 400,
         color: '#000000',
-        alignment: 'left'
+        alignment: 'left',
       };
       break;
     case BlockType.IMAGE:
@@ -84,7 +99,7 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
         alt: 'Imagem',
         width: '100%',
         height: 'auto',
-        objectFit: 'cover'
+        objectFit: 'cover',
       };
       break;
     case BlockType.PROPERTY_GRID:
@@ -93,7 +108,7 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
         gap: 24,
         showFilters: true,
         maxItems: 6,
-        sortBy: 'date'
+        sortBy: 'date',
       };
       break;
     case BlockType.STATS:
@@ -101,9 +116,9 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
         stats: [
           { value: '1.5k+', label: 'Transações' },
           { value: '2Bi', label: 'Volume de Vendas' },
-          { value: '15', label: 'Anos de Experiência' }
+          { value: '15', label: 'Anos de Experiência' },
         ],
-        columns: 3
+        columns: 3,
       };
       break;
     case BlockType.FORM:
@@ -113,10 +128,15 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
           { name: 'name', type: 'text', label: 'Nome', required: true },
           { name: 'email', type: 'email', label: 'E-mail', required: true },
           { name: 'phone', type: 'tel', label: 'Telefone', required: false },
-          { name: 'message', type: 'textarea', label: 'Mensagem', required: true }
+          {
+            name: 'message',
+            type: 'textarea',
+            label: 'Mensagem',
+            required: true,
+          },
         ],
         submitText: 'Enviar',
-        successMessage: 'Mensagem enviada com sucesso!'
+        successMessage: 'Mensagem enviada com sucesso!',
       };
       break;
     case BlockType.CTA:
@@ -126,12 +146,12 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
         buttonText: 'Fale Conosco',
         buttonLink: '#contact',
         backgroundColor: '#4F46E5',
-        textColor: '#ffffff'
+        textColor: '#ffffff',
       };
       break;
     case BlockType.SPACER:
       baseBlock.config = {
-        height: 60
+        height: 60,
       };
       baseBlock.styles.padding = { top: 0, right: 0, bottom: 0, left: 0 };
       break;
@@ -140,7 +160,7 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
         thickness: 1,
         color: '#e5e7eb',
         width: '100%',
-        style: 'solid'
+        style: 'solid',
       };
       break;
   }
@@ -148,13 +168,17 @@ const createDefaultBlock = (type: BlockType, order: number): Block => {
   return baseBlock;
 };
 
-export const LayoutEditorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const LayoutEditorProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const { settings, updateSettings } = useSettings();
-  
+
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [selectedBlock, setSelectedBlock] = useState<Block | null>(null);
   const [mode, setMode] = useState<'edit' | 'preview'>('edit');
-  const [device, setDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+  const [device, setDevice] = useState<'mobile' | 'tablet' | 'desktop'>(
+    'desktop'
+  );
   const [history, setHistory] = useState<Block[][]>([[]]);
   const [historyIndex, setHistoryIndex] = useState(0);
 
@@ -167,101 +191,122 @@ export const LayoutEditorProvider: React.FC<{ children: ReactNode }> = ({ childr
   }, [settings.layout_config]);
 
   // Adicionar ao histórico
-  const addToHistory = useCallback((newBlocks: Block[]) => {
-    const newHistory = history.slice(0, historyIndex + 1);
-    newHistory.push(newBlocks);
-    setHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
-  }, [history, historyIndex]);
+  const addToHistory = useCallback(
+    (newBlocks: Block[]) => {
+      const newHistory = history.slice(0, historyIndex + 1);
+      newHistory.push(newBlocks);
+      setHistory(newHistory);
+      setHistoryIndex(newHistory.length - 1);
+    },
+    [history, historyIndex]
+  );
 
-  const addBlock = useCallback((type: BlockType, position?: number) => {
-    const newBlock = createDefaultBlock(type, position ?? blocks.length);
-    const newBlocks = [...blocks];
-    
-    if (position !== undefined) {
-      newBlocks.splice(position, 0, newBlock);
+  const addBlock = useCallback(
+    (type: BlockType, position?: number) => {
+      const newBlock = createDefaultBlock(type, position ?? blocks.length);
+      const newBlocks = [...blocks];
+
+      if (position !== undefined) {
+        newBlocks.splice(position, 0, newBlock);
+        // Reordenar
+        newBlocks.forEach((block, idx) => {
+          block.order = idx;
+        });
+      } else {
+        newBlocks.push(newBlock);
+      }
+
+      setBlocks(newBlocks);
+      addToHistory(newBlocks);
+      setSelectedBlock(newBlock);
+    },
+    [blocks, addToHistory]
+  );
+
+  const removeBlock = useCallback(
+    (id: string) => {
+      const newBlocks = blocks.filter((b) => b.id !== id);
+      newBlocks.forEach((block, idx) => {
+        block.order = idx;
+      });
+      setBlocks(newBlocks);
+      addToHistory(newBlocks);
+      if (selectedBlock?.id === id) {
+        setSelectedBlock(null);
+      }
+    },
+    [blocks, selectedBlock, addToHistory]
+  );
+
+  const updateBlock = useCallback(
+    (id: string, updates: Partial<Block>) => {
+      const newBlocks = blocks.map((block) =>
+        block.id === id ? { ...block, ...updates } : block
+      );
+      setBlocks(newBlocks);
+      addToHistory(newBlocks);
+
+      if (selectedBlock?.id === id) {
+        setSelectedBlock({ ...selectedBlock, ...updates });
+      }
+    },
+    [blocks, selectedBlock, addToHistory]
+  );
+
+  const moveBlock = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      const newBlocks = [...blocks];
+      const [movedBlock] = newBlocks.splice(fromIndex, 1);
+      newBlocks.splice(toIndex, 0, movedBlock);
+
       // Reordenar
       newBlocks.forEach((block, idx) => {
         block.order = idx;
       });
-    } else {
-      newBlocks.push(newBlock);
-    }
-    
-    setBlocks(newBlocks);
-    addToHistory(newBlocks);
-    setSelectedBlock(newBlock);
-  }, [blocks, addToHistory]);
 
-  const removeBlock = useCallback((id: string) => {
-    const newBlocks = blocks.filter(b => b.id !== id);
-    newBlocks.forEach((block, idx) => {
-      block.order = idx;
-    });
-    setBlocks(newBlocks);
-    addToHistory(newBlocks);
-    if (selectedBlock?.id === id) {
-      setSelectedBlock(null);
-    }
-  }, [blocks, selectedBlock, addToHistory]);
+      setBlocks(newBlocks);
+      addToHistory(newBlocks);
+    },
+    [blocks, addToHistory]
+  );
 
-  const updateBlock = useCallback((id: string, updates: Partial<Block>) => {
-    const newBlocks = blocks.map(block => 
-      block.id === id ? { ...block, ...updates } : block
-    );
-    setBlocks(newBlocks);
-    addToHistory(newBlocks);
-    
-    if (selectedBlock?.id === id) {
-      setSelectedBlock({ ...selectedBlock, ...updates });
-    }
-  }, [blocks, selectedBlock, addToHistory]);
+  const selectBlock = useCallback(
+    (id: string | null) => {
+      if (id === null) {
+        setSelectedBlock(null);
+      } else {
+        const block = blocks.find((b) => b.id === id);
+        setSelectedBlock(block || null);
+      }
+    },
+    [blocks]
+  );
 
-  const moveBlock = useCallback((fromIndex: number, toIndex: number) => {
-    const newBlocks = [...blocks];
-    const [movedBlock] = newBlocks.splice(fromIndex, 1);
-    newBlocks.splice(toIndex, 0, movedBlock);
-    
-    // Reordenar
-    newBlocks.forEach((block, idx) => {
-      block.order = idx;
-    });
-    
-    setBlocks(newBlocks);
-    addToHistory(newBlocks);
-  }, [blocks, addToHistory]);
+  const duplicateBlock = useCallback(
+    (id: string) => {
+      const blockToDuplicate = blocks.find((b) => b.id === id);
+      if (!blockToDuplicate) return;
 
-  const selectBlock = useCallback((id: string | null) => {
-    if (id === null) {
-      setSelectedBlock(null);
-    } else {
-      const block = blocks.find(b => b.id === id);
-      setSelectedBlock(block || null);
-    }
-  }, [blocks]);
+      const newBlock: Block = {
+        ...blockToDuplicate,
+        id: generateBlockId(),
+        order: blockToDuplicate.order + 1,
+      };
 
-  const duplicateBlock = useCallback((id: string) => {
-    const blockToDuplicate = blocks.find(b => b.id === id);
-    if (!blockToDuplicate) return;
-    
-    const newBlock: Block = {
-      ...blockToDuplicate,
-      id: generateBlockId(),
-      order: blockToDuplicate.order + 1
-    };
-    
-    const newBlocks = [...blocks];
-    newBlocks.splice(blockToDuplicate.order + 1, 0, newBlock);
-    
-    // Reordenar
-    newBlocks.forEach((block, idx) => {
-      block.order = idx;
-    });
-    
-    setBlocks(newBlocks);
-    addToHistory(newBlocks);
-    setSelectedBlock(newBlock);
-  }, [blocks, addToHistory]);
+      const newBlocks = [...blocks];
+      newBlocks.splice(blockToDuplicate.order + 1, 0, newBlock);
+
+      // Reordenar
+      newBlocks.forEach((block, idx) => {
+        block.order = idx;
+      });
+
+      setBlocks(newBlocks);
+      addToHistory(newBlocks);
+      setSelectedBlock(newBlock);
+    },
+    [blocks, addToHistory]
+  );
 
   const undo = useCallback(() => {
     if (historyIndex > 0) {
@@ -287,18 +332,18 @@ export const LayoutEditorProvider: React.FC<{ children: ReactNode }> = ({ childr
       globalStyles: settings.layout_config?.globalStyles || {
         colors: {},
         fonts: {},
-        spacing: {}
+        spacing: {},
       },
       breakpoints: settings.layout_config?.breakpoints || {
         mobile: 375,
         tablet: 768,
-        desktop: 1440
-      }
+        desktop: 1440,
+      },
     };
 
     await updateSettings({
       ...settings,
-      layout_config: layoutConfig
+      layout_config: layoutConfig,
     });
   }, [blocks, settings, updateSettings]);
 
@@ -317,9 +362,12 @@ export const LayoutEditorProvider: React.FC<{ children: ReactNode }> = ({ childr
     setHistoryIndex(0);
   }, []);
 
-  const getBlockById = useCallback((id: string) => {
-    return blocks.find(b => b.id === id);
-  }, [blocks]);
+  const getBlockById = useCallback(
+    (id: string) => {
+      return blocks.find((b) => b.id === id);
+    },
+    [blocks]
+  );
 
   const value: LayoutEditorContextType = {
     blocks,
@@ -343,7 +391,7 @@ export const LayoutEditorProvider: React.FC<{ children: ReactNode }> = ({ childr
     saveLayout,
     loadLayout,
     resetLayout,
-    getBlockById
+    getBlockById,
   };
 
   return (
@@ -356,7 +404,9 @@ export const LayoutEditorProvider: React.FC<{ children: ReactNode }> = ({ childr
 export const useLayoutEditor = () => {
   const context = useContext(LayoutEditorContext);
   if (!context) {
-    throw new Error('useLayoutEditor deve ser usado dentro de um LayoutEditorProvider');
+    throw new Error(
+      'useLayoutEditor deve ser usado dentro de um LayoutEditorProvider'
+    );
   }
   return context;
 };

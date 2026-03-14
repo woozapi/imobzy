@@ -7,10 +7,7 @@ interface SpacerBlockProps {
 
 const SpacerBlock: React.FC<SpacerBlockProps> = ({ config }) => {
   return (
-    <div
-      style={{ height: `${config.height}px` }}
-      className="bg-transparent"
-    />
+    <div style={{ height: `${config.height}px` }} className="bg-transparent" />
   );
 };
 

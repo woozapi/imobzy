@@ -8,7 +8,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { signIn, user, profile, loading: authLoading } = useAuth();
   const { settings } = useSettings();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +21,10 @@ const Login: React.FC = () => {
     if (authLoading || !justSignedIn) return; // Only redirect after a deliberate login
     if (!user || !profile) return;
 
-    console.log('✅ [Login] Profile loaded via AuthContext, redirecting...', { role: profile.role, org: profile.organization?.niche });
+    console.log('✅ [Login] Profile loaded via AuthContext, redirecting...', {
+      role: profile.role,
+      org: profile.organization?.niche,
+    });
 
     if (profile.role === 'superadmin') {
       navigate('/superadmin', { replace: true });
@@ -34,7 +37,9 @@ const Login: React.FC = () => {
 
   // A2: If user navigates to /login while already authenticated (not after a fresh login)
   if (!authLoading && user && profile && !justSignedIn) {
-    console.log('🔄 [Login] Already authenticated, redirecting away from login page.');
+    console.log(
+      '🔄 [Login] Already authenticated, redirecting away from login page.'
+    );
     if (profile.role === 'superadmin') {
       return <Navigate to="/superadmin" replace />;
     }
@@ -55,10 +60,14 @@ const Login: React.FC = () => {
       // Do NOT manually fetch profile here. AuthContext.onAuthStateChange will handle it.
       // Just flag that we signed in so the useEffect above handles the redirect.
       setJustSignedIn(true);
-      console.log('✅ [Login] signIn successful. Waiting for AuthContext to load profile...');
+      console.log(
+        '✅ [Login] signIn successful. Waiting for AuthContext to load profile...'
+      );
     } catch (err: any) {
       console.error('Login error:', err);
-      setError(err.message || 'Erro ao fazer login. Verifique suas credenciais.');
+      setError(
+        err.message || 'Erro ao fazer login. Verifique suas credenciais.'
+      );
       setLoading(false);
     }
     // Note: we don't setLoading(false) on success — the redirect will unmount this component
@@ -83,7 +92,9 @@ const Login: React.FC = () => {
             </div>
           </div>
 
-          <h2 className="text-2xl font-black text-black text-center mb-8">Login</h2>
+          <h2 className="text-2xl font-black text-black text-center mb-8">
+            Login
+          </h2>
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
@@ -98,7 +109,10 @@ const Login: React.FC = () => {
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-black/20" size={20} />
+                <Mail
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-black/20"
+                  size={20}
+                />
                 <input
                   type="email"
                   required
@@ -115,7 +129,10 @@ const Login: React.FC = () => {
                 Senha
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-black/20" size={20} />
+                <Lock
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-black/20"
+                  size={20}
+                />
                 <input
                   type="password"
                   required
@@ -140,7 +157,10 @@ const Login: React.FC = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-black/60">
               Não tem uma conta?{' '}
-              <Link to="/register" className="font-black text-black hover:underline">
+              <Link
+                to="/register"
+                className="font-black text-black hover:underline"
+              >
                 Criar conta
               </Link>
             </p>
@@ -149,7 +169,10 @@ const Login: React.FC = () => {
 
         {/* Back to Site */}
         <div className="mt-6 text-center">
-          <Link to="/" className="text-sm text-black/40 hover:text-black font-bold transition">
+          <Link
+            to="/"
+            className="text-sm text-black/40 hover:text-black font-bold transition"
+          >
             ← Voltar para o site
           </Link>
         </div>
@@ -159,4 +182,3 @@ const Login: React.FC = () => {
 };
 
 export default Login;
-

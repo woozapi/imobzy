@@ -6,7 +6,10 @@ interface HeroWithFormBlockSettingsProps {
   onUpdate: (config: HeroWithFormBlockConfig) => void;
 }
 
-const HeroWithFormBlockSettings: React.FC<HeroWithFormBlockSettingsProps> = ({ config, onUpdate }) => {
+const HeroWithFormBlockSettings: React.FC<HeroWithFormBlockSettingsProps> = ({
+  config,
+  onUpdate,
+}) => {
   const updateField = (field: keyof HeroWithFormBlockConfig, value: any) => {
     onUpdate({ ...config, [field]: value });
   };
@@ -94,7 +97,10 @@ const HeroWithFormBlockSettings: React.FC<HeroWithFormBlockSettingsProps> = ({ c
           onChange={(e) => updateField('showBadges', e.target.checked)}
           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
         />
-        <label htmlFor="showBadges" className="text-sm font-medium text-gray-700">
+        <label
+          htmlFor="showBadges"
+          className="text-sm font-medium text-gray-700"
+        >
           Mostrar Selos de Confiança
         </label>
       </div>

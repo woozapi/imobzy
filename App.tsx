@@ -1,5 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
 
 // Impersonation Components
 import ImpersonateCallback from './views/ImpersonateCallback';
@@ -82,8 +88,13 @@ console.log('App.tsx: Multi-Panel Architecture Active');
 // ==========================================
 // ERROR BOUNDARY
 // ==========================================
-interface EBProps { children: React.ReactNode }
-interface EBState { hasError: boolean; error: Error | null }
+interface EBProps {
+  children: React.ReactNode;
+}
+interface EBState {
+  hasError: boolean;
+  error: Error | null;
+}
 
 class ErrorBoundary extends React.Component<EBProps, EBState> {
   // @ts-ignore
@@ -108,12 +119,18 @@ class ErrorBoundary extends React.Component<EBProps, EBState> {
       return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-red-50 p-8 text-center">
           <div className="bg-white p-8 rounded-3xl shadow-2xl border border-red-100 max-w-2xl">
-            <h1 className="text-2xl font-black text-red-600 mb-4 uppercase">Ops! Algo deu errado.</h1>
-            <p className="text-slate-600 mb-6 font-medium">Ocorreu um erro inesperado na renderização do sistema.</p>
+            <h1 className="text-2xl font-black text-red-600 mb-4 uppercase">
+              Ops! Algo deu errado.
+            </h1>
+            <p className="text-slate-600 mb-6 font-medium">
+              Ocorreu um erro inesperado na renderização do sistema.
+            </p>
             <div className="bg-slate-900 text-left p-4 rounded-xl mb-6 overflow-auto max-h-48">
-              <code className="text-red-400 text-xs font-mono">{this.state.error?.toString()}</code>
+              <code className="text-red-400 text-xs font-mono">
+                {this.state.error?.toString()}
+              </code>
             </div>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="px-8 py-3 bg-red-600 text-white rounded-xl font-bold uppercase tracking-widest hover:bg-red-700 transition-all"
             >
@@ -146,7 +163,7 @@ const FullScreenSpinner: React.FC = () => (
 // ==========================================
 const NicheRedirect: React.FC = () => {
   const { profile, isImpersonating, loading } = useAuth();
-  
+
   if (loading) return <FullScreenSpinner />;
 
   // If Super Admin and NOT impersonating, go to Super Admin panel
@@ -160,7 +177,7 @@ const NicheRedirect: React.FC = () => {
   }
 
   const niche = profile.organization.niche || 'traditional';
-  const target = (niche === 'rural' || niche === 'hybrid') ? '/rural' : '/urban';
+  const target = niche === 'rural' || niche === 'hybrid' ? '/rural' : '/urban';
   return <Navigate to={target} replace />;
 };
 
@@ -168,7 +185,9 @@ const NicheRedirect: React.FC = () => {
 // GLOBAL SUPER ADMIN GUARD
 // Forces super admins to /superadmin unless impersonating
 // ==========================================
-const SuperAdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const SuperAdminGuard: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { profile, isImpersonating, loading } = useAuth();
   const location = useLocation();
 
@@ -177,7 +196,11 @@ const SuperAdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   if (profile?.role === 'superadmin' && !isImpersonating) {
     const path = location.pathname;
-    if (!path.startsWith('/superadmin') && path !== '/login' && path !== '/impersonate') {
+    if (
+      !path.startsWith('/superadmin') &&
+      path !== '/login' &&
+      path !== '/impersonate'
+    ) {
       return <Navigate to="/superadmin" replace />;
     }
   }
@@ -207,55 +230,436 @@ const AppContent: React.FC = () => {
           <Route path="/onboarding" element={<Onboarding />} />
 
           {/* ====== LEGACY /admin → NICHE REDIRECT ====== */}
-          <Route path="/admin" element={<ProtectedRoute><NicheRedirect /></ProtectedRoute>} />
-          <Route path="/admin/*" element={<ProtectedRoute><NicheRedirect /></ProtectedRoute>} />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <NicheRedirect />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute>
+                <NicheRedirect />
+              </ProtectedRoute>
+            }
+          />
 
           {/* ====== 🌾 RURAL PANEL ====== */}
-          <Route path="/rural" element={<ProtectedRoute><RuralLayout><RuralDashboard /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/cadastro-tecnico" element={<ProtectedRoute><RuralLayout><CadastroTecnico /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/properties" element={<ProtectedRoute><RuralLayout><PropertyManagement /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/properties/new" element={<ProtectedRoute><RuralLayout><PropertyEditor /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/properties/:id" element={<ProtectedRoute><RuralLayout><PropertyEditor /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/geointeligencia" element={<ProtectedRoute><RuralLayout><Geointeligencia /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/due-diligence" element={<ProtectedRoute><RuralLayout><DueDiligence /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/dataroom" element={<ProtectedRoute><RuralLayout><DataRoom /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/crm" element={<ProtectedRoute><RuralLayout><KanbanBoard /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/messages" element={<ProtectedRoute><RuralLayout><Messages /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/whatsapp-setup" element={<ProtectedRoute><RuralLayout><WhatsAppSetup /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/reports" element={<ProtectedRoute><RuralLayout><BIRural /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/portal-proprietario" element={<ProtectedRoute><RuralLayout><PortalProprietarioRural /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/portal-comprador" element={<ProtectedRoute><RuralLayout><PortalCompradorRural /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/landing-pages" element={<ProtectedRoute><RuralLayout><LandingPageManager /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/landing-pages/new" element={<ProtectedRoute><RuralLayout><LandingPageEditor /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/landing-pages/:id" element={<ProtectedRoute><RuralLayout><LandingPageEditor /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/ai-assistant" element={<ProtectedRoute><RuralLayout><AIAssistant /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/contracts" element={<ProtectedRoute><RuralLayout><LegalContracts /></RuralLayout></ProtectedRoute>} />
-          <Route path="/rural/settings" element={<ProtectedRoute><RuralLayout><SystemSettings /></RuralLayout></ProtectedRoute>} />
+          <Route
+            path="/rural"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <RuralDashboard />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/cadastro-tecnico"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <CadastroTecnico />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/properties"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <PropertyManagement />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/properties/new"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <PropertyEditor />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/properties/:id"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <PropertyEditor />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/geointeligencia"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <Geointeligencia />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/due-diligence"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <DueDiligence />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/dataroom"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <DataRoom />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/crm"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <KanbanBoard />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/messages"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <Messages />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/whatsapp-setup"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <WhatsAppSetup />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/reports"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <BIRural />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/portal-proprietario"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <PortalProprietarioRural />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/portal-comprador"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <PortalCompradorRural />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/landing-pages"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <LandingPageManager />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/landing-pages/new"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <LandingPageEditor />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/landing-pages/:id"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <LandingPageEditor />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/ai-assistant"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <AIAssistant />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/contracts"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <LegalContracts />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/rural/settings"
+            element={
+              <ProtectedRoute>
+                <RuralLayout>
+                  <SystemSettings />
+                </RuralLayout>
+              </ProtectedRoute>
+            }
+          />
 
           {/* ====== 🏙 URBAN PANEL ====== */}
-          <Route path="/urban" element={<ProtectedRoute><UrbanLayout><UrbanDashboard /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/properties" element={<ProtectedRoute><UrbanLayout><PropertyManagement /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/properties/new" element={<ProtectedRoute><UrbanLayout><PropertyEditor /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/properties/:id" element={<ProtectedRoute><UrbanLayout><PropertyEditor /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/empreendimentos" element={<ProtectedRoute><UrbanLayout><Empreendimentos /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/locacao" element={<ProtectedRoute><UrbanLayout><Locacao /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/compliance" element={<ProtectedRoute><UrbanLayout><ComplianceUrbano /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/exportador" element={<ProtectedRoute><UrbanLayout><ExportadorPortais /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/crm" element={<ProtectedRoute><UrbanLayout><KanbanBoard /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/messages" element={<ProtectedRoute><UrbanLayout><Messages /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/whatsapp-setup" element={<ProtectedRoute><UrbanLayout><WhatsAppSetup /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/reports" element={<ProtectedRoute><UrbanLayout><BIRural /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/portal-proprietario" element={<ProtectedRoute><UrbanLayout><PortalProprietarioUrbano /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/portal-comprador" element={<ProtectedRoute><UrbanLayout><PortalCompradorUrbano /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/landing-pages" element={<ProtectedRoute><UrbanLayout><LandingPageManager /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/landing-pages/new" element={<ProtectedRoute><UrbanLayout><LandingPageEditor /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/landing-pages/:id" element={<ProtectedRoute><UrbanLayout><LandingPageEditor /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/ai-assistant" element={<ProtectedRoute><UrbanLayout><AIAssistant /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/contracts" element={<ProtectedRoute><UrbanLayout><LegalContracts /></UrbanLayout></ProtectedRoute>} />
-          <Route path="/urban/settings" element={<ProtectedRoute><UrbanLayout><SystemSettings /></UrbanLayout></ProtectedRoute>} />
+          <Route
+            path="/urban"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <UrbanDashboard />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/properties"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <PropertyManagement />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/properties/new"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <PropertyEditor />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/properties/:id"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <PropertyEditor />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/empreendimentos"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <Empreendimentos />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/locacao"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <Locacao />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/compliance"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <ComplianceUrbano />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/exportador"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <ExportadorPortais />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/crm"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <KanbanBoard />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/messages"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <Messages />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/whatsapp-setup"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <WhatsAppSetup />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/reports"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <BIRural />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/portal-proprietario"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <PortalProprietarioUrbano />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/portal-comprador"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <PortalCompradorUrbano />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/landing-pages"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <LandingPageManager />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/landing-pages/new"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <LandingPageEditor />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/landing-pages/:id"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <LandingPageEditor />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/ai-assistant"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <AIAssistant />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/contracts"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <LegalContracts />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/urban/settings"
+            element={
+              <ProtectedRoute>
+                <UrbanLayout>
+                  <SystemSettings />
+                </UrbanLayout>
+              </ProtectedRoute>
+            }
+          />
 
           {/* ====== 👑 SUPER ADMIN ====== */}
-          <Route path="/superadmin" element={<ProtectedRoute><SuperAdminLayout /></ProtectedRoute>}>
+          <Route
+            path="/superadmin"
+            element={
+              <ProtectedRoute>
+                <SuperAdminLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<SuperAdminDashboard />} />
             <Route path="analytics" element={<AnalyticsDashboard />} />
             <Route path="monitoring" element={<PlatformMonitoring />} />
@@ -289,17 +693,17 @@ const App: React.FC = () => {
       <Router>
         <AuthProvider>
           <SettingsProvider>
-          <TextsProvider>
-            <PlansProvider>
-              <DomainRouter>
-                <TrackingPixels />
-                <AppContent />
-              </DomainRouter>
-            </PlansProvider>
-          </TextsProvider>
-        </SettingsProvider>
-      </AuthProvider>
-    </Router>
+            <TextsProvider>
+              <PlansProvider>
+                <DomainRouter>
+                  <TrackingPixels />
+                  <AppContent />
+                </DomainRouter>
+              </PlansProvider>
+            </TextsProvider>
+          </SettingsProvider>
+        </AuthProvider>
+      </Router>
     </ErrorBoundary>
   );
 };

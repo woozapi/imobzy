@@ -7,7 +7,10 @@ interface HeroBlockSettingsProps {
   onUpdate: (config: HeroBlockConfig) => void;
 }
 
-const HeroBlockSettings: React.FC<HeroBlockSettingsProps> = ({ config, onUpdate }) => {
+const HeroBlockSettings: React.FC<HeroBlockSettingsProps> = ({
+  config,
+  onUpdate,
+}) => {
   const updateField = (field: keyof HeroBlockConfig, value: any) => {
     onUpdate({ ...config, [field]: value });
   };
@@ -61,7 +64,9 @@ const HeroBlockSettings: React.FC<HeroBlockSettingsProps> = ({ config, onUpdate 
           max="1"
           step="0.1"
           value={config.overlayOpacity}
-          onChange={(e) => updateField('overlayOpacity', parseFloat(e.target.value))}
+          onChange={(e) =>
+            updateField('overlayOpacity', parseFloat(e.target.value))
+          }
           className="w-full"
         />
       </div>
@@ -117,8 +122,10 @@ const HeroBlockSettings: React.FC<HeroBlockSettingsProps> = ({ config, onUpdate 
       </div>
 
       <div className="border-t border-gray-200 pt-4">
-        <h4 className="text-sm font-medium text-gray-900 mb-3">Call to Action</h4>
-        
+        <h4 className="text-sm font-medium text-gray-900 mb-3">
+          Call to Action
+        </h4>
+
         <div className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">

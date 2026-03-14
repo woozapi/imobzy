@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSettings } from '../../context/SettingsContext';
 import { supabase } from '../../services/supabase';
-import { Activity, CheckCircle, XCircle, AlertCircle, Save, TestTube } from 'lucide-react';
+import {
+  Activity,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Save,
+  TestTube,
+} from 'lucide-react';
 
 /**
  * TRACKING SETTINGS COMPONENT
@@ -33,7 +40,12 @@ const TrackingSettings: React.FC = () => {
   const [config, setConfig] = useState<PixelConfig>({
     facebook: { enabled: false, pixelId: '', testMode: false },
     google_analytics: { enabled: false, measurementId: '', testMode: false },
-    google_ads: { enabled: false, conversionId: '', conversionLabel: '', testMode: false },
+    google_ads: {
+      enabled: false,
+      conversionId: '',
+      conversionLabel: '',
+      testMode: false,
+    },
   });
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -61,9 +73,9 @@ const TrackingSettings: React.FC = () => {
 
       setSaveSuccess(true);
       await refreshSettings();
-      
+
       setTimeout(() => setSaveSuccess(false), 3000);
-      
+
       console.log('✅ Configurações de tracking salvas com sucesso');
     } catch (err: any) {
       console.error('❌ Erro ao salvar configurações:', err);
@@ -75,18 +87,27 @@ const TrackingSettings: React.FC = () => {
 
   const testPixel = (pixelType: string) => {
     console.log(`🧪 Testando ${pixelType}...`);
-    
+
     if (pixelType === 'facebook' && (window as any).fbq) {
       (window as any).fbq('track', 'PageView');
-      alert('Evento de teste enviado para Facebook Pixel! Verifique no Facebook Events Manager.');
+      alert(
+        'Evento de teste enviado para Facebook Pixel! Verifique no Facebook Events Manager.'
+      );
     } else if (pixelType === 'google_analytics' && (window as any).gtag) {
-      (window as any).gtag('event', 'test_event', { event_category: 'Test', event_label: 'Manual Test' });
-      alert('Evento de teste enviado para Google Analytics! Verifique no Google Analytics em tempo real.');
+      (window as any).gtag('event', 'test_event', {
+        event_category: 'Test',
+        event_label: 'Manual Test',
+      });
+      alert(
+        'Evento de teste enviado para Google Analytics! Verifique no Google Analytics em tempo real.'
+      );
     } else if (pixelType === 'google_ads' && (window as any).gtag) {
       (window as any).gtag('event', 'conversion', { send_to: 'test' });
       alert('Evento de teste enviado para Google Ads!');
     } else {
-      alert('Pixel não está carregado. Salve as configurações e recarregue a página.');
+      alert(
+        'Pixel não está carregado. Salve as configurações e recarregue a página.'
+      );
     }
   };
 
@@ -96,8 +117,12 @@ const TrackingSettings: React.FC = () => {
         <div className="flex items-center gap-3 mb-6">
           <Activity className="text-indigo-600" size={32} />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Tracking & Analytics</h1>
-            <p className="text-gray-600">Configure pixels de rastreamento e análise de conversões</p>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Tracking & Analytics
+            </h1>
+            <p className="text-gray-600">
+              Configure pixels de rastreamento e análise de conversões
+            </p>
           </div>
         </div>
 
@@ -109,18 +134,27 @@ const TrackingSettings: React.FC = () => {
                 <span className="text-2xl">📘</span>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Facebook Pixel</h2>
-                <p className="text-sm text-gray-600">Rastreie conversões do Facebook e Instagram</p>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Facebook Pixel
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Rastreie conversões do Facebook e Instagram
+                </p>
               </div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={config.facebook?.enabled || false}
-                onChange={(e) => setConfig({
-                  ...config,
-                  facebook: { ...config.facebook!, enabled: e.target.checked }
-                })}
+                onChange={(e) =>
+                  setConfig({
+                    ...config,
+                    facebook: {
+                      ...config.facebook!,
+                      enabled: e.target.checked,
+                    },
+                  })
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -136,10 +170,15 @@ const TrackingSettings: React.FC = () => {
                 <input
                   type="text"
                   value={config.facebook?.pixelId || ''}
-                  onChange={(e) => setConfig({
-                    ...config,
-                    facebook: { ...config.facebook!, pixelId: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setConfig({
+                      ...config,
+                      facebook: {
+                        ...config.facebook!,
+                        pixelId: e.target.value,
+                      },
+                    })
+                  }
                   placeholder="123456789012345"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
@@ -153,10 +192,15 @@ const TrackingSettings: React.FC = () => {
                   type="checkbox"
                   id="fb-test-mode"
                   checked={config.facebook?.testMode || false}
-                  onChange={(e) => setConfig({
-                    ...config,
-                    facebook: { ...config.facebook!, testMode: e.target.checked }
-                  })}
+                  onChange={(e) =>
+                    setConfig({
+                      ...config,
+                      facebook: {
+                        ...config.facebook!,
+                        testMode: e.target.checked,
+                      },
+                    })
+                  }
                   className="rounded"
                 />
                 <label htmlFor="fb-test-mode" className="text-sm text-gray-700">
@@ -183,18 +227,27 @@ const TrackingSettings: React.FC = () => {
                 <span className="text-2xl">📊</span>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Google Analytics 4</h2>
-                <p className="text-sm text-gray-600">Análise completa de comportamento e conversões</p>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Google Analytics 4
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Análise completa de comportamento e conversões
+                </p>
               </div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={config.google_analytics?.enabled || false}
-                onChange={(e) => setConfig({
-                  ...config,
-                  google_analytics: { ...config.google_analytics!, enabled: e.target.checked }
-                })}
+                onChange={(e) =>
+                  setConfig({
+                    ...config,
+                    google_analytics: {
+                      ...config.google_analytics!,
+                      enabled: e.target.checked,
+                    },
+                  })
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
@@ -210,10 +263,15 @@ const TrackingSettings: React.FC = () => {
                 <input
                   type="text"
                   value={config.google_analytics?.measurementId || ''}
-                  onChange={(e) => setConfig({
-                    ...config,
-                    google_analytics: { ...config.google_analytics!, measurementId: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setConfig({
+                      ...config,
+                      google_analytics: {
+                        ...config.google_analytics!,
+                        measurementId: e.target.value,
+                      },
+                    })
+                  }
                   placeholder="G-XXXXXXXXXX"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
@@ -227,10 +285,15 @@ const TrackingSettings: React.FC = () => {
                   type="checkbox"
                   id="ga-test-mode"
                   checked={config.google_analytics?.testMode || false}
-                  onChange={(e) => setConfig({
-                    ...config,
-                    google_analytics: { ...config.google_analytics!, testMode: e.target.checked }
-                  })}
+                  onChange={(e) =>
+                    setConfig({
+                      ...config,
+                      google_analytics: {
+                        ...config.google_analytics!,
+                        testMode: e.target.checked,
+                      },
+                    })
+                  }
                   className="rounded"
                 />
                 <label htmlFor="ga-test-mode" className="text-sm text-gray-700">
@@ -258,17 +321,24 @@ const TrackingSettings: React.FC = () => {
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-900">Google Ads</h2>
-                <p className="text-sm text-gray-600">Rastreamento de conversões para anúncios</p>
+                <p className="text-sm text-gray-600">
+                  Rastreamento de conversões para anúncios
+                </p>
               </div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"
                 checked={config.google_ads?.enabled || false}
-                onChange={(e) => setConfig({
-                  ...config,
-                  google_ads: { ...config.google_ads!, enabled: e.target.checked }
-                })}
+                onChange={(e) =>
+                  setConfig({
+                    ...config,
+                    google_ads: {
+                      ...config.google_ads!,
+                      enabled: e.target.checked,
+                    },
+                  })
+                }
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
@@ -284,10 +354,15 @@ const TrackingSettings: React.FC = () => {
                 <input
                   type="text"
                   value={config.google_ads?.conversionId || ''}
-                  onChange={(e) => setConfig({
-                    ...config,
-                    google_ads: { ...config.google_ads!, conversionId: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setConfig({
+                      ...config,
+                      google_ads: {
+                        ...config.google_ads!,
+                        conversionId: e.target.value,
+                      },
+                    })
+                  }
                   placeholder="AW-XXXXXXXXXX"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
@@ -300,10 +375,15 @@ const TrackingSettings: React.FC = () => {
                 <input
                   type="text"
                   value={config.google_ads?.conversionLabel || ''}
-                  onChange={(e) => setConfig({
-                    ...config,
-                    google_ads: { ...config.google_ads!, conversionLabel: e.target.value }
-                  })}
+                  onChange={(e) =>
+                    setConfig({
+                      ...config,
+                      google_ads: {
+                        ...config.google_ads!,
+                        conversionLabel: e.target.value,
+                      },
+                    })
+                  }
                   placeholder="xxxxxxxxxxxx"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
@@ -343,9 +423,17 @@ const TrackingSettings: React.FC = () => {
               <p className="font-semibold mb-1">Como funciona:</p>
               <ul className="list-disc list-inside space-y-1">
                 <li>Configure os IDs dos pixels acima</li>
-                <li>Os pixels serão carregados automaticamente em todas as páginas</li>
-                <li>Eventos de conversão serão disparados quando leads forem capturados</li>
-                <li>Todos os leads incluirão dados de origem (UTM parameters, referrer, etc)</li>
+                <li>
+                  Os pixels serão carregados automaticamente em todas as páginas
+                </li>
+                <li>
+                  Eventos de conversão serão disparados quando leads forem
+                  capturados
+                </li>
+                <li>
+                  Todos os leads incluirão dados de origem (UTM parameters,
+                  referrer, etc)
+                </li>
               </ul>
             </div>
           </div>

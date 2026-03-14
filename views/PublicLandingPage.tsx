@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { landingPageService } from '../services/landingPages';
 import { LandingPage, BlockType } from '../types/landingPage';
 import { supabase } from '../services/supabase';
-import MainLandingPage from './LandingPage'; 
+import MainLandingPage from './LandingPage';
 import Login from './Login'; // Import Login Component
 import { SettingsProvider } from '../context/SettingsContext';
 import { Loader } from 'lucide-react';
@@ -31,13 +31,13 @@ import DividerBlock from '../components/LandingPageBlocks/DividerBlock';
 import { useSettings } from '../context/SettingsContext'; // For public page might fallback/fail gracefully if context missing
 
 interface PublicLandingPageProps {
-    forceSlug?: string;
+  forceSlug?: string;
 }
 
 const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
   const { slug: routeSlug } = useParams<{ slug: string }>();
   // Prefer the prop from DomainRouter, fallback to URL parameter
-  const activeSlug = forceSlug || routeSlug; 
+  const activeSlug = forceSlug || routeSlug;
 
   const [landingPage, setLandingPage] = useState<LandingPage | null>(null);
   const [error, setError] = useState<string | null>(null); // Added error state
@@ -48,7 +48,7 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
   const [showLogin, setShowLogin] = useState(false); // Flag to show branding login
 
   // Alias for compatibility with existing render logic
-  const page = landingPage; 
+  const page = landingPage;
   const isPreview = false; // Default for public view
 
   const [searchParams] = useSearchParams(); // Call hook at top level
@@ -68,110 +68,112 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
       const { data: org, error: orgError } = await supabase
         .rpc('get_tenant_public', { slug_input: slug })
         .single();
-      
-      if (orgError) console.warn("Erro ao buscar org via RPC:", orgError);
+
+      if (orgError) console.warn('Erro ao buscar org via RPC:', orgError);
 
       if (!org) {
         // Fallback for direct query if RPC fails or not deployed yet (during dev)
-         const { data: orgDirect, error: directError } = await supabase
-            .from('organizations')
-            .select('id, name, slug')
-            .eq('slug', slug)
-            .single();
-            
-         if (!orgDirect) {
-             console.error('Organization not found for slug:', slug);
-             setLoading(false);
-             return;
-         }
-         // Note: If RLS blocks this, it will fail.
-         setOrganization(orgDirect);
+        const { data: orgDirect, error: directError } = await supabase
+          .from('organizations')
+          .select('id, name, slug')
+          .eq('slug', slug)
+          .single();
+
+        if (!orgDirect) {
+          console.error('Organization not found for slug:', slug);
+          setLoading(false);
+          return;
+        }
+        // Note: If RLS blocks this, it will fail.
+        setOrganization(orgDirect);
       } else {
-         setOrganization(org);
+        setOrganization(org);
       }
 
-      const orgId = org?.id || (organization as any)?.id;
+      const orgId = (org as any)?.id || (organization as any)?.id;
 
-      if(orgId) {
+      if (orgId) {
         // 2. Load Public Site Settings
-        const { data: siteSettings } = await supabase
-            .rpc('get_site_settings_public', { org_id: orgId });
-        
+        const { data: siteSettings } = await supabase.rpc(
+          'get_site_settings_public',
+          { org_id: orgId }
+        );
+
         if (siteSettings) {
-            setSettings(siteSettings);
+          setSettings(siteSettings);
         } else {
-            // Try standard select if RPC returns null (maybe empty settings)
-            // But standard select might be blocked by RLS.
-            // console.warn('Using default settings');
+          // Try standard select if RPC returns null (maybe empty settings)
+          // But standard select might be blocked by RLS.
+          // console.warn('Using default settings');
         }
       }
 
       // 3. Load Active Landing Page
       if (orgId) {
-          const targetPageSlug = searchParams.get('page'); // Use top-level variable
-          
-          // Check for Login Route
-          const path = window.location.pathname;
-          if (path.endsWith('/site/login')) {
-              setShowLogin(true);
-              setLoading(false);
-              return; // Stop loading page logic
-          }
+        const targetPageSlug = searchParams.get('page'); // Use top-level variable
 
-          let pageData = null;
+        // Check for Login Route
+        const path = window.location.pathname;
+        if (path.endsWith('/site/login')) {
+          setShowLogin(true);
+          setLoading(false);
+          return; // Stop loading page logic
+        }
 
-          if (targetPageSlug) {
-             // Specific page requested
-             const { data } = await supabase
-                 .from('landing_pages')
-                 .select('*')
-                 .eq('organization_id', orgId)
-                 .eq('slug', targetPageSlug)
-                 .eq('status', 'published')
-                 .single();
-             pageData = data;
-          } else {
-             // Root access: Try to find a dedicated homepage
-             const { data } = await supabase
-                 .from('landing_pages')
-                 .select('*')
-                 .eq('organization_id', orgId)
-                 .eq('status', 'published')
-                 .in('slug', ['home', 'inicio', 'index', 'main', 'site'])
-                 .limit(1)
-                 .maybeSingle();
-             
-             pageData = data;
-          }
+        let pageData = null;
 
-          if (pageData) {
-              // Map DB snake_case to CamelCase
-              const mappedPage: any = {
-                  ...pageData,
-                  themeConfig: pageData.theme_config || pageData.themeConfig || {},
-                  metaTitle: pageData.meta_title,
-                  metaDescription: pageData.meta_description,
-                  ogImage: pageData.og_image,
-                  customCss: pageData.custom_css,
-                  customJs: pageData.custom_js,
-                  propertySelection: pageData.property_selection || pageData.propertySelection,
-                  formConfig: pageData.form_config || pageData.formConfig,
-                  createdAt: pageData.created_at,
-                  updatedAt: pageData.updated_at,
-              };
-              setLandingPage(mappedPage);
-              setShowMainSite(false);
-          } else if (!targetPageSlug) {
-              // NO HOME PAGE FOUND -> SHOW MAIN SITE COMPONENT (Terra Produtiva Model)
-              console.log('Using Main LandingPage Component');
-              setShowMainSite(true);
-          }
+        if (targetPageSlug) {
+          // Specific page requested
+          const { data } = await supabase
+            .from('landing_pages')
+            .select('*')
+            .eq('organization_id', orgId)
+            .eq('slug', targetPageSlug)
+            .eq('status', 'published')
+            .single();
+          pageData = data;
+        } else {
+          // Root access: Try to find a dedicated homepage
+          const { data } = await supabase
+            .from('landing_pages')
+            .select('*')
+            .eq('organization_id', orgId)
+            .eq('status', 'published')
+            .in('slug', ['home', 'inicio', 'index', 'main', 'site'])
+            .limit(1)
+            .maybeSingle();
+
+          pageData = data;
+        }
+
+        if (pageData) {
+          // Map DB snake_case to CamelCase
+          const mappedPage: any = {
+            ...pageData,
+            themeConfig: pageData.theme_config || pageData.themeConfig || {},
+            metaTitle: pageData.meta_title,
+            metaDescription: pageData.meta_description,
+            ogImage: pageData.og_image,
+            customCss: pageData.custom_css,
+            customJs: pageData.custom_js,
+            propertySelection:
+              pageData.property_selection || pageData.propertySelection,
+            formConfig: pageData.form_config || pageData.formConfig,
+            createdAt: pageData.created_at,
+            updatedAt: pageData.updated_at,
+          };
+          setLandingPage(mappedPage);
+          setShowMainSite(false);
+        } else if (!targetPageSlug) {
+          // NO HOME PAGE FOUND -> SHOW MAIN SITE COMPONENT (Terra Produtiva Model)
+          console.log('Using Main LandingPage Component');
+          setShowMainSite(true);
+        }
       }
-      
-      setLoading(false);
 
       setLoading(false);
 
+      setLoading(false);
     } catch (err: any) {
       console.error('Error loading site:', err);
       setError(err.message || 'Erro ao carregar o site');
@@ -181,12 +183,18 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
 
   const getContainerClass = (width?: string) => {
     switch (width) {
-      case 'sm': return 'max-w-3xl mx-auto px-4';
-      case 'md': return 'max-w-5xl mx-auto px-4';
-      case 'lg': return 'max-w-6xl mx-auto px-4';
-      case 'xl': return 'max-w-7xl mx-auto px-4';
-      case 'full': return 'w-full';
-      default: return 'w-full'; 
+      case 'sm':
+        return 'max-w-3xl mx-auto px-4';
+      case 'md':
+        return 'max-w-5xl mx-auto px-4';
+      case 'lg':
+        return 'max-w-6xl mx-auto px-4';
+      case 'xl':
+        return 'max-w-7xl mx-auto px-4';
+      case 'full':
+        return 'w-full';
+      default:
+        return 'w-full';
     }
   };
 
@@ -228,7 +236,13 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
       case BlockType.BROKER_CARD:
         // Note: Public view might not have access to 'useSettings' context provider if it's outside main App structure
         // But we pass null/undefined and let the block handle fallback or use saved config
-        return <BrokerCardBlock config={block.config} theme={theme} settings={null} />; 
+        return (
+          <BrokerCardBlock
+            config={block.config}
+            theme={theme}
+            settings={null}
+          />
+        );
       case BlockType.DIVIDER:
         return <DividerBlock config={block.config} />;
       case BlockType.SPACER:
@@ -242,7 +256,10 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader className="animate-spin mx-auto mb-4 text-indigo-600" size={48} />
+          <Loader
+            className="animate-spin mx-auto mb-4 text-indigo-600"
+            size={48}
+          />
           <p className="text-gray-600">Carregando...</p>
         </div>
       </div>
@@ -251,20 +268,20 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
 
   // RENDER LOGIN IF REQUESTED
   if (showLogin && organization) {
-      return (
-          <SettingsProvider organizationId={organization.id}>
-              <Login />
-          </SettingsProvider>
-      );
+    return (
+      <SettingsProvider organizationId={organization.id}>
+        <Login />
+      </SettingsProvider>
+    );
   }
 
   // RENDER MAIN SITE MODEL IF REQUESTED
   if (showMainSite && organization) {
-      return (
-          <SettingsProvider organizationId={organization.id}>
-              <MainLandingPage organizationId={organization.id} />
-          </SettingsProvider>
-      );
+    return (
+      <SettingsProvider organizationId={organization.id}>
+        <MainLandingPage organizationId={organization.id} />
+      </SettingsProvider>
+    );
   }
 
   if (error || !page) {
@@ -294,14 +311,16 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
         color: page.themeConfig.textColor || '#000000',
         minHeight: '100vh',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
       }}
     >
       {/* SEO Meta Tags */}
       <title>{page.title}</title>
       <meta name="description" content={page.description} />
       {page.metaTitle && <meta property="og:title" content={page.metaTitle} />}
-      {page.metaDescription && <meta property="og:description" content={page.metaDescription} />}
+      {page.metaDescription && (
+        <meta property="og:description" content={page.metaDescription} />
+      )}
       {page.ogImage && <meta property="og:image" content={page.ogImage} />}
 
       {/* Preview Banner */}
@@ -314,8 +333,8 @@ const PublicLandingPage: React.FC<PublicLandingPageProps> = ({ forceSlug }) => {
       {/* Render all blocks */}
       <div className="flex-1">
         {page.blocks.map((block) => (
-          <div 
-            key={block.id} 
+          <div
+            key={block.id}
             style={block.styles}
             className={getContainerClass(block.containerWidth)}
           >

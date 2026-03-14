@@ -1,6 +1,5 @@
-
-import { GoogleGenAI, Type } from "@google/genai";
-import { Property, Lead } from "../types";
+import { GoogleGenAI, Type } from '@google/genai';
+import { Property, Lead } from '../types';
 
 // Lazy initialization para evitar crash quando API key não está disponível
 let ai: GoogleGenAI | null = null;
@@ -8,9 +7,11 @@ let ai: GoogleGenAI | null = null;
 const getAI = () => {
   if (!ai) {
     // @ts-ignore
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
     if (!apiKey) {
-      console.warn("⚠️ VITE_GEMINI_API_KEY não configurada - funcionalidades de IA desabilitadas");
+      console.warn(
+        '⚠️ VITE_GEMINI_API_KEY não configurada - funcionalidades de IA desabilitadas'
+      );
       return null;
     }
     ai = new GoogleGenAI({ apiKey });
@@ -28,17 +29,21 @@ export const generateSmartDescription = async (property: Partial<Property>) => {
     Infraestrutura: ${property.features?.infra?.casaSede ? 'Possui Casa Sede' : ''}, ${property.features?.infra?.curral ? 'Possui Currais' : ''}
     Galpões: ${property.features?.infra?.galpaes || 0}
     Casas de Funcionários: ${property.features?.infra?.casasFuncionarios || 0}
-    Recursos Hídricos: ${[
-      property.features?.water?.rio ? 'Rio' : '',
-      property.features?.water?.nascente ? 'Nascente' : '',
-      property.features?.water?.represa ? 'Represa' : ''
-    ].filter(Boolean).join(', ') || 'Não informado'}
+    Recursos Hídricos: ${
+      [
+        property.features?.water?.rio ? 'Rio' : '',
+        property.features?.water?.nascente ? 'Nascente' : '',
+        property.features?.water?.represa ? 'Represa' : '',
+      ]
+        .filter(Boolean)
+        .join(', ') || 'Não informado'
+    }
     
     A descrição deve ser persuasiva, destacando os diferenciais rurais, o relevo, a qualidade do solo e o potencial produtivo.`;
 
   const client = getAI();
   if (!client) {
-    return "Funcionalidade de IA não disponível. Configure VITE_GEMINI_API_KEY.";
+    return 'Funcionalidade de IA não disponível. Configure VITE_GEMINI_API_KEY.';
   }
 
   try {
@@ -46,24 +51,28 @@ export const generateSmartDescription = async (property: Partial<Property>) => {
       model: 'gemini-2.0-flash',
       contents: prompt,
       config: {
-        systemInstruction: "Você é um mestre em copywriting imobiliário brasileiro.",
+        systemInstruction:
+          'Você é um mestre em copywriting imobiliário brasileiro.',
         temperature: 0.7,
-      }
+      },
     });
-    return response.text || "Descrição não gerada.";
+    return response.text || 'Descrição não gerada.';
   } catch (error) {
-    console.error("Error generating description:", error);
-    return "Erro ao gerar descrição com IA.";
+    console.error('Error generating description:', error);
+    return 'Erro ao gerar descrição com IA.';
   }
 };
 
-export const matchLeadWithProperties = async (lead: Lead, properties: Property[]) => {
-  const propertySummary = properties.map(p => ({
+export const matchLeadWithProperties = async (
+  lead: Lead,
+  properties: Property[]
+) => {
+  const propertySummary = properties.map((p) => ({
     id: p.id,
     title: p.title,
     price: p.price,
     features: p.features,
-    location: p.location.neighborhood
+    location: p.location.neighborhood,
   }));
 
   const prompt = `Analise o perfil do cliente abaixo e recomende os 3 melhores imóveis da lista fornecida que mais se adequam às suas necessidades.
@@ -75,7 +84,7 @@ export const matchLeadWithProperties = async (lead: Lead, properties: Property[]
 
   const client = getAI();
   if (!client) {
-    return "Funcionalidade de IA não disponível. Configure VITE_GEMINI_API_KEY.";
+    return 'Funcionalidade de IA não disponível. Configure VITE_GEMINI_API_KEY.';
   }
 
   try {
@@ -83,20 +92,21 @@ export const matchLeadWithProperties = async (lead: Lead, properties: Property[]
       model: 'gemini-2.0-flash',
       contents: prompt,
       config: {
-        systemInstruction: "Você é um consultor imobiliário experiente que foca em matching de alta conversão.",
-      }
+        systemInstruction:
+          'Você é um consultor imobiliário experiente que foca em matching de alta conversão.',
+      },
     });
-    return response.text || "Nenhuma recomendação disponível.";
+    return response.text || 'Nenhuma recomendação disponível.';
   } catch (error) {
-    console.error("Error matching lead:", error);
-    return "Erro ao processar recomendações com IA.";
+    console.error('Error matching lead:', error);
+    return 'Erro ao processar recomendações com IA.';
   }
 };
 
 export const geminiService = {
   generateText: async (prompt: string) => {
     const client = getAI();
-    if (!client) return "{}";
+    if (!client) return '{}';
 
     try {
       const response = await client.models.generateContent({
@@ -104,12 +114,12 @@ export const geminiService = {
         contents: prompt,
         config: {
           temperature: 0.2, // Mais preciso para JSON
-        }
+        },
       });
-      return response.text || "{}";
+      return response.text || '{}';
     } catch (error) {
-      console.error("Error generating text:", error);
-      return "{}";
+      console.error('Error generating text:', error);
+      return '{}';
     }
-  }
+  },
 };
